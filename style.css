@@ -1,139 +1,108 @@
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* VARIABLES Y RESET */
+:root {
+    --verde-mimar: #72bd99;
+    --verde-dark: #5da685;
+    --blanco: #ffffff;
+    --gris-fondo: #f4f7f6;
+    --texto: #333;
 }
 
-/* BODY */
 body {
-  font-family: 'Inter', sans-serif;
-  background: radial-gradient(circle at top, #1c1c1c 0%, #0f0f0f 60%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-  color: #222;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--gris-fondo);
+    color: var(--texto);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
 }
 
-/* CARD */
 .container {
-  background: #ffffff;
-  width: 100%;
-  max-width: 460px;
-  padding: 60px 35px;
-  border-radius: 28px;
-  box-shadow:
-    0 40px 100px rgba(0, 0, 0, 0.6),
-    0 0 40px rgba(114, 189, 153, 0.15);
-  text-align: center;
-  animation: fadeIn 0.7s ease;
-  position: relative;
+    width: 100%;
+    max-width: 450px;
+    background: var(--blanco);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    text-align: center;
 }
 
-/* LOGO WRAPPER CON GLOW */
-.logo-wrapper {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 25px;
+/* CLASE MAESTRA PARA OCULTAR */
+.hidden {
+    display: none !important;
 }
 
-.logo-wrapper::before {
-  content: "";
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(114,189,153,0.35) 0%, transparent 70%);
-  border-radius: 50%;
-  z-index: 0;
-}
+/* CABECERAS */
+h1 { color: var(--verde-mimar); margin-bottom: 5px; }
+h2 { font-weight: 300; font-size: 1.1rem; margin-bottom: 30px; color: #777; }
+h3 { font-size: 1rem; margin: 20px 0 10px; text-align: left; border-left: 4px solid var(--verde-mimar); padding-left: 10px; }
 
-.logo {
-  width: 190px;   /* BIEN GRANDE */
-  position: relative;
-  z-index: 1;
-}
+/* INPUTS Y BOTONES */
+.input-group { margin-bottom: 15px; text-align: left; }
+label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #555; }
 
-/* MARCA */
-.brand {
-  font-family: 'Playfair Display', serif;
-  font-size: 30px;
-  font-weight: 700;
-  color: #72bd99;
-  margin-bottom: 10px;
-  letter-spacing: 0.5px;
-}
-
-.subtitle {
-  font-size: 14px;
-  color: #777;
-  margin-bottom: 30px;
-  font-weight: 400;
-}
-
-/* DIVIDER */
-.divider {
-  height: 1px;
-  background: linear-gradient(to right, transparent, #eaeaea, transparent);
-  margin: 30px 0;
-}
-
-/* SECTION TITLE */
-h3 {
-  font-weight: 500;
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 18px;
-}
-
-/* INPUT */
 input {
-  width: 100%;
-  padding: 18px;
-  border-radius: 16px;
-  border: 1px solid #ddd;
-  font-size: 16px;
-  margin-bottom: 22px;
-  transition: 0.3s;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-size: 1rem;
 }
 
-input:focus {
-  outline: none;
-  border-color: #72bd99;
-  box-shadow: 0 0 0 4px rgba(114, 189, 153, 0.2);
+.btn-primary {
+    width: 100%;
+    background-color: var(--verde-mimar);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-/* BUTTON */
-button {
-  width: 100%;
-  padding: 18px;
-  border-radius: 18px;
-  border: none;
-  background: linear-gradient(135deg, #72bd99, #5aa985);
-  color: white;
-  font-size: 17px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-  box-shadow: 0 8px 25px rgba(114,189,153,0.35);
+.btn-primary:hover { background-color: var(--verde-dark); }
+
+/* DISEÑO DE LA AGENDA */
+.agenda-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
 }
 
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(114,189,153,0.45);
+.btn-logout {
+    background: #ffeded;
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    cursor: pointer;
 }
 
-/* FOOTER */
-.footer {
-  margin-top: 25px;
-  font-size: 12px;
-  color: #999;
+/* GRILLAS DE SERVICIOS Y HORARIOS */
+.services-grid, .horarios-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
-/* ANIMACIÓN */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(25px); }
-  to { opacity: 1; transform: translateY(0); }
+.btn-servicio, .btn-hora {
+    background: white;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-servicio.selected {
+    background-color: var(--verde-mimar);
+    color: white;
+    border-color: var(--verde-mimar);
 }
