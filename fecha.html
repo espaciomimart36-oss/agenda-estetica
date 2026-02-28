@@ -79,7 +79,6 @@
       background: #e85c5b;
     }
 
-    /* 📱 MOBILE */
     @media (max-width: 768px) {
       .agenda-layout {
         flex-direction: column;
@@ -112,7 +111,9 @@
 
 </div>
 
-<!-- 🔥 SCRIPT REAL CON RESERVA -->
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
 <script type="module">
   import { db } from "./js/firebase.js";
   import {
@@ -176,11 +177,10 @@
             createdAt: serverTimestamp()
           });
 
-          alert("Reserva confirmada ✅");
-          window.location.href = "index.html";
+          mostrarToast("Reserva confirmada ✅");
 
         } catch (error) {
-          alert("Error al reservar");
+          mostrarToast("Error al reservar ❌");
           btn.innerText = hora;
           btn.disabled = false;
         }
@@ -188,6 +188,17 @@
 
       horariosDiv.appendChild(btn);
     });
+  }
+
+  function mostrarToast(mensaje) {
+    const toast = document.getElementById("toast");
+    toast.innerText = mensaje;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+      window.location.href = "index.html";
+    }, 1800);
   }
 
   function volver() {
