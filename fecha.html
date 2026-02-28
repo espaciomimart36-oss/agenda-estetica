@@ -46,10 +46,6 @@
       justify-content: space-between;
     }
 
-    #calendarWrapper {
-      margin-top: 20px;
-    }
-
     #horarios {
       margin-top: 30px;
     }
@@ -69,24 +65,6 @@
       color: white;
     }
 
-    .flatpickr-calendar {
-      border-radius: 20px !important;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.15) !important;
-    }
-
-    .flatpickr-day.selected {
-      background: #72bd99 !important;
-      border-color: #72bd99 !important;
-    }
-
-    .flatpickr-day.today {
-      border-color: #72bd99 !important;
-    }
-
-    .flatpickr-day:hover {
-      background: #d9f1e7 !important;
-    }
-
     .volver-btn {
       background: #ff7675;
       color: white;
@@ -100,6 +78,14 @@
     .volver-btn:hover {
       background: #e85c5b;
     }
+
+    /* 📱 MOBILE */
+    @media (max-width: 768px) {
+      .agenda-layout {
+        flex-direction: column;
+        margin: 20px auto;
+      }
+    }
   </style>
 </head>
 
@@ -110,10 +96,7 @@
   <div class="calendar-panel">
     <h2>Elegí fecha y hora</h2>
 
-    <!-- INPUT REAL para flatpickr -->
     <input type="text" id="calendarInput" hidden>
-
-    <!-- Donde se renderiza -->
     <div id="calendarWrapper"></div>
 
     <div id="horarios"></div>
@@ -129,25 +112,41 @@
 
 </div>
 
-<script>
+<!-- 🔥 SCRIPT REAL CON RESERVA -->
+<script type="module">
+  import { db } from "./js/firebase.js";
+  import {
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
   const params = new URLSearchParams(window.location.search);
   const servicio = params.get("servicio");
+  const clientId = localStorage.getItem("usuario");
+
+  if (!clientId) {
+    window.location.href = "index.html";
+  }
 
   document.getElementById("servicioTitulo").innerText = servicio;
+
+  let fechaSeleccionada = null;
 
   flatpickr("#calendarInput", {
     inline: true,
     appendTo: document.getElementById("calendarWrapper"),
     locale: "es",
-    minDate: new Date(),      // 🔥 Usa fecha real del sistema
-    defaultDate: new Date(),  // 🔥 Arranca en hoy
+    minDate: new Date(),
+    defaultDate: new Date(),
     dateFormat: "Y-m-d",
     onChange: function(selectedDates, dateStr) {
-      generarHorarios(dateStr);
+      fechaSeleccionada = dateStr;
+      generarHorarios();
     }
   });
 
-  function generarHorarios(fecha) {
+  function generarHorarios() {
     const horariosDiv = document.getElementById("horarios");
     horariosDiv.innerHTML = "";
 
@@ -161,6 +160,32 @@
     horarios.forEach(hora => {
       const btn = document.createElement("button");
       btn.innerText = hora;
+
+      btn.addEventListener("click", async () => {
+        if (!fechaSeleccionada) return;
+
+        btn.innerText = "Reservando...";
+        btn.disabled = true;
+
+        try {
+          await addDoc(collection(db, "reservas"), {
+            cliente: clientId,
+            servicio: servicio,
+            fecha: fechaSeleccionada,
+            hora: hora,
+            createdAt: serverTimestamp()
+          });
+
+          alert("Reserva confirmada ✅");
+          window.location.href = "index.html";
+
+        } catch (error) {
+          alert("Error al reservar");
+          btn.innerText = hora;
+          btn.disabled = false;
+        }
+      });
+
       horariosDiv.appendChild(btn);
     });
   }
@@ -168,6 +193,8 @@
   function volver() {
     window.location.href = "index.html";
   }
+
+  window.volver = volver;
 </script>
 
 </body>
