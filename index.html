@@ -5,7 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Espacio Mimar_T | Agenda</title>
 
-  <link rel="stylesheet" href="style.css">
+  <!-- CSS -->
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- FLATPICKR -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+  <!-- EMAILJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init("AU6Z1JJBvWY9zpSnn");
+    })();
+  </script>
 </head>
 
 <body>
@@ -34,12 +48,22 @@
     <h2 id="bienvenida"></h2>
     <button id="btnLogout">Salir</button>
 
-    <h3>Seleccioná un Servicio</h3>
+    <h3>1. Seleccioná un Servicio</h3>
     <div id="servicesContainer"></div>
+
+    <h3>2. Elegí la Fecha</h3>
+    <input type="text" id="fecha" placeholder="Seleccionar fecha">
+
+    <h3>3. Horarios Disponibles</h3>
+    <div id="horariosContainer"></div>
   </div>
 
 </div>
 
-<script type="module" src="js/script.js"></script>
+<div id="toast" class="toast"></div>
+
+<!-- JS PRINCIPAL -->
+<script type="module" src="./js/script.js"></script>
+
 </body>
 </html>
