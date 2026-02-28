@@ -7,13 +7,24 @@ body {
   background-color: #f6f7f9;
   margin: 0;
   padding: 40px;
-  display: flex;
-  justify-content: center;
 }
+
+h1, h2, h3 {
+  margin-top: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ============================= */
+/* LOGIN / AGENDA BOX */
+/* ============================= */
 
 .container {
   width: 100%;
   max-width: 700px;
+  margin: auto;
 }
 
 #section-login,
@@ -22,14 +33,6 @@ body {
   padding: 35px;
   border-radius: 25px;
   box-shadow: 0 15px 40px rgba(0,0,0,0.06);
-}
-
-.hidden {
-  display: none;
-}
-
-h1, h2, h3 {
-  margin-top: 0;
 }
 
 /* ============================= */
@@ -161,7 +164,35 @@ button {
 }
 
 /* ============================= */
-/* FLATPICKR AJUSTE PRO */
+/* LAYOUT FECHA.HTML */
+/* ============================= */
+
+.agenda-layout {
+  display: flex;
+  gap: 40px;
+  max-width: 1100px;
+  margin: auto;
+  padding: 40px;
+}
+
+.calendar-panel {
+  flex: 2;
+  background: white;
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.resumen-panel {
+  flex: 1;
+  background: white;
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+/* ============================= */
+/* FLATPICKR PRO */
 /* ============================= */
 
 .flatpickr-calendar {
@@ -175,18 +206,15 @@ button {
   border-radius: 25px 25px 0 0 !important;
 }
 
-/* NÚMEROS NORMALES */
 .flatpickr-day {
   color: #2d2d2d !important;
   font-weight: 500;
 }
 
-/* DESHABILITADOS */
 .flatpickr-day.flatpickr-disabled {
   color: #b0b6ba !important;
 }
 
-/* SELECCIONADO */
 .flatpickr-day.selected {
   background: #72bd99 !important;
   border-color: #72bd99 !important;
@@ -194,12 +222,36 @@ button {
   font-weight: 600;
 }
 
-/* HOY */
 .flatpickr-day.today {
   border: 2px solid #72bd99 !important;
 }
 
-/* HOVER */
 .flatpickr-day:hover {
   background: #e6f3ee !important;
+}
+
+/* ============================= */
+/* MOBILE RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 768px) {
+
+  body {
+    padding: 20px;
+  }
+
+  .agenda-layout {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .calendar-panel,
+  .resumen-panel {
+    width: 100%;
+  }
+
+  .flatpickr-calendar {
+    width: 100% !important;
+  }
+
 }
