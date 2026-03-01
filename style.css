@@ -1,54 +1,60 @@
 :root {
   --verde: #72bd99;
   --verde-oscuro: #5da685;
-  --fondo: #f4f7f6;
+  --fondo: #f6f7f9;
   --blanco: #ffffff;
   --gris-borde: #ddd;
 }
 
-/* Reset */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body centrado */
+/* BODY NORMAL */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--fondo);
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 60px 20px;
 }
 
-/* Contenedor */
+/* CONTENEDOR */
 .container {
   background: var(--blanco);
-  width: 90%;
-  max-width: 380px;
-  padding: 30px 25px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 35px 30px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
 }
 
-/* Título */
-.container h2 {
+/* TITULOS */
+h1 {
   text-align: center;
   margin-bottom: 25px;
-  color: #333;
+  font-size: 26px;
 }
 
-/* Inputs */
+/* LABELS */
+label {
+  font-size: 14px;
+  font-weight: 500;
+  display: block;
+  margin-top: 12px;
+}
+
+/* INPUTS */
 input {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
+  margin-top: 6px;
   margin-bottom: 15px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--gris-borde);
   font-size: 14px;
-  transition: border 0.2s ease;
 }
 
 input:focus {
@@ -56,19 +62,48 @@ input:focus {
   border-color: var(--verde);
 }
 
-/* Botón */
+/* BOTONES */
 button {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
+  border-radius: 14px;
   border: none;
-  border-radius: 8px;
-  background-color: var(--verde);
+  background: var(--verde);
   color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
+  margin-top: 10px;
+  transition: 0.2s ease;
 }
 
 button:hover {
-  background-color: var(--verde-oscuro);
+  background: var(--verde-oscuro);
+}
+
+/* SERVICIOS */
+#servicesContainer {
+  margin-top: 20px;
+  display: grid;
+  gap: 10px;
+}
+
+.btn-servicio {
+  background: #f1f1f1;
+  color: #333;
+}
+
+.btn-servicio:hover {
+  background: var(--verde);
+  color: white;
+}
+
+/* UTILIDADES */
+.hidden {
+  display: none;
+}
+
+.login-error {
+  color: #d63031;
+  font-size: 14px;
+  margin-top: 5px;
 }

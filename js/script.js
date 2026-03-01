@@ -2,8 +2,8 @@ import { db } from "./firebase.js";
 import {
   collection,
   getDocs,
-  getDoc,
   doc,
+  getDoc,
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -17,29 +17,43 @@ const whatsappInput = document.getElementById("whatsapp");
 const loginError = document.getElementById("loginError");
 
 const servicesContainer = document.getElementById("servicesContainer");
-const bienvenida = document.getElementById("bienvenida");
 const btnLogout = document.getElementById("btnLogout");
 
 let clientId = localStorage.getItem("usuario");
 
 /* ===============================
-   SESIÓN
+   INICIO
 =================================*/
-function verificarSesion() {
+
+init();
+
+async function init() {
   if (clientId) {
-    sectionLogin.classList.add("hidden");
-    sectionAgenda.classList.remove("hidden");
-    bienvenida.innerText = `Hola, ${clientId} ✨`;
-    cargarServicios();
+    mostrarAgenda();
   } else {
-    sectionLogin.classList.remove("hidden");
-    sectionAgenda.classList.add("hidden");
+    mostrarLogin();
   }
+}
+
+/* ===============================
+   MOSTRAR SECCIONES
+=================================*/
+
+function mostrarLogin() {
+  sectionLogin.classList.remove("hidden");
+  sectionAgenda.classList.add("hidden");
+}
+
+function mostrarAgenda() {
+  sectionLogin.classList.add("hidden");
+  sectionAgenda.classList.remove("hidden");
+  cargarServicios();
 }
 
 /* ===============================
    LOGIN
 =================================*/
+
 btnIngresar?.addEventListener("click", async () => {
 
   loginError.textContent = "";
@@ -58,7 +72,7 @@ btnIngresar?.addEventListener("click", async () => {
     const clienteSnap = await getDoc(clienteRef);
 
     if (!clienteSnap.exists()) {
-      loginError.textContent = "Usuario incorrecto o no autorizado.";
+      loginError.textContent = "Usuario incorrecto.";
       return;
     }
 
@@ -70,46 +84,58 @@ btnIngresar?.addEventListener("click", async () => {
     localStorage.setItem("usuario", keyword);
     clientId = keyword;
 
-    verificarSesion();
+    mostrarAgenda();
 
   } catch (error) {
-    loginError.textContent = "Error de conexión.";
+    loginError.textContent = "Error de conexión con Firebase.";
   }
 });
 
 /* ===============================
-   SERVICIOS → REDIRECCIÓN
+   SERVICIOS
 =================================*/
+
 async function cargarServicios() {
 
-  const snapshot = await getDocs(collection(db, "services"));
-  servicesContainer.innerHTML = "";
+  servicesContainer.innerHTML = "Cargando servicios...";
 
-  snapshot.forEach((docSnap) => {
-    const data = docSnap.data();
+  try {
+    const snapshot = await getDocs(collection(db, "services"));
 
-    if (data.activo) {
-      const btn = document.createElement("button");
-      btn.innerText = data.nombre;
-      btn.className = "btn-servicio";
+    servicesContainer.innerHTML = "";
 
-      // 🔥 AHORA REDIRIGE A fecha.html
-      btn.onclick = () => {
-        const servicio = encodeURIComponent(data.nombre);
-        window.location.href = `fecha.html?servicio=${servicio}`;
-      };
-
-      servicesContainer.appendChild(btn);
+    if (snapshot.empty) {
+      servicesContainer.innerHTML = "No hay servicios disponibles.";
+      return;
     }
-  });
+
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+
+      if (data.activo) {
+        const btn = document.createElement("button");
+        btn.innerText = data.nombre;
+        btn.className = "btn-servicio";
+
+        btn.onclick = () => {
+          const servicio = encodeURIComponent(data.nombre);
+          window.location.href = `fecha.html?servicio=${servicio}`;
+        };
+
+        servicesContainer.appendChild(btn);
+      }
+    });
+
+  } catch (error) {
+    servicesContainer.innerHTML = "Error cargando servicios.";
+  }
 }
 
 /* ===============================
    LOGOUT
 =================================*/
+
 btnLogout?.addEventListener("click", () => {
   localStorage.removeItem("usuario");
   location.reload();
 });
-
-verificarSesion();
