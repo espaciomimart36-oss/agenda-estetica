@@ -101,8 +101,9 @@ function showDay(fecha) {
     reservas.forEach(r => {
       html += `
         <div class="reserva-card">
-          <strong>${r.hora} hs</strong> - ${r.nombreCliente}<br>
+          <strong>${r.hora} hs</strong> - ${r.clientId || "Sin nombre"}<br>
           <span>Servicio: ${r.servicio}</span><br>
+          <span>Email: ${r.emailCliente || "-"}</span><br>
           <button class="btn-cancel" onclick="cancelarReserva('${r.id}', '${fecha}')">
             Cancelar turno
           </button>
