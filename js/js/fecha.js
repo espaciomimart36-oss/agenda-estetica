@@ -1,4 +1,4 @@
-import { db } from "./firebase.js";
+import { db } from "./js/firebase.js";
 
 import {
 collection,
@@ -10,6 +10,16 @@ doc,
 getDoc
 }
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* ====== EMAILJS ====== */
+/* Usa tu PUBLIC KEY de EmailJS */
+emailjs.init("TU_PUBLIC_KEY_AQUI");
+
+/* IDs de EmailJS */
+const EMAIL_SERVICE = "service_p8k8xah";
+const EMAIL_TEMPLATE = "template_3nk7shm";
+
+/* ===================== */
 
 const params=new URLSearchParams(window.location.search);
 
@@ -42,7 +52,7 @@ document.getElementById("user-display").innerHTML=
 let fechaGlobal="";
 let horaGlobal="";
 
-/* cargar excepciones */
+/* ===== cargar excepciones ===== */
 
 const excepcionesSnap = await getDocs(collection(db,"calendarExceptions"));
 
@@ -62,7 +72,7 @@ motivosBloqueo[data.date]=data.reason;
 
 });
 
-/* calendario */
+/* ===== calendario ===== */
 
 flatpickr("#calendar",{
 
@@ -99,13 +109,13 @@ cargarHorarios(dateStr);
 
 });
 
-/* horarios */
+/* ===== horarios ===== */
 
 async function cargarHorarios(fecha){
 
 const container=document.getElementById("horarios");
 
-container.innerHTML="Cargando...";
+container.innerHTML="Cargando horarios...";
 
 const q=query(collection(db,"reservas"),where("fecha","==",fecha));
 
@@ -148,7 +158,7 @@ container.appendChild(btn);
 
 }
 
-/* reservar */
+/* ===== reservar ===== */
 
 document.getElementById("btn-finalizar").onclick=async()=>{
 
@@ -171,6 +181,30 @@ hora:horaGlobal,
 timestamp:new Date()
 
 });
+
+/* ===== enviar correo ===== */
+
+try{
+
+await emailjs.send(
+EMAIL_SERVICE,
+EMAIL_TEMPLATE,
+{
+to_name: clientName,
+to_email: clientEmail,
+servicio: servicioNombre,
+fecha: fechaGlobal,
+hora: horaGlobal
+}
+);
+
+}catch(error){
+
+console.error("Error enviando email:", error);
+
+}
+
+/* ===== feedback UI ===== */
 
 const btn=document.getElementById("btn-finalizar");
 
