@@ -7,6 +7,8 @@
 --border:#edf2f7;
 }
 
+/* RESET */
+
 *{
 box-sizing:border-box;
 margin:0;
@@ -17,16 +19,17 @@ padding:0;
 html,body{
 width:100%;
 min-height:100%;
-background:var(--bg);
+background:white;
 font-family:'Segoe UI',Roboto,sans-serif;
 color:var(--text-main);
+overflow-x:hidden;
 }
 
-/* MOBILE FIRST */
+/* CONTENEDOR PRINCIPAL — USA TODA LA PANTALLA */
 
 .container{
 width:100%;
-min-height:100dvh;
+min-height:100vh;
 padding:28px 20px;
 display:flex;
 flex-direction:column;
@@ -38,6 +41,8 @@ background:white;
 .is-login{
 justify-content:center;
 }
+
+/* TITULOS */
 
 h2{
 font-size:24px;
@@ -76,6 +81,11 @@ border:none;
 font-size:16px;
 font-weight:700;
 cursor:pointer;
+transition:.15s;
+}
+
+button:active{
+transform:scale(.98);
 }
 
 #btn-ingresar,
@@ -106,6 +116,7 @@ cursor:pointer;
 display:none;
 margin-top:12px;
 color:var(--text-soft);
+line-height:1.4;
 }
 
 .btn-reservar{
@@ -131,6 +142,7 @@ border-radius:12px;
 border:1px solid var(--border);
 background:#f8fafc;
 font-weight:600;
+cursor:pointer;
 }
 
 .hora-btn.selected{
@@ -142,9 +154,10 @@ border-color:var(--primary);
 .hora-btn:disabled{
 background:#edf2f7;
 color:#cbd5e0;
+cursor:not-allowed;
 }
 
-/* CALENDARIO FULL WIDTH */
+/* CALENDARIO */
 
 .flatpickr-calendar{
 width:100%!important;
@@ -157,23 +170,4 @@ border-radius:14px!important;
 .flatpickr-day.selected{
 background:var(--primary)!important;
 border-color:var(--primary)!important;
-}
-
-/* DESKTOP */
-
-@media(min-width:700px){
-
-body{
-display:flex;
-justify-content:center;
-align-items:flex-start;
-}
-
-.container{
-max-width:520px;
-margin:40px 0;
-border-radius:26px;
-box-shadow:0 25px 50px rgba(0,0,0,.08);
-}
-
 }
