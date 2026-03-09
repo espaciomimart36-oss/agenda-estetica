@@ -3,28 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <title>Ingreso Clientes | Espacio Mimar</title>
-    <link rel="stylesheet" href="style.css"> </head>
-
+    <title>Ingreso | Espacio Mimar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
-
-    <div class="container">
-        <div class="form-wrapper">
-            <h2>Ingreso Clientes</h2>
-
-            <form id="loginForm">
-                <input id="username" placeholder="Usuario (Ej: Faby M)" required>
-                <input id="dni" type="tel" placeholder="DNI sin puntos" required>
-                
-                <div id="errorMsg"></div>
-                
-                <button type="submit" id="btn-ingresar">Ingresar</button>
-            </form>
-        </div>
+    <div class="container is-login">
+        <h2>Ingreso Clientes</h2>
+        <form id="loginForm">
+            <input id="username" placeholder="Usuario (Ej: Faby M)" required>
+            <input id="dni" type="tel" placeholder="DNI" required>
+            <div id="errorMsg" style="color:red; text-align:center; margin-bottom:15px; font-size:14px;"></div>
+            <button type="submit" id="btn-ingresar">Ingresar</button>
+        </form>
     </div>
-
     <script type="module" src="./js/login.js"></script>
-
 </body>
 </html>
