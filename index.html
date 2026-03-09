@@ -1,94 +1,30 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Ingreso Clientes | Espacio Mimar</title>
-
-<style>
-
-:root{
---primary:#72bd99;
---bg:#f4f7f6;
-}
-
-body{
-font-family:'Segoe UI',sans-serif;
-background:var(--bg);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
-}
-
-.container{
-background:white;
-padding:30px;
-border-radius:20px;
-width:90%;
-max-width:380px;
-box-shadow:0 10px 35px rgba(0,0,0,0.08);
-}
-
-h2{
-text-align:center;
-margin-bottom:20px;
-}
-
-input{
-width:100%;
-padding:14px;
-border-radius:12px;
-border:1px solid #ddd;
-margin-bottom:15px;
-}
-
-button{
-width:100%;
-padding:15px;
-border:none;
-border-radius:12px;
-background:#72bd99;
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-
-#errorMsg{
-color:red;
-font-size:0.8rem;
-margin-bottom:10px;
-}
-
-</style>
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>Ingreso Clientes | Espacio Mimar</title>
+    <link rel="stylesheet" href="style.css"> </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
+        <div class="form-wrapper">
+            <h2>Ingreso Clientes</h2>
 
-<h2>Ingreso Clientes</h2>
+            <form id="loginForm">
+                <input id="username" placeholder="Usuario (Ej: Faby M)" required>
+                <input id="dni" type="tel" placeholder="DNI sin puntos" required>
+                
+                <div id="errorMsg"></div>
+                
+                <button type="submit" id="btn-ingresar">Ingresar</button>
+            </form>
+        </div>
+    </div>
 
-<form id="loginForm">
-
-<input id="username" placeholder="Usuario (Ej: Faby M)" required>
-
-<input id="dni" placeholder="DNI" required>
-
-<div id="errorMsg"></div>
-
-<button type="submit">
-Ingresar
-</button>
-
-</form>
-
-</div>
-
-<script type="module" src="./js/login.js"></script>
+    <script type="module" src="./js/login.js"></script>
 
 </body>
 </html>

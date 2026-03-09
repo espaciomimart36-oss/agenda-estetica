@@ -1,332 +1,180 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Elegir Fecha | Espacio Mimar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        :root { --primary: #72bd99; --danger: #ff5c5c; --bg: #f4f7f6; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100dvh;
+        }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        .container {
+            background: white;
+            padding: 35px 22px;
+            width: 100%;
+            max-width: 480px;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
 
-<title>Elegir Fecha | Espacio Mimar</title>
+        #titulo-servicio { font-size: 22px; margin-bottom: 5px; color: #2d3748; text-align: center; }
+        #user-display { font-size: 14px; color: #718096; margin-bottom: 20px; text-align: center; }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        /* Ajustes Calendario para Full Width */
+        .flatpickr-calendar { 
+            width: 100% !important; 
+            box-shadow: none !important; 
+            border: 1px solid #e2e8f0 !important;
+            margin-bottom: 20px !important;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+        .dia-bloqueado { background: var(--danger) !important; color: white !important; border-radius: 50% !important; }
 
-<style>
+        #horarios {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
 
-:root{
---primary:#72bd99;
---primary-dark:#5fa887;
---danger:#ff3b3b;
---bg:#f2f5f4;
-}
+        .hora-btn {
+            padding: 12px 5px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-*{box-sizing:border-box;}
+        .hora-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .hora-btn:disabled { background: #edf2f7; color: #cbd5e0; border-color: #edf2f7; cursor: not-allowed; }
 
-body{
-font-family:'Segoe UI',sans-serif;
-background:var(--bg);
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-margin:0;
-padding:15px;
-}
-
-.container{
-background:white;
-padding:25px;
-border-radius:22px;
-width:100%;
-max-width:420px;
-box-shadow:0 15px 40px rgba(0,0,0,0.08);
-text-align:center;
-}
-
-#titulo-servicio{
-margin-bottom:5px;
-}
-
-#user-display{
-font-size:.85rem;
-color:#666;
-margin-bottom:15px;
-}
-
-.flatpickr-calendar{
-margin:auto;
-border:none!important;
-box-shadow:0 10px 35px rgba(0,0,0,0.08)!important;
-border-radius:18px!important;
-}
-
-/* DIA BLOQUEADO */
-
-.flatpickr-day.dia-bloqueado{
-background:#ff3b3b !important;
-color:white !important;
-border-radius:50% !important;
-font-weight:bold !important;
-cursor:not-allowed;
-}
-
-.flatpickr-day.dia-bloqueado:hover{
-background:#d60000 !important;
-}
-
-#horarios{
-margin-top:20px;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-.hora-btn{
-padding:14px;
-border:2px solid var(--primary);
-border-radius:14px;
-background:white;
-color:var(--primary);
-font-weight:600;
-cursor:pointer;
-}
-
-.hora-btn.selected{
-background:var(--primary-dark);
-color:white;
-}
-
-.hora-btn:disabled{
-background:var(--danger);
-border-color:var(--danger);
-color:white;
-cursor:not-allowed;
-}
-
-.btn-principal{
-margin-top:20px;
-width:100%;
-padding:16px;
-border:none;
-border-radius:14px;
-background:var(--primary);
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-
-</style>
+        .btn-principal {
+            margin-top: auto;
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 16px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(114, 189, 153, 0.2);
+        }
+    </style>
 </head>
-
 <body>
-
-<div class="container">
-
-<h2 id="titulo-servicio">Cargando...</h2>
-
-<div id="user-display"></div>
-
-<input type="text" id="calendar">
-
-<div id="horarios"></div>
-
-<button id="btn-finalizar" class="btn-principal">
-Reservar Turno
-</button>
-
-</div>
-
-<script type="module">
-
-import { db } from "./js/firebase.js";
-
-import {
-collection,
-query,
-where,
-getDocs,
-addDoc,
-doc,
-getDoc
-}
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-emailjs.init("AU6Z1JJBVWY9zpSnn");
-
-const params=new URLSearchParams(window.location.search);
-
-const servicioId=params.get("sid");
-const servicioNombre=decodeURIComponent(params.get("servicio")||"Servicio");
-
-document.getElementById("titulo-servicio").innerText=servicioNombre;
-
-const userDni=sessionStorage.getItem("userDni");
-
-let clientName="";
-let clientEmail="";
-
-if(userDni){
-
-const snap=await getDoc(doc(db,"clients",userDni));
-
-if(snap.exists()){
-
-clientName=snap.data().fullName;
-clientEmail=snap.data().email;
-
-document.getElementById("user-display").innerHTML=
-`Cliente: <b>${clientName}</b>`;
-
-}
-
-}
-
-let fechaGlobal="";
-let horaGlobal="";
-
-/* Cargar días bloqueados */
-
-const excepcionesSnap = await getDocs(collection(db,"calendarExceptions"));
-
-const fechasBloqueadas=[];
-const motivosBloqueo={};
-
-excepcionesSnap.forEach(docSnap=>{
-
-const data=docSnap.data();
-
-if(data.active && data.type==="blocked"){
-
-fechasBloqueadas.push(data.date);
-motivosBloqueo[data.date]=data.reason;
-
-}
-
-});
-
-/* Calendario */
-
-flatpickr("#calendar",{
-
-inline:true,
-locale:"es",
-
-onDayCreate:(dObj,dStr,fp,dayElem)=>{
-
-const fecha = dayElem.dateObj.toISOString().split("T")[0];
-
-if(fechasBloqueadas.includes(fecha)){
-
-dayElem.classList.add("dia-bloqueado");
-dayElem.title="No disponible: "+motivosBloqueo[fecha];
-
-}
-
-},
-
-onChange:(dates,dateStr)=>{
-
-if(motivosBloqueo[dateStr]){
-
-alert("No hay atención este día: "+motivosBloqueo[dateStr]);
-return;
-
-}
-
-fechaGlobal=dateStr;
-
-cargarHorarios(dateStr);
-
-}
-
-});
-
-async function cargarHorarios(fecha){
-
-const container=document.getElementById("horarios");
-
-container.innerHTML="Cargando...";
-
-const q=query(collection(db,"reservas"),where("fecha","==",fecha));
-
-const snap=await getDocs(q);
-
-const ocupados=snap.docs.map(d=>d.data().hora);
-
-container.innerHTML="";
-
-const horarios=[
-"07:00","08:00","09:00","10:00","11:00","12:00",
-"12:30","16:00","17:00","18:00","19:00","20:00","20:30"
-];
-
-horarios.forEach(h=>{
-
-const btn=document.createElement("button");
-
-btn.className="hora-btn";
-btn.innerText=h;
-
-if(ocupados.includes(h)){
-btn.disabled=true;
-}
-
-btn.onclick=()=>{
-
-document.querySelectorAll(".hora-btn")
-.forEach(b=>b.classList.remove("selected"));
-
-btn.classList.add("selected");
-
-horaGlobal=h;
-
-};
-
-container.appendChild(btn);
-
-});
-
-}
-
-document.getElementById("btn-finalizar").onclick=async()=>{
-
-if(!horaGlobal){
-
-alert("Seleccioná un horario");
-return;
-
-}
-
-await addDoc(collection(db,"reservas"),{
-
-clientId:userDni,
-clientName,
-clientEmail,
-servicioId,
-servicioNombre,
-fecha:fechaGlobal,
-hora:horaGlobal,
-timestamp:new Date()
-
-});
-
-const btn=document.getElementById("btn-finalizar");
-
-btn.innerText="Turno reservado ✓";
-btn.style.background="#5fa887";
-btn.disabled=true;
-
-setTimeout(()=>{
-
-window.location.href="index.html";
-
-},1500);
-
-};
-
-</script>
-
+    <div class="container">
+        <h2 id="titulo-servicio">Cargando...</h2>
+        <div id="user-display"></div>
+        <input type="text" id="calendar" style="display:none">
+        <div id="horarios"></div>
+        <button id="btn-finalizar" class="btn-principal">Reservar Turno</button>
+    </div>
+
+    <script type="module">
+        /* Mismo código JS que ya tenías, funciona perfecto */
+        import { db } from "./js/firebase.js";
+        import { collection, query, where, getDocs, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        emailjs.init("AU6Z1JJBVWY9zpSnn");
+        const params = new URLSearchParams(window.location.search);
+        const servicioId = params.get("sid");
+        const servicioNombre = decodeURIComponent(params.get("servicio") || "Servicio");
+        document.getElementById("titulo-servicio").innerText = servicioNombre;
+
+        const userDni = sessionStorage.getItem("userDni");
+        let clientName = ""; let clientEmail = "";
+        if (userDni) {
+            const snap = await getDoc(doc(db, "clients", userDni));
+            if (snap.exists()) {
+                clientName = snap.data().fullName;
+                clientEmail = snap.data().email;
+                document.getElementById("user-display").innerHTML = `Cliente: <b>${clientName}</b>`;
+            }
+        }
+
+        let fechaGlobal = ""; let horaGlobal = "";
+        const excepcionesSnap = await getDocs(collection(db, "calendarExceptions"));
+        const fechasBloqueadas = []; const motivosBloqueo = {};
+        excepcionesSnap.forEach(docSnap => {
+            const data = docSnap.data();
+            if (data.active && data.type === "blocked") {
+                fechasBloqueadas.push(data.date);
+                motivosBloqueo[data.date] = data.reason;
+            }
+        });
+
+        flatpickr("#calendar", {
+            inline: true, locale: "es",
+            onDayCreate: (dObj, dStr, fp, dayElem) => {
+                const fecha = dayElem.dateObj.toISOString().split("T")[0];
+                if (fechasBloqueadas.includes(fecha)) {
+                    dayElem.classList.add("dia-bloqueado");
+                    dayElem.title = "No disponible: " + motivosBloqueo[fecha];
+                }
+            },
+            onChange: (dates, dateStr) => {
+                if (motivosBloqueo[dateStr]) { alert("Día cerrado: " + motivosBloqueo[dateStr]); return; }
+                fechaGlobal = dateStr; cargarHorarios(dateStr);
+            }
+        });
+
+        async function cargarHorarios(fecha) {
+            const container = document.getElementById("horarios");
+            container.innerHTML = "Cargando...";
+            const q = query(collection(db, "reservas"), where("fecha", "==", fecha));
+            const snap = await getDocs(q);
+            const ocupados = snap.docs.map(d => d.data().hora);
+            container.innerHTML = "";
+            const horarios = ["07:00","08:00","09:00","10:00","11:00","12:00","12:30","16:00","17:00","18:00","19:00","20:00","20:30"];
+
+            horarios.forEach(h => {
+                const btn = document.createElement("button");
+                btn.className = "hora-btn";
+                btn.innerText = h;
+                if (ocupados.includes(h)) btn.disabled = true;
+                btn.onclick = () => {
+                    document.querySelectorAll(".hora-btn").forEach(b => b.classList.remove("selected"));
+                    btn.classList.add("selected");
+                    horaGlobal = h;
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        document.getElementById("btn-finalizar").onclick = async () => {
+            if (!horaGlobal) { alert("Seleccioná un horario"); return; }
+            const btn = document.getElementById("btn-finalizar");
+            btn.innerText = "Reservando..."; btn.disabled = true;
+            
+            await addDoc(collection(db, "reservas"), {
+                clientId: userDni, clientName, clientEmail, servicioId, servicioNombre,
+                fecha: fechaGlobal, hora: horaGlobal, timestamp: new Date()
+            });
+
+            btn.innerText = "Turno reservado ✓";
+            btn.style.background = "#5fa887";
+            setTimeout(() => { window.location.href = "index.html"; }, 1500);
+        };
+    </script>
 </body>
 </html>

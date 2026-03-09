@@ -1,214 +1,149 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Servicios | Espacio Mimar</title>
+    <style>
+        :root { --primary: #72bd99; --bg: #f4f7f6; --text: #2d3748; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100dvh;
+        }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        .container {
+            background: white;
+            padding: 40px 24px;
+            width: 100%;
+            max-width: 480px;
+            min-height: 100dvh;
+        }
 
-<title>Servicios | Espacio Mimar</title>
+        h2 { text-align: center; color: var(--text); margin-bottom: 30px; font-size: 24px; }
 
-<style>
+        .categoria {
+            margin-top: 30px;
+            font-weight: 800;
+            font-size: 13px;
+            color: var(--primary);
+            letter-spacing: 1px;
+            border-bottom: 2px solid #f0f4f2;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
 
-:root{
---primary:#72bd99;
---bg:#f4f7f6;
-}
+        .servicio {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
 
-body{
-font-family:'Segoe UI',sans-serif;
-background:var(--bg);
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-margin:0;
-}
+        .servicio-titulo {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.container{
-background:white;
-padding:25px;
-border-radius:20px;
-width:90%;
-max-width:420px;
-box-shadow:0 10px 30px rgba(0,0,0,0.08);
-}
+        .servicio-desc {
+            display: none;
+            font-size: 15px;
+            color: #718096;
+            margin-top: 12px;
+            line-height: 1.5;
+        }
 
-h2{
-text-align:center;
-margin-bottom:20px;
-}
+        .servicio-duracion {
+            font-size: 13px;
+            color: #a0aec0;
+            margin-top: 10px;
+            font-weight: 500;
+        }
 
-.categoria{
-margin-top:25px;
-font-weight:bold;
-font-size:1.1rem;
-color:#444;
-}
-
-.servicio{
-border:1px solid #e5e5e5;
-border-radius:14px;
-padding:15px;
-margin-top:10px;
-}
-
-.servicio-titulo{
-font-weight:bold;
-font-size:1rem;
-cursor:pointer;
-display:flex;
-justify-content:space-between;
-}
-
-.servicio-desc{
-display:none;
-font-size:.9rem;
-color:#666;
-margin-top:10px;
-}
-
-.servicio-duracion{
-font-size:.8rem;
-color:#999;
-margin-top:8px;
-}
-
-.btn-reservar{
-margin-top:12px;
-width:100%;
-padding:12px;
-background:var(--primary);
-border:none;
-border-radius:10px;
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-
-</style>
-
+        .btn-reservar {
+            margin-top: 15px;
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-
 <body>
+    <div class="container">
+        <h2>Elegí tu tratamiento</h2>
+        <div id="listaServicios">Cargando servicios...</div>
+    </div>
 
-<div class="container">
+    <script type="module">
+        import { db } from "./js/firebase.js";
+        import { collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-<h2>Elegí tu tratamiento</h2>
+        const container = document.getElementById("listaServicios");
 
-<div id="listaServicios">
-Cargando servicios...
-</div>
+        async function cargarServicios() {
+            try {
+                const q = query(collection(db, "services"), where("activo", "==", true), orderBy("orden"));
+                const snap = await getDocs(q);
+                container.innerHTML = "";
+                let categorias = {};
 
-</div>
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    if (!categorias[data.categoria]) { categorias[data.categoria] = []; }
+                    categorias[data.categoria].push({ id: doc.id, ...data });
+                });
 
-<script type="module">
+                for (const categoria in categorias) {
+                    const cat = document.createElement("div");
+                    cat.className = "categoria";
+                    cat.innerText = categoria.toUpperCase();
+                    container.appendChild(cat);
 
-import { db } from "./js/firebase.js";
+                    categorias[categoria].forEach(serv => {
+                        const card = document.createElement("div");
+                        card.className = "servicio";
+                        card.innerHTML = `
+                            <div class="servicio-titulo">${serv.nombre} <span>▼</span></div>
+                            <div class="servicio-desc">
+                                ${serv.descripcion}
+                                <div class="servicio-duracion">⏱ Duración: ${serv.duracion} min</div>
+                                <button class="btn-reservar">Reservar turno</button>
+                            </div>
+                        `;
 
-import {
-collection,
-query,
-where,
-orderBy,
-getDocs
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+                        const titulo = card.querySelector(".servicio-titulo");
+                        const desc = card.querySelector(".servicio-desc");
 
-const container=document.getElementById("listaServicios");
+                        titulo.onclick = () => {
+                            desc.style.display = desc.style.display === "block" ? "none" : "block";
+                        };
 
-async function cargarServicios(){
-
-const q=query(
-collection(db,"services"),
-where("activo","==",true),
-orderBy("orden")
-);
-
-const snap=await getDocs(q);
-
-container.innerHTML="";
-
-let categorias={};
-
-snap.forEach(doc=>{
-
-const data=doc.data();
-
-if(!categorias[data.categoria]){
-categorias[data.categoria]=[];
-}
-
-categorias[data.categoria].push({
-id:doc.id,
-...data
-});
-
-});
-
-for(const categoria in categorias){
-
-const cat=document.createElement("div");
-cat.className="categoria";
-cat.innerText=categoria.toUpperCase();
-
-container.appendChild(cat);
-
-categorias[categoria].forEach(serv=>{
-
-const card=document.createElement("div");
-card.className="servicio";
-
-card.innerHTML=`
-
-<div class="servicio-titulo">
-${serv.nombre}
-<span>▼</span>
-</div>
-
-<div class="servicio-desc">
-${serv.descripcion}
-
-<div class="servicio-duracion">
-Duración: ${serv.duracion} min
-</div>
-
-<button class="btn-reservar">
-Reservar turno
-</button>
-
-</div>
-
-`;
-
-const titulo=card.querySelector(".servicio-titulo");
-const desc=card.querySelector(".servicio-desc");
-
-titulo.onclick=()=>{
-desc.style.display=
-desc.style.display==="block"
-?"none"
-:"block";
-};
-
-card.querySelector(".btn-reservar").onclick=()=>{
-
-const nombreServicio = encodeURIComponent(serv.nombre);
-
-window.location.href =
-`fecha.html?sid=${serv.id}&servicio=${nombreServicio}`;
-
-};
-
-container.appendChild(card);
-
-});
-
-}
-
-}
-
-cargarServicios();
-
-</script>
-
+                        card.querySelector(".btn-reservar").onclick = () => {
+                            window.location.href = `fecha.html?sid=${serv.id}&servicio=${encodeURIComponent(serv.nombre)}`;
+                        };
+                        container.appendChild(card);
+                    });
+                }
+            } catch (e) { container.innerHTML = "Error al cargar servicios."; }
+        }
+        cargarServicios();
+    </script>
 </body>
 </html>
