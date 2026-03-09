@@ -1,146 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Elegir Fecha | Espacio Mimar</title>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
-<style>
-
-:root{
---primary:#72bd99;
---primary-dark:#5fa887;
---danger:#ff3b3b;
---bg:#f2f5f4;
-}
-
-*{box-sizing:border-box;}
-
-body{
-font-family:'Segoe UI',sans-serif;
-background:var(--bg);
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-margin:0;
-padding:15px;
-}
-
-.container{
-background:white;
-padding:25px;
-border-radius:22px;
-width:100%;
-max-width:420px;
-box-shadow:0 15px 40px rgba(0,0,0,0.08);
-text-align:center;
-}
-
-#titulo-servicio{
-margin-bottom:5px;
-}
-
-#user-display{
-font-size:.85rem;
-color:#666;
-margin-bottom:15px;
-}
-
-.flatpickr-calendar{
-margin:auto;
-border:none!important;
-box-shadow:0 10px 35px rgba(0,0,0,0.08)!important;
-border-radius:18px!important;
-}
-
-/* DIA BLOQUEADO */
-
-.flatpickr-day.dia-bloqueado{
-background:#ff3b3b !important;
-color:white !important;
-border-radius:50% !important;
-font-weight:bold !important;
-cursor:not-allowed;
-}
-
-.flatpickr-day.dia-bloqueado:hover{
-background:#d60000 !important;
-}
-
-#horarios{
-margin-top:20px;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-.hora-btn{
-padding:14px;
-border:2px solid var(--primary);
-border-radius:14px;
-background:white;
-color:var(--primary);
-font-weight:600;
-cursor:pointer;
-}
-
-.hora-btn.selected{
-background:var(--primary-dark);
-color:white;
-}
-
-.hora-btn:disabled{
-background:var(--danger);
-border-color:var(--danger);
-color:white;
-cursor:not-allowed;
-}
-
-.btn-principal{
-margin-top:20px;
-width:100%;
-padding:16px;
-border:none;
-border-radius:14px;
-background:var(--primary);
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h2 id="titulo-servicio">Cargando...</h2>
-
-<div id="user-display"></div>
-
-<input type="text" id="calendar">
-
-<div id="horarios"></div>
-
-<button id="btn-finalizar" class="btn-principal">
-Reservar Turno
-</button>
-
-</div>
-
-<script type="module">
-
-import { db } from "./js/firebase.js";
+import { db } from "./firebase.js";
 
 import {
 collection,
@@ -152,8 +10,6 @@ doc,
 getDoc
 }
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-emailjs.init("AU6Z1JJBVWY9zpSnn");
 
 const params=new URLSearchParams(window.location.search);
 
@@ -186,7 +42,7 @@ document.getElementById("user-display").innerHTML=
 let fechaGlobal="";
 let horaGlobal="";
 
-/* Cargar días bloqueados */
+/* cargar excepciones */
 
 const excepcionesSnap = await getDocs(collection(db,"calendarExceptions"));
 
@@ -206,7 +62,7 @@ motivosBloqueo[data.date]=data.reason;
 
 });
 
-/* Calendario */
+/* calendario */
 
 flatpickr("#calendar",{
 
@@ -242,6 +98,8 @@ cargarHorarios(dateStr);
 }
 
 });
+
+/* horarios */
 
 async function cargarHorarios(fecha){
 
@@ -290,6 +148,8 @@ container.appendChild(btn);
 
 }
 
+/* reservar */
+
 document.getElementById("btn-finalizar").onclick=async()=>{
 
 if(!horaGlobal){
@@ -325,8 +185,3 @@ window.location.href="index.html";
 },1500);
 
 };
-
-</script>
-
-</body>
-</html>

@@ -7,6 +7,10 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* ===============================
+ELEMENTOS
+=================================*/
+
 const sectionLogin = document.getElementById("section-login");
 const sectionAgenda = document.getElementById("section-agenda");
 
@@ -22,36 +26,43 @@ const btnLogout = document.getElementById("btnLogout");
 let clientId = localStorage.getItem("usuario");
 
 /* ===============================
-   INICIO
+INICIO
 =================================*/
 
 init();
 
 async function init() {
+
   if (clientId) {
     mostrarAgenda();
   } else {
     mostrarLogin();
   }
+
 }
 
 /* ===============================
-   MOSTRAR SECCIONES
+MOSTRAR SECCIONES
 =================================*/
 
 function mostrarLogin() {
+
   sectionLogin.classList.remove("hidden");
   sectionAgenda.classList.add("hidden");
+
 }
 
 function mostrarAgenda() {
+
   sectionLogin.classList.add("hidden");
   sectionAgenda.classList.remove("hidden");
+
   cargarServicios();
+
 }
 
 /* ===============================
-   LOGIN
+LOGIN
 =================================*/
 
 btnIngresar?.addEventListener("click", async () => {
@@ -63,17 +74,22 @@ btnIngresar?.addEventListener("click", async () => {
   const whatsapp = whatsappInput.value.trim();
 
   if (!keyword || !email || !whatsapp) {
+
     loginError.textContent = "Completá todos los campos.";
     return;
+
   }
 
   try {
+
     const clienteRef = doc(db, "clients", keyword);
     const clienteSnap = await getDoc(clienteRef);
 
     if (!clienteSnap.exists()) {
+
       loginError.textContent = "Usuario incorrecto.";
       return;
+
     }
 
     await updateDoc(clienteRef, {
@@ -87,12 +103,15 @@ btnIngresar?.addEventListener("click", async () => {
     mostrarAgenda();
 
   } catch (error) {
+
     loginError.textContent = "Error de conexión con Firebase.";
+
   }
+
 });
 
 /* ===============================
-   SERVICIOS
+CARGAR SERVICIOS
 =================================*/
 
 async function cargarServicios() {
@@ -100,42 +119,60 @@ async function cargarServicios() {
   servicesContainer.innerHTML = "Cargando servicios...";
 
   try {
+
     const snapshot = await getDocs(collection(db, "services"));
 
     servicesContainer.innerHTML = "";
 
     if (snapshot.empty) {
+
       servicesContainer.innerHTML = "No hay servicios disponibles.";
       return;
+
     }
 
     snapshot.forEach((docSnap) => {
+
       const data = docSnap.data();
 
       if (data.activo) {
+
         const btn = document.createElement("button");
+
         btn.innerText = data.nombre;
         btn.className = "btn-servicio";
 
         btn.onclick = () => {
-          const servicio = encodeURIComponent(data.nombre);
-          window.location.href = `fecha.html?servicio=${servicio}`;
+
+          const servicioId = docSnap.id;
+          const servicioNombre = encodeURIComponent(data.nombre);
+
+          window.location.href =
+            `fecha.html?sid=${servicioId}&servicio=${servicioNombre}`;
+
         };
 
         servicesContainer.appendChild(btn);
+
       }
+
     });
 
   } catch (error) {
+
     servicesContainer.innerHTML = "Error cargando servicios.";
+
   }
+
 }
 
 /* ===============================
-   LOGOUT
+LOGOUT
 =================================*/
 
 btnLogout?.addEventListener("click", () => {
+
   localStorage.removeItem("usuario");
   location.reload();
+
 });

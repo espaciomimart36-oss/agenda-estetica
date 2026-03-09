@@ -5,59 +5,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Panel de Cliente - Espacio Mimar</title>
-
-<link rel="stylesheet" href="styles.css">
+<title>Beneficio de Membresía | Espacio Mimar</title>
 
 <style>
 
-.modal-nutricion{
-position: fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background: rgba(0,0,0,0.35);
+body{
+font-family:'Segoe UI',sans-serif;
+background:#f4f7f6;
+margin:0;
 display:flex;
 align-items:center;
 justify-content:center;
-z-index:9999;
-font-family: 'Glacial Indifference', sans-serif;
+height:100vh;
 }
 
-.modal-nutricion-contenido{
-background:#ffffff;
+.card{
+background:white;
 padding:35px;
-border-radius:14px;
+border-radius:16px;
 max-width:520px;
 width:90%;
 text-align:center;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
+box-shadow:0 10px 35px rgba(0,0,0,0.08);
 }
 
-.modal-nutricion h2{
-font-family:'League Spartan', sans-serif;
+h2{
 color:#72bd99;
 margin-bottom:20px;
 }
 
-.modal-nutricion p{
+p{
 color:#555;
-font-size:15px;
 line-height:1.6;
 margin-bottom:12px;
 }
 
-.destacado{
-font-weight:500;
-}
-
-.nota{
-font-size:14px;
-color:#777;
-}
-
-.botones-nutricion{
+.botones{
 margin-top:25px;
 display:flex;
 justify-content:center;
@@ -68,29 +51,19 @@ gap:15px;
 background:#72bd99;
 color:white;
 border:none;
-padding:12px 22px;
+padding:12px 24px;
 border-radius:25px;
 cursor:pointer;
 font-size:14px;
-transition:0.3s;
-}
-
-.btn-si:hover{
-background:#5ea985;
 }
 
 .btn-no{
 background:white;
 border:1px solid #ddd;
-padding:12px 22px;
+padding:12px 24px;
 border-radius:25px;
 cursor:pointer;
 font-size:14px;
-transition:0.3s;
-}
-
-.btn-no:hover{
-background:#f6f6f6;
 }
 
 </style>
@@ -99,26 +72,7 @@ background:#f6f6f6;
 
 <body>
 
-<!-- PANEL CLIENTE -->
-<section id="section-agenda">
-
-<h1 id="bienvenida"></h1>
-
-<div id="servicesContainer"></div>
-
-<input type="date" id="fecha">
-
-<div id="horariosContainer"></div>
-
-<button id="btnLogout">Cerrar sesión</button>
-
-</section>
-
-
-<!-- MODAL CONSULTA NUTRICIONAL -->
-<div id="consultaNutricionalModal" class="modal-nutricion" style="display:none;">
-
-<div class="modal-nutricion-contenido">
+<div class="card">
 
 <h2>✨ Consulta nutricional incluida</h2>
 
@@ -143,33 +97,88 @@ sabemos que los hábitos y la alimentación influyen directamente
 en la calidad de la piel, el metabolismo y en los resultados estéticos.
 </p>
 
-<p class="destacado">
+<p>
 💚 Si desean aprovechar este beneficio dentro de su membresía,
 pueden solicitar su consulta mensual.
 </p>
 
-<p class="nota">
-Y si prefieren no hacerlo, la membresía se mantiene exactamente igual,
-sin cambios en beneficios ni en el valor.
+<p style="font-size:14px;color:#777;">
+Y si prefieren no hacerlo, la membresía se mantiene exactamente igual.
 </p>
 
-<div class="botones-nutricion">
+<div class="botones">
 
-<button id="aceptarNutricion" class="btn-si">
+<button id="btnSi" class="btn-si">
 Sí, me gustaría
 </button>
 
-<button id="rechazarNutricion" class="btn-no">
+<button id="btnNo" class="btn-no">
 No por ahora
 </button>
 
 </div>
 
 </div>
-</div>
 
+<script type="module">
 
-<script type="module" src="app.js"></script>
+import { db } from "./js/firebase.js";
+import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* Obtener usuario */
+const usuario = sessionStorage.getItem("userDni");
+
+if(!usuario){
+window.location.href="index.html";
+}
+
+/* BOTON SI */
+
+document.getElementById("btnSi").onclick = async () => {
+
+try{
+
+await updateDoc(doc(db,"clients",usuario),{
+
+consultaNutricional:true,
+consultaNutricionalRespondida:true
+
+});
+
+}catch(e){
+
+console.log("Error guardando:",e);
+
+}
+
+window.location.href="servicios.html";
+
+};
+
+/* BOTON NO */
+
+document.getElementById("btnNo").onclick = async () => {
+
+try{
+
+await updateDoc(doc(db,"clients",usuario),{
+
+consultaNutricional:false,
+consultaNutricionalRespondida:true
+
+});
+
+}catch(e){
+
+console.log("Error guardando:",e);
+
+}
+
+window.location.href="servicios.html";
+
+};
+
+</script>
 
 </body>
 </html>

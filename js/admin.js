@@ -1,157 +1,298 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { 
-  getFirestore, 
-  collection, 
-  getDocs,
-  deleteDoc,
-  doc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { db } from "./firebase.js";
 
-const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "estetica-8d067",
-  storageBucket: "TU_BUCKET",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
-};
+import {
+collection,
+getDocs,
+doc,
+getDoc,
+deleteDoc,
+updateDoc,
+query,
+where
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
-let currentDate = new Date();
-let reservasPorFecha = {};
+let reservasCache=[];
 
-function renderCalendar() {
-  const grid = document.getElementById("calendarGrid");
-  const monthTitle = document.getElementById("monthTitle");
+const calendarGrid=document.getElementById("calendarGrid");
+const selectedDayDiv=document.getElementById("selectedDay");
 
-  grid.innerHTML = "";
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+const historialModal=document.getElementById("historialModal");
+const historialBody=document.getElementById("historialBody");
 
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
+let clienteActual=null;
 
-  monthTitle.innerText = firstDay
-    .toLocaleString("es-ES", { month: "long", year: "numeric" })
-    .toUpperCase();
 
-  const dayNames = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
-  dayNames.forEach(d => {
-    const div = document.createElement("div");
-    div.className = "day-name";
-    div.innerText = d;
-    grid.appendChild(div);
-  });
 
-  let startDay = (firstDay.getDay() + 6) % 7;
-  for (let i = 0; i < startDay; i++) {
-    grid.appendChild(document.createElement("div"));
-  }
+async function cargarReservas(){
 
-  for (let d = 1; d <= lastDay.getDate(); d++) {
-    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+const snap=await getDocs(collection(db,"reservas"));
 
-    const div = document.createElement("div");
-    div.className = "day";
-    div.innerText = d;
+reservasCache=snap.docs.map(d=>({
+id:d.id,
+...d.data()
+}));
 
-    if (reservasPorFecha[dateStr]) {
-      div.classList.add("has-reservation");
-    }
+renderCalendar();
 
-    div.onclick = () => showDay(dateStr);
-    grid.appendChild(div);
-  }
 }
 
-async function loadReservas() {
-  const snapshot = await getDocs(collection(db, "reservas"));
-  reservasPorFecha = {};
 
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const id = docSnap.id;
 
-    if (data.fecha) {
-      if (!reservasPorFecha[data.fecha]) {
-        reservasPorFecha[data.fecha] = [];
-      }
+function renderCalendar(){
 
-      reservasPorFecha[data.fecha].push({
-        id,
-        ...data
-      });
-    }
-  });
+calendarGrid.innerHTML="";
 
-  renderCalendar();
-}
+for(let i=1;i<=31;i++){
 
-function showDay(fecha) {
-  const container = document.getElementById("selectedDay");
-  const reservas = reservasPorFecha[fecha];
+const day=document.createElement("div");
+day.className="day";
+day.innerText=i;
 
-  let html = `<h3 style="margin-top:20px;">Día: ${fecha}</h3>`;
+const dia=i.toString().padStart(2,"0");
 
-  if (!reservas) {
-    html += `<p>No hay reservas para este día.</p>`;
-  } else {
-    reservas.forEach(r => {
-      html += `
-        <div class="reserva-card">
-          <strong>${r.hora} hs</strong> - ${r.clientId || "Sin nombre"}<br>
-          <span>Servicio: ${r.servicio}</span><br>
-          <span>Email: ${r.emailCliente || "-"}</span><br>
-          <button class="btn-cancel" onclick="cancelarReserva('${r.id}', '${fecha}')">
-            Cancelar turno
-          </button>
-        </div>
-      `;
-    });
-  }
+const tieneReserva=reservasCache.some(r=>{
 
-  container.innerHTML = html;
-}
+if(!r.fecha) return false;
 
-let reservaPendiente = null;
-let fechaPendiente = null;
+return r.fecha.includes("-"+dia);
 
-window.cancelarReserva = function(id, fecha) {
-  reservaPendiente = id;
-  fechaPendiente = fecha;
-  document.getElementById("modalConfirm").classList.remove("hidden");
-};
-
-document.getElementById("modalCancel").onclick = function() {
-  document.getElementById("modalConfirm").classList.add("hidden");
-};
-
-document.getElementById("modalConfirmBtn").onclick = async function() {
-  if (!reservaPendiente) return;
-
-  await deleteDoc(doc(db, "reservas", reservaPendiente));
-
-  document.getElementById("modalConfirm").classList.add("hidden");
-
-  await loadReservas();
-  showDay(fechaPendiente);
-
-  reservaPendiente = null;
-  fechaPendiente = null;
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("btnPrev").onclick = () => {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
-  };
-
-  document.getElementById("btnNext").onclick = () => {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
-  };
-
-  loadReservas();
 });
+
+if(tieneReserva){
+day.classList.add("has-reservation");
+}
+
+day.onclick=()=>mostrarReservasDia(dia);
+
+calendarGrid.appendChild(day);
+
+}
+
+}
+
+
+
+async function mostrarReservasDia(dia){
+
+selectedDayDiv.innerHTML="";
+
+const reservas=reservasCache.filter(r=>{
+
+if(!r.fecha) return false;
+
+return r.fecha.includes("-"+dia);
+
+});
+
+for(const r of reservas){
+
+let nombre="Cliente";
+let email="";
+
+if(r.clientId){
+
+const clienteSnap=await getDoc(doc(db,"clients",r.clientId));
+
+if(clienteSnap.exists()){
+
+const c=clienteSnap.data();
+nombre=c.fullName || "Cliente";
+email=c.email || "";
+
+}
+
+}
+
+const registro=r.registroSesion || "";
+
+const servicio=r.servicioNombre || r.servicio || "";
+
+const card=document.createElement("div");
+card.className="reserva-card";
+
+card.innerHTML=`
+
+<strong>${r.hora} · ${nombre}</strong>
+
+<br>Servicio: ${servicio}
+
+<br>Email: ${email}
+
+<br><br>
+
+<div class="registro-box">
+
+<textarea>${registro}</textarea>
+
+<button class="btn-guardar">Guardar registro</button>
+
+</div>
+
+<button class="btn-historial">Historial del cliente</button>
+
+<button class="btn-cancel">Cancelar turno</button>
+
+`;
+
+const textarea=card.querySelector("textarea");
+const btnGuardar=card.querySelector(".btn-guardar");
+const btnHistorial=card.querySelector(".btn-historial");
+const btnCancel=card.querySelector(".btn-cancel");
+
+
+btnGuardar.onclick=async()=>{
+
+await updateDoc(doc(db,"reservas",r.id),{
+registroSesion:textarea.value
+});
+
+card.querySelector(".registro-box").innerHTML=
+
+`Registro guardado ✓ 
+<br>
+<button class="btn-historial">Ver / editar</button>`;
+
+};
+
+
+btnHistorial.onclick=()=>abrirHistorial(r.clientId);
+
+
+btnCancel.onclick=async()=>{
+
+await deleteDoc(doc(db,"reservas",r.id));
+
+alert("Turno cancelado");
+
+cargarReservas();
+
+};
+
+
+selectedDayDiv.appendChild(card);
+
+}
+
+}
+
+
+
+async function abrirHistorial(clientId){
+
+clienteActual=clientId;
+
+const q=query(
+collection(db,"reservas"),
+where("clientId","==",clientId)
+);
+
+const snap=await getDocs(q);
+
+historialBody.innerHTML="";
+
+snap.forEach(d=>{
+
+const r=d.data();
+
+historialBody.innerHTML+=`
+
+<p>
+
+<strong>${r.fecha}</strong>
+
+<br>${r.servicioNombre || r.servicio || ""}
+
+<br>${r.registroSesion || ""}
+
+</p>
+
+<hr>
+
+`;
+
+});
+
+historialModal.style.display="flex";
+
+}
+
+
+
+document.getElementById("exportPDF").onclick=async function(){
+
+let contenido = historialBody.innerText;
+
+let nombreCliente = "Cliente";
+
+if(clienteActual){
+
+const clienteSnap = await getDoc(doc(db,"clients",clienteActual));
+
+if(clienteSnap.exists()){
+
+nombreCliente = clienteSnap.data().fullName || "Cliente";
+
+}
+
+}
+
+const ventana = window.open();
+
+ventana.document.write(`
+<html>
+
+<head>
+
+<title>Historial</title>
+
+<style>
+
+body{
+font-family:Arial;
+padding:40px;
+}
+
+h1{
+margin-bottom:5px;
+}
+
+h2{
+margin-top:0;
+color:#555;
+}
+
+pre{
+font-family:inherit;
+font-size:14px;
+line-height:1.6;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Espacio Mimar</h1>
+
+<h2>Historial de tratamientos</h2>
+
+<p><strong>Cliente:</strong> ${nombreCliente}</p>
+
+<hr>
+
+<pre>${contenido}</pre>
+
+</body>
+
+</html>
+`);
+
+ventana.print();
+
+};
+
+
+
+cargarReservas();

@@ -4,8 +4,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* ===============================
-   ELEMENTOS DOM
+ELEMENTOS DOM
 =================================*/
+
 const sectionLogin = document.getElementById("section-login");
 const sectionAgenda = document.getElementById("section-agenda");
 
@@ -20,202 +21,344 @@ const horariosContainer = document.getElementById("horariosContainer");
 const bienvenida = document.getElementById("bienvenida");
 const btnLogout = document.getElementById("btnLogout");
 
+const modalNutricion = document.getElementById("consultaNutricionalModal");
+const btnAceptarNutricion = document.getElementById("aceptarNutricion");
+const btnRechazarNutricion = document.getElementById("rechazarNutricion");
+
 let servicioSeleccionado = null;
 let clientId = localStorage.getItem("usuario");
 
 /* ===============================
-   1️⃣ GESTIÓN DE VISTAS (LOGIN / AGENDA)
+GESTIÓN DE VISTAS
 =================================*/
-function verificarSesion() {
+
+async function verificarSesion() {
+
     if (clientId) {
-        // Usuario logueado: mostrar agenda
-        sectionLogin.classList.add("hidden");
-        sectionAgenda.classList.remove("hidden");
+
+        sectionLogin?.classList.add("hidden");
+        sectionAgenda?.classList.remove("hidden");
+
         bienvenida.innerText = `Hola, ${clientId} ✨`;
-        cargarServicios();
+
+        await cargarServicios();
+
+        await verificarConsultaNutricional();
+
     } else {
-        // No hay usuario: mostrar login
-        sectionLogin.classList.remove("hidden");
-        sectionAgenda.classList.add("hidden");
+
+        sectionLogin?.classList.remove("hidden");
+        sectionAgenda?.classList.add("hidden");
+
     }
+
 }
 
 /* ===============================
-   2️⃣ LÓGICA DE LOGIN
+CONSULTA NUTRICIONAL
 =================================*/
+
+async function verificarConsultaNutricional(){
+
+    try{
+
+        const clienteRef = doc(db,"clients",clientId);
+        const clienteSnap = await getDoc(clienteRef);
+
+        if(!clienteSnap.exists()) return;
+
+        const data = clienteSnap.data();
+
+        if(!data.consultaNutricionalRespondida){
+
+            modalNutricion.style.display = "flex";
+
+        }
+
+    }catch(e){
+
+        console.error("Error nutricion:",e);
+
+    }
+
+}
+
+async function guardarRespuestaNutricion(respuesta){
+
+    try{
+
+        const clienteRef = doc(db,"clients",clientId);
+
+        await updateDoc(clienteRef,{
+            consultaNutricional: respuesta,
+            consultaNutricionalRespondida: true
+        });
+
+        modalNutricion.style.display = "none";
+
+    }catch(e){
+
+        console.error("Error guardando respuesta:",e);
+
+    }
+
+}
+
+btnAceptarNutricion?.addEventListener("click",()=>guardarRespuestaNutricion(true));
+btnRechazarNutricion?.addEventListener("click",()=>guardarRespuestaNutricion(false));
+
+/* ===============================
+LOGIN
+=================================*/
+
 if (btnIngresar) {
+
     btnIngresar.onclick = async () => {
+
         const keyword = usuarioInput.value.toUpperCase().trim();
         const email = emailInput.value.trim();
         const whatsapp = whatsappInput.value.trim();
 
         if (!keyword || !email || !whatsapp) {
+
             alert("Por favor, completa todos los campos.");
             return;
+
         }
 
         try {
+
             const clienteRef = doc(db, "clients", keyword);
             const clienteSnap = await getDoc(clienteRef);
 
             if (clienteSnap.exists()) {
-                await updateDoc(clienteRef, { email, telefono: whatsapp });
+
+                await updateDoc(clienteRef,{
+                    email,
+                    telefono: whatsapp
+                });
+
             } else {
-                await setDoc(clienteRef, {
+
+                await setDoc(clienteRef,{
                     nombre: keyword,
                     email,
                     telefono: whatsapp,
                     monthlyLimit: 4,
-                    role: "client"
+                    role: "client",
+                    consultaNutricionalRespondida: false
                 });
+
             }
 
             localStorage.setItem("usuario", keyword);
-            // En lugar de alert, recargamos para que verificarSesion() haga la magia
-            location.reload(); 
-            
+
+            location.reload();
+
         } catch (e) {
+
             console.error("Error en login:", e);
             alert("Error de conexión con la base de datos.");
+
         }
+
     };
+
 }
 
 /* ===============================
-   3️⃣ CARGAR SERVICIOS
+SERVICIOS
 =================================*/
-async function cargarServicios() {
+
+async function cargarServicios(){
+
     if (!servicesContainer) return;
-    const snapshot = await getDocs(collection(db, "services"));
-    servicesContainer.innerHTML = "";
 
-    snapshot.forEach((docSnap) => {
+    const snapshot = await getDocs(collection(db,"services"));
+
+    servicesContainer.innerHTML="";
+
+    snapshot.forEach((docSnap)=>{
+
         const data = docSnap.data();
-        if (data.activo) {
-            const btn = document.createElement("button");
-            btn.innerText = data.nombre;
-            btn.className = "btn-servicio";
-            btn.onclick = () => {
-                document.querySelectorAll(".btn-servicio").forEach((b) => b.classList.remove("selected"));
+
+        if(data.activo){
+
+            const btn=document.createElement("button");
+
+            btn.innerText=data.nombre;
+            btn.className="btn-servicio";
+
+            btn.onclick=()=>{
+
+                document.querySelectorAll(".btn-servicio")
+                .forEach(b=>b.classList.remove("selected"));
+
                 btn.classList.add("selected");
-                servicioSeleccionado = data.nombre;
+
+                servicioSeleccionado=data.nombre;
+
             };
+
             servicesContainer.appendChild(btn);
+
         }
+
     });
+
 }
 
 /* ===============================
-   4️⃣ GENERAR HORARIOS
+HORARIOS
 =================================*/
-async function generarHorarios(fechaSeleccionada) {
-    horariosContainer.innerHTML = "<p>Buscando horarios...</p>";
-    const dias = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"];
-    const fechaObj = new Date(fechaSeleccionada.replace(/-/g, "/"));
-    const diaTexto = dias[fechaObj.getDay()];
 
-    const docRef = doc(db, "horarios", diaTexto);
-    const docSnap = await getDoc(docRef);
+async function generarHorarios(fechaSeleccionada){
 
-    if (!docSnap.exists() || !docSnap.data().activo) {
-        horariosContainer.innerHTML = "<p>No hay atención este día.</p>";
+    horariosContainer.innerHTML="<p>Buscando horarios...</p>";
+
+    const dias=["domingo","lunes","martes","miercoles","jueves","viernes","sabado"];
+
+    const fechaObj=new Date(fechaSeleccionada.replace(/-/g,"/"));
+
+    const diaTexto=dias[fechaObj.getDay()];
+
+    const docRef=doc(db,"horarios",diaTexto);
+    const docSnap=await getDoc(docRef);
+
+    if(!docSnap.exists() || !docSnap.data().activo){
+
+        horariosContainer.innerHTML="<p>No hay atención este día.</p>";
         return;
+
     }
 
-    const qReservas = query(collection(db, "reservas"), where("fecha", "==", fechaSeleccionada));
-    const snapRes = await getDocs(qReservas);
-    const ocupados = snapRes.docs.map((d) => d.data().hora);
+    const qReservas=query(collection(db,"reservas"),where("fecha","==",fechaSeleccionada));
+    const snapRes=await getDocs(qReservas);
 
-    horariosContainer.innerHTML = "";
-    const data = docSnap.data();
+    const ocupados=snapRes.docs.map(d=>d.data().hora);
 
-    data.bloques.forEach((bloque) => {
-        let temp = new Date(`2026-01-01T${bloque.inicio}:00`);
-        let limite = new Date(`2026-01-01T${bloque.fin}:00`);
-        const tipo = bloque.tipo.trim().toLowerCase();
+    horariosContainer.innerHTML="";
 
-        while (temp < limite) {
-            const horaStr = temp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
-            const btn = document.createElement("button");
-            btn.innerText = horaStr;
-            btn.className = "btn-hora";
+    const data=docSnap.data();
 
-            if (ocupados.includes(horaStr)) {
-                btn.innerText += " 🔴";
-                btn.disabled = true;
+    data.bloques.forEach((bloque)=>{
+
+        let temp=new Date(`2026-01-01T${bloque.inicio}:00`);
+        let limite=new Date(`2026-01-01T${bloque.fin}:00`);
+
+        const tipo=bloque.tipo.trim().toLowerCase();
+
+        while(temp<limite){
+
+            const horaStr=temp.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",hour12:false});
+
+            const btn=document.createElement("button");
+            btn.innerText=horaStr;
+            btn.className="btn-hora";
+
+            if(ocupados.includes(horaStr)){
+
+                btn.innerText+=" 🔴";
+                btn.disabled=true;
                 btn.classList.add("bloqueado");
-            } else {
-                btn.onclick = () => reservarTurno(fechaSeleccionada, horaStr);
+
+            }else{
+
+                btn.onclick=()=>reservarTurno(fechaSeleccionada,horaStr);
+
             }
+
             horariosContainer.appendChild(btn);
-            temp.setMinutes(temp.getMinutes() + (tipo === "fraccionado" ? 30 : 60));
+
+            temp.setMinutes(temp.getMinutes()+(tipo==="fraccionado"?30:60));
+
         }
+
     });
+
 }
 
 /* ===============================
-   5️⃣ RESERVAR Y ENVIAR EMAIL
+RESERVA
 =================================*/
-async function reservarTurno(fecha, hora) {
-    if (!servicioSeleccionado) {
+
+async function reservarTurno(fecha,hora){
+
+    if(!servicioSeleccionado){
+
         alert("Primero seleccioná un servicio");
         return;
+
     }
 
-    try {
-        const clienteRef = doc(db, "clients", clientId);
-        const clienteSnap = await getDoc(clienteRef);
-        const clienteData = clienteSnap.data();
+    try{
 
-        // 1. Guardar en Firebase
-        await addDoc(collection(db, "reservas"), {
+        const clienteRef=doc(db,"clients",clientId);
+        const clienteSnap=await getDoc(clienteRef);
+        const clienteData=clienteSnap.data();
+
+        await addDoc(collection(db,"reservas"),{
+
             clientId,
-            nombreCliente: clienteData.nombre,
-            emailCliente: clienteData.email,
-            servicio: servicioSeleccionado,
+            nombreCliente:clienteData.nombre,
+            emailCliente:clienteData.email,
+            servicio:servicioSeleccionado,
             fecha,
             hora,
-            timestamp: serverTimestamp()
+            timestamp:serverTimestamp()
+
         });
 
-        // 2. Enviar confirmación por EmailJS
-        await emailjs.send("service_p8k8xah", "template_3nk7shm", {
-            to_name: clienteData.nombre,
-            to_email: clienteData.email,
-            servicio: servicioSeleccionado,
-            fecha: fecha,
-            hora: hora
+        await emailjs.send("service_p8k8xah","template_3nk7shm",{
+
+            to_name:clienteData.nombre,
+            to_email:clienteData.email,
+            servicio:servicioSeleccionado,
+            fecha:fecha,
+            hora:hora
+
         });
 
         alert("✅ Turno reservado. Revisa tu email.");
+
         generarHorarios(fecha);
 
-    } catch (e) {
-        console.error("Error en reserva:", e);
+    }catch(e){
+
+        console.error("Error en reserva:",e);
         alert("No se pudo completar la reserva.");
+
     }
+
 }
 
 /* ===============================
-   EVENTOS Y ARRANQUE
+EVENTOS
 =================================*/
-if (fechaInput) {
-    fechaInput.addEventListener("change", () => {
-        if (!servicioSeleccionado) {
-            alert("Seleccioná un servicio primero");
-            fechaInput.value = "";
-            return;
-        }
-        generarHorarios(fechaInput.value);
-    });
-}
 
-if (btnLogout) {
-    btnLogout.onclick = () => {
-        localStorage.removeItem("usuario");
-        location.reload();
-    };
-}
+fechaInput?.addEventListener("change",()=>{
 
-// Iniciar sistema
+    if(!servicioSeleccionado){
+
+        alert("Seleccioná un servicio primero");
+        fechaInput.value="";
+        return;
+
+    }
+
+    generarHorarios(fechaInput.value);
+
+});
+
+btnLogout?.addEventListener("click",()=>{
+
+    localStorage.removeItem("usuario");
+    location.reload();
+
+});
+
+/* ===============================
+INICIAR
+=================================*/
+
 verificarSesion();

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Servicios | Espacio Mimar</title>
+
+<style>
+
+:root{
+--primary:#72bd99;
+--bg:#f4f7f6;
+}
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:var(--bg);
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+margin:0;
+}
+
+.container{
+background:white;
+padding:25px;
+border-radius:20px;
+width:90%;
+max-width:420px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+.categoria{
+margin-top:25px;
+font-weight:bold;
+font-size:1.1rem;
+color:#444;
+}
+
+.servicio{
+border:1px solid #e5e5e5;
+border-radius:14px;
+padding:15px;
+margin-top:10px;
+}
+
+.servicio-titulo{
+font-weight:bold;
+font-size:1rem;
+cursor:pointer;
+display:flex;
+justify-content:space-between;
+}
+
+.servicio-desc{
+display:none;
+font-size:.9rem;
+color:#666;
+margin-top:10px;
+}
+
+.servicio-duracion{
+font-size:.8rem;
+color:#999;
+margin-top:8px;
+}
+
+.btn-reservar{
+margin-top:12px;
+width:100%;
+padding:12px;
+background:var(--primary);
+border:none;
+border-radius:10px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Elegí tu tratamiento</h2>
+
+<div id="listaServicios">
+Cargando servicios...
+</div>
+
+</div>
+
+<script type="module">
+
+import { db } from "./js/firebase.js";
+
+import {
+collection,
+query,
+where,
+orderBy,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const container=document.getElementById("listaServicios");
+
+async function cargarServicios(){
+
+const q=query(
+collection(db,"services"),
+where("activo","==",true),
+orderBy("orden")
+);
+
+const snap=await getDocs(q);
+
+container.innerHTML="";
+
+let categorias={};
+
+snap.forEach(doc=>{
+
+const data=doc.data();
+
+if(!categorias[data.categoria]){
+categorias[data.categoria]=[];
+}
+
+categorias[data.categoria].push({
+id:doc.id,
+...data
+});
+
+});
+
+for(const categoria in categorias){
+
+const cat=document.createElement("div");
+cat.className="categoria";
+cat.innerText=categoria.toUpperCase();
+
+container.appendChild(cat);
+
+categorias[categoria].forEach(serv=>{
+
+const card=document.createElement("div");
+card.className="servicio";
+
+card.innerHTML=`
+
+<div class="servicio-titulo">
+${serv.nombre}
+<span>▼</span>
+</div>
+
+<div class="servicio-desc">
+${serv.descripcion}
+
+<div class="servicio-duracion">
+Duración: ${serv.duracion} min
+</div>
+
+<button class="btn-reservar">
+Reservar turno
+</button>
+
+</div>
+
+`;
+
+const titulo=card.querySelector(".servicio-titulo");
+const desc=card.querySelector(".servicio-desc");
+
+titulo.onclick=()=>{
+desc.style.display=
+desc.style.display==="block"
+?"none"
+:"block";
+};
+
+card.querySelector(".btn-reservar").onclick=()=>{
+
+const nombreServicio = encodeURIComponent(serv.nombre);
+
+window.location.href =
+`fecha.html?sid=${serv.id}&servicio=${nombreServicio}`;
+
+};
+
+container.appendChild(card);
+
+});
+
+}
+
+}
+
+cargarServicios();
+
+</script>
+
+</body>
+</html>
