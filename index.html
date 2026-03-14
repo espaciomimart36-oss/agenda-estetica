@@ -1,232 +1,253 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingreso | Espacio Mimar</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --verde-principal: #8ca38a;
+            --verde-oscuro: #7a8f78;
+            --crema-fondo: #f9f7f2;
+            --texto-suave: #6b706a;
+            --blanco: #ffffff;
+        }
 
-<title>Ingreso | Espacio Mimar</title>
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            /* Fondo con un degradado sutil y elegante */
+            background: radial-gradient(circle at center, #fdfdfd 0%, #f4f7f4 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
 
-<style>
+        .container {
+            background: var(--blanco);
+            padding: 50px 40px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid rgba(140, 163, 138, 0.1);
+        }
 
-body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(135deg,#e8f2ef,#f5f7f6);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
+        .logo {
+            width: 320px; /* Ajustado para que no sea invasivo */
+            margin-bottom: 20px;
+            filter: grayscale(0.2);
+        }
 
-.container{
-background:white;
-padding:40px;
-border-radius:22px;
-text-align:center;
-box-shadow:0 10px 35px rgba(0,0,0,0.08);
-max-width:420px;
-width:90%;
-}
+        .subtitulo {
+            color: var(--verde-principal);
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
 
-.logo{
-width:300px;
-margin-bottom:15px;
-}
+        .profesional-card {
+            background-color: #e8ede8;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
 
-.subtitulo{
-color:#777;
-font-size:14px;
-margin-bottom:18px;
-}
+        .profesional {
+            font-weight: 600;
+            font-size: 18px;
+            color: #4a5d48;
+            margin-bottom: 4px;
+        }
 
-.profesional{
-font-weight:bold;
-font-size:17px;
-margin-bottom:4px;
-}
+        .credenciales {
+            font-size: 12px;
+            color: var(--texto-suave);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
 
-.credenciales{
-font-size:13px;
-color:#666;
-margin-bottom:15px;
-}
+        .descripcion {
+            font-size: 12px;
+            color: #888;
+            line-height: 1.5;
+            font-style: italic;
+        }
 
-.descripcion{
-font-size:13px;
-color:#555;
-line-height:1.5;
-margin-bottom:25px;
-}
+        h2 {
+            font-size: 20px;
+            font-weight: 400;
+            color: #444;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
 
-h2{
-margin-bottom:20px;
-}
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
 
-input{
-width:100%;
-padding:14px;
-border-radius:12px;
-border:1px solid #ddd;
-margin-bottom:15px;
-font-size:15px;
-outline:none;
-}
+        input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background-color: #fdfdfd;
+        }
 
-input:focus{
-border:1px solid #72bd99;
-}
+        input:focus {
+            border-color: var(--verde-principal);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(140, 163, 138, 0.1);
+        }
 
-button{
-background:#72bd99;
-border:none;
-color:white;
-padding:14px;
-width:100%;
-border-radius:12px;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
-}
+        button {
+            background: var(--verde-principal);
+            border: none;
+            color: white;
+            padding: 18px;
+            width: 100%;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
 
-button:hover{
-background:#5faa86;
-}
+        button:hover {
+            background: var(--verde-oscuro);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(140, 163, 138, 0.2);
+        }
 
-.error{
-color:red;
-font-size:14px;
-margin-top:10px;
-display:none;
-}
+        .error {
+            color: #d9534f;
+            font-size: 13px;
+            margin-top: 15px;
+            font-weight: 500;
+            display: none;
+        }
 
-</style>
+        footer {
+            margin-top: 30px;
+            font-size: 10px;
+            color: #bbb;
+            letter-spacing: 1px;
+        }
 
+    </style>
 </head>
 
 <body>
 
 <div class="container">
+    <img src="img/logo.png" class="logo">
+    
+    <div class="subtitulo">Estética Avanzada</div>
 
-<img src="img/logo.png" class="logo">
+    <div class="profesional-card">
+        <div class="profesional">Gimena Knack</div>
+        <div class="credenciales">
+            Farmacéutica MP 1212<br>
+            Dermocosmiatra Reg. 2319
+        </div>
+        <div class="descripcion">
+            Tratamientos personalizados con enfoque clínico y estético.
+        </div>
+    </div>
 
-<div class="subtitulo">
-Centro profesional de estética avanzada
-</div>
+    <h2>Ingreso de Pacientes</h2>
 
-<div class="profesional">
-Gimena Knack
-</div>
+    <div class="input-group">
+        <input id="nombre" placeholder="Usuario">
+    </div>
+    <div class="input-group">
+        <input id="dni" placeholder="DNI (sin puntos)">
+    </div>
 
-<div class="credenciales">
-Farmacéutica MP 1212<br>
-Cosmetóloga · Cosmiatra · Dermocosmiatra
-</div>
+    <button id="btnIngresar">
+        Iniciar Sesión
+    </button>
 
-<div class="descripcion">
-Especialista en tratamientos faciales y corporales personalizados.
-Cada paciente recibe una evaluación profesional y un tratamiento adaptado a sus necesidades.
-</div>
+    <div id="error" class="error"></div>
 
-<h2>Ingreso pacientes</h2>
-
-<input id="nombre" placeholder="Nombre">
-<input id="dni" placeholder="DNI">
-
-<button id="btnIngresar">
-Ingresar
-</button>
-
-<div id="error" class="error"></div>
-
+    <footer>TU BIENESTAR ES NUESTRA PRIORIDAD</footer>
 </div>
 
 <script type="module">
+    // Tu lógica de Firebase se mantiene igual aquí...
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-getFirestore,
-doc,
-getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    const firebaseConfig = {
+        apiKey: "TU_API_KEY",
+        authDomain: "TU_AUTH_DOMAIN",
+        projectId: "estetica-8d067",
+        storageBucket: "TU_BUCKET",
+        messagingSenderId: "TU_ID",
+        appId: "TU_APP_ID"
+    };
 
-const firebaseConfig = {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-apiKey: "TU_API_KEY",
-authDomain: "TU_AUTH_DOMAIN",
-projectId: "estetica-8d067",
-storageBucket: "TU_BUCKET",
-messagingSenderId: "TU_ID",
-appId: "TU_APP_ID"
+    document.getElementById("btnIngresar").addEventListener("click", async ()=>{
+        const nombre = document.getElementById("nombre").value.trim();
+        const dni = document.getElementById("dni").value.trim();
+        const error = document.getElementById("error");
 
-};
+        error.style.display="none";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+        if(nombre=="" || dni==""){
+            error.innerText="Por favor, complete todos los campos.";
+            error.style.display="block";
+            return;
+        }
 
-document.getElementById("btnIngresar").addEventListener("click", async ()=>{
+        try {
+            const ref = doc(db,"clients",dni);
+            const snapshot = await getDoc(ref);
 
-const nombre = document.getElementById("nombre").value.trim();
-const dni = document.getElementById("dni").value.trim();
-const error = document.getElementById("error");
+            if(!snapshot.exists()){
+                error.innerText="Paciente no encontrado.";
+                error.style.display="block";
+                return;
+            }
 
-error.style.display="none";
+            const cliente = snapshot.data();
 
-if(nombre=="" || dni==""){
+            if(cliente.fullName.toLowerCase() !== nombre.toLowerCase()){
+                error.innerText="El nombre no coincide con el DNI.";
+                error.style.display="block";
+                return;
+            }
 
-error.innerText="Complete los datos";
-error.style.display="block";
-return;
+            localStorage.setItem("clienteNombre",cliente.fullName);
+            localStorage.setItem("clienteDNI",cliente.dni);
 
-}
+            window.location.href = cliente.consultaNutricionalRespondida ? "servicios.html" : "historia.html";
 
-try{
-
-const ref = doc(db,"clients",dni);
-const snapshot = await getDoc(ref);
-
-if(!snapshot.exists()){
-
-error.innerText="Usuario no encontrado";
-error.style.display="block";
-return;
-
-}
-
-const cliente = snapshot.data();
-
-if(cliente.fullName.toLowerCase() !== nombre.toLowerCase()){
-
-error.innerText="Nombre incorrecto";
-error.style.display="block";
-return;
-
-}
-
-localStorage.setItem("clienteNombre",cliente.fullName);
-localStorage.setItem("clienteDNI",cliente.dni);
-
-if(cliente.consultaNutricionalRespondida === true){
-
-window.location.href="servicios.html"
-
-}else{
-
-window.location.href="historia.html"
-
-}
-
-}catch(e){
-
-console.error(e);
-error.innerText="Error conectando con la base de datos";
-error.style.display="block";
-
-}
-
-});
-
+        } catch(e) {
+            console.error(e);
+            error.innerText="Error de conexión.";
+            error.style.display="block";
+        }
+    });
 </script>
 
 </body>
