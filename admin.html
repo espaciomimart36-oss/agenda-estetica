@@ -1,213 +1,255 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel Admin - Espacio Mimar</title>
-<link rel="stylesheet" href="style.css">
 
-<script>
-const isAdmin = localStorage.getItem("adminAuth");
-if (isAdmin !== "true") {
-window.location.href = "login-admin.html";
-}
-</script>
+<title>Panel Admin | Espacio Mimar</title>
 
 <style>
 
 body{
-background:#f4f7f6;
 font-family:Arial;
+background:#f4f7f6;
+margin:0;
 }
 
+/* HEADER */
+
+.header{
+text-align:center;
+padding:40px 20px;
+}
+
+.header h1{
+margin:0;
+font-size:28px;
+}
+
+.header p{
+color:#666;
+margin-top:5px;
+}
+
+/* MENU */
+
+.menu-admin{
+display:flex;
+justify-content:center;
+gap:15px;
+margin-top:20px;
+}
+
+.menu-admin button{
+background:#72bd99;
+border:none;
+padding:10px 18px;
+border-radius:10px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+font-size:14px;
+}
+
+.menu-admin button:hover{
+opacity:0.9;
+}
+
+/* CONTAINER */
+
 .container{
-max-width:900px;
-margin:40px auto;
+max-width:1100px;
+margin:auto;
 padding:20px;
 }
 
-.admin-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.btn-logout{
-background:#72bd99;
-color:white;
-border:none;
-padding:8px 14px;
-border-radius:8px;
-cursor:pointer;
-}
+/* CALENDARIO */
 
 .calendar{
 background:white;
-padding:20px;
+padding:30px;
 border-radius:20px;
-margin-top:20px;
-box-shadow:0 4px 15px rgba(0,0,0,0.05);
+box-shadow:0 10px 35px rgba(0,0,0,0.08);
 }
 
-.calendar-grid{
+/* DIAS SEMANA */
+
+.diasSemana{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+text-align:center;
+margin-bottom:10px;
+font-weight:bold;
+color:#666;
+}
+
+/* GRID DIAS */
+
+.gridDias{
 display:grid;
 grid-template-columns:repeat(7,1fr);
 gap:10px;
 }
 
-.day{
-aspect-ratio:1;
-display:flex;
-align-items:center;
-justify-content:center;
-background:#f8f9fa;
-border-radius:12px;
-cursor:pointer;
-}
+/* DIA */
 
-.day.has-reservation{
-background:#ffe3e3;
-border:2px solid #ff7675;
-color:#d63031;
+.day{
+background:#f2f2f2;
+padding:18px;
+text-align:center;
+border-radius:10px;
+cursor:pointer;
+transition:0.2s;
 font-weight:bold;
 }
 
-.reserva-card{
-background:white;
-padding:15px;
-border-radius:12px;
-margin-top:15px;
-border-left:5px solid #d63031;
-box-shadow:0 2px 8px rgba(0,0,0,0.05);
+.day:hover{
+background:#e7f3ed;
 }
+
+/* DIA OCUPADO */
+
+.day.ocupado{
+background:#ffd6d6;
+border:2px solid #ff6b6b;
+}
+
+/* TURNOS */
+
+.turnos{
+margin-top:25px;
+}
+
+.turno{
+background:white;
+border-left:4px solid #ff7675;
+padding:15px;
+margin-bottom:12px;
+border-radius:8px;
+box-shadow:0 3px 10px rgba(0,0,0,0.05);
+}
+
+.turno h2{
+margin:0 0 5px 0;
+font-size:18px;
+}
+
+.turno p{
+margin:4px 0;
+}
+
+/* TEXTAREA */
 
 textarea{
 width:100%;
-height:70px;
-border-radius:10px;
-border:1px solid #ddd;
-padding:10px;
-}
-
-.btn-guardar{
-margin-top:8px;
-background:#72bd99;
-color:white;
-border:none;
-padding:10px;
-border-radius:8px;
-cursor:pointer;
-width:100%;
-}
-
-.btn-cancel{
-margin-top:8px;
-background:#d63031;
-color:white;
-border:none;
-padding:10px;
-border-radius:8px;
-cursor:pointer;
-width:100%;
-}
-
-.btn-historial{
-margin-top:6px;
-background:#eee;
-border:none;
+height:80px;
+margin-top:10px;
 padding:8px;
-border-radius:6px;
-cursor:pointer;
-width:100%;
+border-radius:8px;
+border:1px solid #ddd;
+font-family:Arial;
 }
 
-.historial-modal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
-display:none;
-align-items:center;
-justify-content:center;
-}
+/* BOTON GUARDAR */
 
-.historial-content{
-background:white;
-padding:25px;
-border-radius:12px;
-width:500px;
-max-height:80vh;
-overflow:auto;
-}
-
-.btn-pdf{
+button.guardar{
 margin-top:10px;
 background:#72bd99;
-color:white;
 border:none;
-padding:10px;
+padding:8px 12px;
 border-radius:8px;
+color:white;
 cursor:pointer;
-width:100%;
+}
+
+/* HISTORIAS */
+
+#listaHistorias div{
+background:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:15px;
+box-shadow:0 3px 10px rgba(0,0,0,0.05);
 }
 
 </style>
+
 </head>
 
 <body>
 
-<div class="container">
+<div class="header">
 
-<div class="admin-header">
 <h1>Panel Administrativo</h1>
-<button id="btnLogout" class="btn-logout">Cerrar sesión</button>
-</div>
-
 <p>Bienvenida Gimena ✨</p>
 
+<div class="menu-admin">
+
+<button onclick="mostrarAgenda()">Agenda</button>
+<button onclick="mostrarHistorias()">Historias clínicas</button>
+<button onclick="cerrarSesion()">Cerrar sesión</button>
+
+</div>
+
+</div>
+
+
+<div class="container">
+
+<!-- PANEL AGENDA -->
+
+<div id="agendaPanel">
+
 <div class="calendar">
-<div class="calendar-grid" id="calendarGrid"></div>
-</div>
 
-<div id="selectedDay" style="margin-top:30px;"></div>
-
-</div>
-
-
-<!-- MODAL HISTORIAL -->
-
-<div id="historialModal" class="historial-modal">
-
-<div class="historial-content">
-
-<h3>Historial del cliente</h3>
-
-<div id="historialBody"></div>
-
-<button id="exportPDF" class="btn-pdf">Exportar PDF</button>
-
-<br><br>
-
-<button onclick="document.getElementById('historialModal').style.display='none'">
-Cerrar
-</button>
+<!-- CALENDARIO GENERADO POR JS -->
+<div id="agendaContainer"></div>
 
 </div>
 
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<!-- PANEL HISTORIAS -->
 
-<script type="module" src="js/admin.js"></script>
+<div id="historiasPanel" style="display:none">
+
+<h2>Historias clínicas</h2>
+
+<div id="listaHistorias"></div>
+
+</div>
+
+</div>
+
+
+<script type="module" src="./js/admin.js"></script>
 
 <script>
-document.getElementById("btnLogout").onclick=function(){
-localStorage.removeItem("adminAuth");
+
+function mostrarAgenda(){
+
+document.getElementById("agendaPanel").style.display="block";
+document.getElementById("historiasPanel").style.display="none";
+
+}
+
+function mostrarHistorias(){
+
+document.getElementById("agendaPanel").style.display="none";
+document.getElementById("historiasPanel").style.display="block";
+
+}
+
+function cerrarSesion(){
+
+localStorage.clear();
 window.location.href="login-admin.html";
-};
+
+}
+
 </script>
 
 </body>

@@ -1,298 +1,463 @@
-import { db } from "./firebase.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
+getFirestore,
 collection,
-getDocs,
+onSnapshot,
 doc,
-getDoc,
-deleteDoc,
 updateDoc,
-query,
-where
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { jsPDF } from "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/+esm";
 
 
-let reservasCache=[];
+/* ============================= */
+/* ESTILO BOTONES */
+/* ============================= */
 
-const calendarGrid=document.getElementById("calendarGrid");
-const selectedDayDiv=document.getElementById("selectedDay");
+const style = document.createElement("style");
 
-const historialModal=document.getElementById("historialModal");
-const historialBody=document.getElementById("historialBody");
+style.innerHTML = `
 
-let clienteActual=null;
-
-
-
-async function cargarReservas(){
-
-const snap=await getDocs(collection(db,"reservas"));
-
-reservasCache=snap.docs.map(d=>({
-id:d.id,
-...d.data()
-}));
-
-renderCalendar();
-
+.pdfBtn{
+margin-top:18px;
+background:#72bd99;
+border:none;
+color:white;
+padding:10px 18px;
+border-radius:10px;
+font-size:14px;
+font-weight:500;
+cursor:pointer;
+transition:all .25s ease;
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 
+.pdfBtn:hover{
+transform:translateY(-2px);
+box-shadow:0 8px 18px rgba(0,0,0,0.15);
+background:#63a886;
+}
+
+.pdfBtn:active{
+transform:scale(.96);
+}
+
+`;
+
+document.head.appendChild(style);
 
 
-function renderCalendar(){
 
-calendarGrid.innerHTML="";
+/* ============================= */
+/* FIREBASE */
+/* ============================= */
 
-for(let i=1;i<=31;i++){
+const firebaseConfig = {
+apiKey: "TU_API_KEY",
+authDomain: "TU_AUTH_DOMAIN",
+projectId: "estetica-8d067",
+storageBucket: "TU_BUCKET",
+messagingSenderId: "TU_ID",
+appId: "TU_APP_ID"
+};
 
-const day=document.createElement("div");
-day.className="day";
-day.innerText=i;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const dia=i.toString().padStart(2,"0");
 
-const tieneReserva=reservasCache.some(r=>{
 
-if(!r.fecha) return false;
+/* ============================= */
+/* VARIABLES */
+/* ============================= */
 
-return r.fecha.includes("-"+dia);
+let agendaContainer;
+let listaHistorias;
+
+let reservas=[];
+
+let mesActual=new Date().getMonth();
+let yearActual=new Date().getFullYear();
+
+
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+agendaContainer=document.getElementById("agendaContainer");
+listaHistorias=document.getElementById("listaHistorias");
+
+cargarReservas();
 
 });
 
-if(tieneReserva){
-day.classList.add("has-reservation");
-}
-
-day.onclick=()=>mostrarReservasDia(dia);
-
-calendarGrid.appendChild(day);
-
-}
-
-}
 
 
+/* ============================= */
+/* CARGAR RESERVAS */
+/* ============================= */
 
-async function mostrarReservasDia(dia){
+function cargarReservas(){
 
-selectedDayDiv.innerHTML="";
+onSnapshot(collection(db,"reservas"),(snapshot)=>{
 
-const reservas=reservasCache.filter(r=>{
+reservas=[];
 
-if(!r.fecha) return false;
+snapshot.forEach(docu=>{
+reservas.push({
+id:docu.id,
+...docu.data()
+});
+});
 
-return r.fecha.includes("-"+dia);
+renderCalendario();
 
 });
 
-for(const r of reservas){
-
-let nombre="Cliente";
-let email="";
-
-if(r.clientId){
-
-const clienteSnap=await getDoc(doc(db,"clients",r.clientId));
-
-if(clienteSnap.exists()){
-
-const c=clienteSnap.data();
-nombre=c.fullName || "Cliente";
-email=c.email || "";
-
 }
 
-}
 
-const registro=r.registroSesion || "";
 
-const servicio=r.servicioNombre || r.servicio || "";
+/* ============================= */
+/* CALENDARIO */
+/* ============================= */
 
-const card=document.createElement("div");
-card.className="reserva-card";
+function renderCalendario(){
 
-card.innerHTML=`
+agendaContainer.innerHTML="";
 
-<strong>${r.hora} · ${nombre}</strong>
+const primerDiaMes=new Date(yearActual,mesActual,1);
+const diasMes=new Date(yearActual,mesActual+1,0).getDate();
 
-<br>Servicio: ${servicio}
+let primerDia=primerDiaMes.getDay();
+primerDia=(primerDia===0)?6:primerDia-1;
 
-<br>Email: ${email}
+const calendario=document.createElement("div");
 
-<br><br>
+calendario.innerHTML=`
 
-<div class="registro-box">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
 
-<textarea>${registro}</textarea>
+<button id="prevMes" style="background:#72bd99;border:none;color:white;padding:8px 14px;border-radius:8px;cursor:pointer">
+◀
+</button>
 
-<button class="btn-guardar">Guardar registro</button>
+<h2>${nombreMes(mesActual)} ${yearActual}</h2>
+
+<button id="nextMes" style="background:#72bd99;border:none;color:white;padding:8px 14px;border-radius:8px;cursor:pointer">
+▶
+</button>
 
 </div>
 
-<button class="btn-historial">Historial del cliente</button>
+<div class="diasSemana">
+<div>Lun</div>
+<div>Mar</div>
+<div>Mié</div>
+<div>Jue</div>
+<div>Vie</div>
+<div>Sáb</div>
+<div>Dom</div>
+</div>
 
-<button class="btn-cancel">Cancelar turno</button>
+<div id="gridDias" class="gridDias"></div>
 
 `;
 
-const textarea=card.querySelector("textarea");
-const btnGuardar=card.querySelector(".btn-guardar");
-const btnHistorial=card.querySelector(".btn-historial");
-const btnCancel=card.querySelector(".btn-cancel");
+agendaContainer.appendChild(calendario);
+
+const grid=document.getElementById("gridDias");
+
+for(let i=0;i<primerDia;i++){
+grid.appendChild(document.createElement("div"));
+}
+
+for(let d=1;d<=diasMes;d++){
+
+const fecha=`${yearActual}-${String(mesActual+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+const reservasDia=reservas.filter(r=>r.fecha===fecha);
+
+const day=document.createElement("div");
+
+day.className="day";
+day.innerText=d;
+
+if(reservasDia.length>0){
+day.classList.add("ocupado");
+}
+
+day.onclick=()=>mostrarTurnos(fecha,reservasDia);
+
+grid.appendChild(day);
+
+}
+
+document.getElementById("prevMes").onclick=()=>{
+
+mesActual--;
+
+if(mesActual<0){
+mesActual=11;
+yearActual--;
+}
+
+renderCalendario();
+
+};
+
+document.getElementById("nextMes").onclick=()=>{
+
+mesActual++;
+
+if(mesActual>11){
+mesActual=0;
+yearActual++;
+}
+
+renderCalendario();
+
+};
+
+}
 
 
-btnGuardar.onclick=async()=>{
 
-await updateDoc(doc(db,"reservas",r.id),{
-registroSesion:textarea.value
+/* ============================= */
+/* TURNOS */
+/* ============================= */
+
+function mostrarTurnos(fecha,lista){
+
+agendaContainer.innerHTML="";
+
+const titulo=document.createElement("h2");
+titulo.innerText="Turnos "+fecha;
+
+agendaContainer.appendChild(titulo);
+
+lista.sort((a,b)=>a.hora.localeCompare(b.hora));
+
+lista.forEach(turno=>{
+
+const card=document.createElement("div");
+
+card.style.background="white";
+card.style.padding="20px";
+card.style.borderRadius="12px";
+card.style.marginBottom="15px";
+card.style.boxShadow="0 2px 6px rgba(0,0,0,0.05)";
+
+card.innerHTML=`
+
+<h3>${turno.clientName || "Paciente"}</h3>
+<p><b>Hora:</b> ${turno.hora}</p>
+<p><b>Servicio:</b> ${turno.servicioNombre}</p>
+
+<textarea placeholder="Registro tratamiento">${turno.registro || ""}</textarea>
+
+<br><br>
+<button class="guardar">Guardar</button>
+
+`;
+
+agendaContainer.appendChild(card);
+
 });
 
-card.querySelector(".registro-box").innerHTML=
+const volver=document.createElement("button");
 
-`Registro guardado ✓ 
+volver.innerText="Volver calendario";
+volver.onclick=renderCalendario;
+
+agendaContainer.appendChild(volver);
+
+}
+
+
+
+/* ============================= */
+/* HISTORIAS CLINICAS */
+/* ============================= */
+
+window.mostrarHistorias = async function(){
+
+document.getElementById("agendaPanel").style.display="none";
+document.getElementById("historiasPanel").style.display="block";
+
+listaHistorias.innerHTML="";
+
+const buscador = document.createElement("input");
+
+buscador.placeholder="🔎 Buscar paciente por nombre o DNI";
+buscador.style.width="100%";
+buscador.style.padding="14px";
+buscador.style.marginBottom="25px";
+buscador.style.borderRadius="10px";
+buscador.style.border="1px solid #ccc";
+
+listaHistorias.appendChild(buscador);
+
+const contenedor=document.createElement("div");
+
+listaHistorias.appendChild(contenedor);
+
+const snapshot = await getDocs(collection(db,"historias"));
+
+let pacientes=[];
+
+snapshot.forEach(docu=>{
+pacientes.push({
+dni:docu.id,
+...docu.data()
+});
+});
+
+function render(lista){
+
+contenedor.innerHTML="";
+
+lista.forEach(data=>{
+
+const card=document.createElement("div");
+
+card.style.background="white";
+card.style.padding="25px";
+card.style.borderRadius="12px";
+card.style.marginBottom="20px";
+card.style.boxShadow="0 3px 10px rgba(0,0,0,0.05)";
+
+card.innerHTML=`
+
+<h3>${data.nombre}</h3>
+
+<p><b>DNI:</b> ${data.dni}</p>
+<p><b>Edad:</b> ${data.edad}</p>
+<p><b>Teléfono:</b> ${data.telefono}</p>
+
+<hr>
+
+<b>Antecedentes salud</b>
+<p>Enfermedad: ${data.enfermedad}</p>
+<p>Medicación: ${data.medicacion}</p>
+<p>Alergias: ${data.alergias}</p>
+
+<hr>
+
+<b>Antecedentes ginecológicos</b>
+<p>Embarazo: ${data.embarazo}</p>
+<p>Lactancia: ${data.lactancia}</p>
+
+<hr>
+
+<b>Antecedentes estéticos</b>
+<p>Tratamientos previos: ${data.esteticos}</p>
+
+<hr>
+
+<b>Otros antecedentes</b>
+<p>Marcapasos: ${data.marcapasos}</p>
+<p>Implantes: ${data.implantes}</p>
+<p>Cáncer: ${data.cancer}</p>
+
 <br>
-<button class="btn-historial">Ver / editar</button>`;
 
-};
+<button class="pdfBtn">📄 Exportar PDF</button>
 
+`;
 
-btnHistorial.onclick=()=>abrirHistorial(r.clientId);
+contenedor.appendChild(card);
 
+card.querySelector(".pdfBtn").onclick=()=>exportarPDF(data);
 
-btnCancel.onclick=async()=>{
-
-await deleteDoc(doc(db,"reservas",r.id));
-
-alert("Turno cancelado");
-
-cargarReservas();
-
-};
-
-
-selectedDayDiv.appendChild(card);
+});
 
 }
 
-}
+render(pacientes);
 
+buscador.addEventListener("input",()=>{
 
+const texto=buscador.value.toLowerCase();
 
-async function abrirHistorial(clientId){
-
-clienteActual=clientId;
-
-const q=query(
-collection(db,"reservas"),
-where("clientId","==",clientId)
+const filtrados=pacientes.filter(p=>
+(p.nombre || "").toLowerCase().includes(texto) ||
+(p.dni || "").includes(texto)
 );
 
-const snap=await getDocs(q);
-
-historialBody.innerHTML="";
-
-snap.forEach(d=>{
-
-const r=d.data();
-
-historialBody.innerHTML+=`
-
-<p>
-
-<strong>${r.fecha}</strong>
-
-<br>${r.servicioNombre || r.servicio || ""}
-
-<br>${r.registroSesion || ""}
-
-</p>
-
-<hr>
-
-`;
+render(filtrados);
 
 });
 
-historialModal.style.display="flex";
+}
+
+
+
+/* ============================= */
+/* EXPORTAR PDF */
+/* ============================= */
+
+function exportarPDF(data){
+
+const doc = new jsPDF();
+
+doc.setFontSize(18);
+doc.text("Historia clínica",20,20);
+
+doc.setFontSize(12);
+
+let y=40;
+
+function linea(texto){
+
+doc.text(texto,20,y);
+y+=8;
+
+}
+
+linea("Nombre: "+data.nombre);
+linea("DNI: "+data.dni);
+linea("Edad: "+data.edad);
+linea("Teléfono: "+data.telefono);
+
+y+=5;
+linea("Antecedentes salud");
+linea("Enfermedad: "+data.enfermedad);
+linea("Medicación: "+data.medicacion);
+linea("Alergias: "+data.alergias);
+
+y+=5;
+linea("Antecedentes ginecológicos");
+linea("Embarazo: "+data.embarazo);
+linea("Lactancia: "+data.lactancia);
+
+y+=5;
+linea("Antecedentes estéticos");
+linea("Tratamientos previos: "+data.esteticos);
+
+y+=5;
+linea("Otros antecedentes");
+linea("Marcapasos: "+data.marcapasos);
+linea("Implantes: "+data.implantes);
+linea("Cáncer: "+data.cancer);
+
+doc.save("historia_"+data.nombre+".pdf");
 
 }
 
 
 
-document.getElementById("exportPDF").onclick=async function(){
+/* ============================= */
+/* UTIL */
+/* ============================= */
 
-let contenido = historialBody.innerText;
+function nombreMes(m){
 
-let nombreCliente = "Cliente";
+const meses=[
+"Enero","Febrero","Marzo","Abril","Mayo","Junio",
+"Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+];
 
-if(clienteActual){
-
-const clienteSnap = await getDoc(doc(db,"clients",clienteActual));
-
-if(clienteSnap.exists()){
-
-nombreCliente = clienteSnap.data().fullName || "Cliente";
-
-}
+return meses[m];
 
 }
-
-const ventana = window.open();
-
-ventana.document.write(`
-<html>
-
-<head>
-
-<title>Historial</title>
-
-<style>
-
-body{
-font-family:Arial;
-padding:40px;
-}
-
-h1{
-margin-bottom:5px;
-}
-
-h2{
-margin-top:0;
-color:#555;
-}
-
-pre{
-font-family:inherit;
-font-size:14px;
-line-height:1.6;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>Espacio Mimar</h1>
-
-<h2>Historial de tratamientos</h2>
-
-<p><strong>Cliente:</strong> ${nombreCliente}</p>
-
-<hr>
-
-<pre>${contenido}</pre>
-
-</body>
-
-</html>
-`);
-
-ventana.print();
-
-};
-
-
-
-cargarReservas();

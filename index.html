@@ -8,119 +8,97 @@
 
 <title>Ingreso | Espacio Mimar</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
-
 <style>
 
 body{
 margin:0;
-height:100vh;
+font-family:Arial;
+background:linear-gradient(135deg,#e8f2ef,#f5f7f6);
 display:flex;
 justify-content:center;
 align-items:center;
-background:#f4f7f6;
-font-family:'Poppins',sans-serif;
+height:100vh;
 }
 
-/* TARJETA */
-
-.login-card{
-
+.container{
 background:white;
-
-padding:70px;
-
-border-radius:24px;
-
-width:520px;
-
+padding:40px;
+border-radius:22px;
 text-align:center;
-
-box-shadow:0 15px 50px rgba(0,0,0,0.08);
-
+box-shadow:0 10px 35px rgba(0,0,0,0.08);
+max-width:420px;
+width:90%;
 }
-
-/* LOGO */
 
 .logo{
-
-width:420px;
-
-max-width:100%;
-
-margin-bottom:35px;
-
+width:300px;
+margin-bottom:15px;
 }
 
-/* TITULO */
+.subtitulo{
+color:#777;
+font-size:14px;
+margin-bottom:18px;
+}
+
+.profesional{
+font-weight:bold;
+font-size:17px;
+margin-bottom:4px;
+}
+
+.credenciales{
+font-size:13px;
+color:#666;
+margin-bottom:15px;
+}
+
+.descripcion{
+font-size:13px;
+color:#555;
+line-height:1.5;
+margin-bottom:25px;
+}
 
 h2{
-
-font-family:'Playfair Display',serif;
-
-font-size:28px;
-
-color:#2d3748;
-
-margin-bottom:30px;
-
+margin-bottom:20px;
 }
-
-/* INPUT */
 
 input{
-
 width:100%;
-
-padding:15px;
-
-margin-bottom:18px;
-
-border-radius:10px;
-
-border:1px solid #e2e8f0;
-
+padding:14px;
+border-radius:12px;
+border:1px solid #ddd;
+margin-bottom:15px;
 font-size:15px;
-
-font-family:'Poppins',sans-serif;
-
+outline:none;
 }
 
-/* BOTON */
+input:focus{
+border:1px solid #72bd99;
+}
 
 button{
-
-width:100%;
-
-padding:15px;
-
-border:none;
-
-border-radius:12px;
-
 background:#72bd99;
-
+border:none;
 color:white;
-
+padding:14px;
+width:100%;
+border-radius:12px;
 font-size:16px;
-
-font-weight:500;
-
+font-weight:bold;
 cursor:pointer;
-
-transition:0.25s;
-
-font-family:'Poppins',sans-serif;
-
 }
 
 button:hover{
-background:#63a987;
+background:#5faa86;
 }
 
-#errorMsg{
-color:#ff6b6b;
-margin-bottom:10px;
+.error{
+color:red;
+font-size:14px;
+margin-top:10px;
+display:none;
 }
 
 </style>
@@ -129,28 +107,127 @@ margin-bottom:10px;
 
 <body>
 
-<div class="login-card">
+<div class="container">
 
 <img src="img/logo.png" class="logo">
 
-<h2>Ingreso clientes</h2>
+<div class="subtitulo">
+Centro profesional de estética avanzada
+</div>
 
-<form id="loginForm">
+<div class="profesional">
+Gimena Knack
+</div>
 
-<input type="text" id="username" placeholder="Usuario" required>
+<div class="credenciales">
+Farmacéutica MP 1212<br>
+Cosmetóloga · Cosmiatra · Dermocosmiatra
+</div>
 
-<input type="text" id="dni" placeholder="DNI" required>
+<div class="descripcion">
+Especialista en tratamientos faciales y corporales personalizados.
+Cada paciente recibe una evaluación profesional y un tratamiento adaptado a sus necesidades.
+</div>
 
-<div id="errorMsg"></div>
+<h2>Ingreso pacientes</h2>
 
-<button type="submit">Ingresar</button>
+<input id="nombre" placeholder="Nombre">
+<input id="dni" placeholder="DNI">
 
-</form>
+<button id="btnIngresar">
+Ingresar
+</button>
+
+<div id="error" class="error"></div>
 
 </div>
 
-<script type="module" src="./js/login.js"></script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getFirestore,
+doc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey: "TU_API_KEY",
+authDomain: "TU_AUTH_DOMAIN",
+projectId: "estetica-8d067",
+storageBucket: "TU_BUCKET",
+messagingSenderId: "TU_ID",
+appId: "TU_APP_ID"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.getElementById("btnIngresar").addEventListener("click", async ()=>{
+
+const nombre = document.getElementById("nombre").value.trim();
+const dni = document.getElementById("dni").value.trim();
+const error = document.getElementById("error");
+
+error.style.display="none";
+
+if(nombre=="" || dni==""){
+
+error.innerText="Complete los datos";
+error.style.display="block";
+return;
+
+}
+
+try{
+
+const ref = doc(db,"clients",dni);
+const snapshot = await getDoc(ref);
+
+if(!snapshot.exists()){
+
+error.innerText="Usuario no encontrado";
+error.style.display="block";
+return;
+
+}
+
+const cliente = snapshot.data();
+
+if(cliente.fullName.toLowerCase() !== nombre.toLowerCase()){
+
+error.innerText="Nombre incorrecto";
+error.style.display="block";
+return;
+
+}
+
+localStorage.setItem("clienteNombre",cliente.fullName);
+localStorage.setItem("clienteDNI",cliente.dni);
+
+if(cliente.consultaNutricionalRespondida === true){
+
+window.location.href="servicios.html"
+
+}else{
+
+window.location.href="historia.html"
+
+}
+
+}catch(e){
+
+console.error(e);
+error.innerText="Error conectando con la base de datos";
+error.style.display="block";
+
+}
+
+});
+
+</script>
 
 </body>
-
 </html>

@@ -8,145 +8,133 @@
 
 <title>Servicios | Espacio Mimar</title>
 
-<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
 <style>
 
 body{
-background:#f4f7f6;
-font-family:Arial;
 margin:0;
-}
-
-/* HEADER */
-
-.header{
-
-text-align:center;
-
-padding:40px 20px 10px 20px;
-
-}
-
-.header img{
-
-width:220px;
-
-margin-bottom:10px;
-
-}
-
-/* TITULO */
-
-h1{
-
-text-align:center;
-
-margin-bottom:40px;
-
-color:#2d3748;
-
+background:#f4f7f6;
+font-family:'Montserrat',sans-serif;
 }
 
 /* CONTENEDOR */
 
 .container{
-
-max-width:1000px;
-
+width:95%;
+max-width:1600px;
 margin:auto;
-
-padding:20px;
-
-display:grid;
-
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-
-gap:20px;
-
+padding:40px;
+text-align:center;
 }
 
-/* TARJETA */
+/* LOGO */
 
-.servicio-card{
+.logo{
+width:420px;
+margin-bottom:1px;
+}
+
+/* TITULO */
+
+h1{
+font-family:'Playfair Display',serif;
+color:#2c3e3a;
+margin-bottom:50px;
+font-size:36px;
+}
+
+/* GRID */
+
+.servicios{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:35px;
+}
+
+/* TARJETAS */
+
+.servicio{
 
 background:white;
-
-padding:25px;
-
 border-radius:18px;
-
-box-shadow:0 8px 25px rgba(0,0,0,0.06);
-
-transition:0.25s;
-
+padding:35px;
+box-shadow:0 12px 35px rgba(0,0,0,0.08);
 display:flex;
-
 flex-direction:column;
-
 justify-content:space-between;
+min-height:260px;
+transition:.25s;
+text-align:left;
 
 }
 
-.servicio-card:hover{
-
-transform:translateY(-5px);
-
-box-shadow:0 12px 35px rgba(0,0,0,0.10);
-
+.servicio:hover{
+transform:translateY(-6px);
+box-shadow:0 18px 40px rgba(0,0,0,0.12);
 }
 
 /* TITULO SERVICIO */
 
-.servicio-card h3{
-
-margin-bottom:10px;
-
-color:#2d3748;
-
+.servicio h3{
+margin:0;
+font-size:20px;
+color:#2c3e3a;
 }
 
-/* TEXTO */
+/* DURACION */
 
-.servicio-card p{
+.duracion{
+margin-top:6px;
+font-size:13px;
+color:#72bd99;
+font-weight:600;
+}
 
-font-size:14px;
+/* DESCRIPCION */
 
-line-height:1.5;
-
+.servicio p{
+margin-top:15px;
+font-size:15px;
 color:#555;
-
-margin-bottom:20px;
-
+line-height:1.6;
 }
 
 /* BOTON */
 
-.btn-reservar{
+button{
 
+margin-top:20px;
 background:#72bd99;
-
-border:none;
-
-padding:12px;
-
-border-radius:10px;
-
 color:white;
-
-font-weight:bold;
-
+border:none;
+padding:12px;
+border-radius:10px;
 cursor:pointer;
-
-width:100%;
-
-transition:0.2s;
+font-size:15px;
+transition:.2s;
 
 }
 
-.btn-reservar:hover{
+button:hover{
+background:#63ab8a;
+}
 
-background:#63a987;
+/* RESPONSIVE */
+
+@media(max-width:1200px){
+
+.servicios{
+grid-template-columns:repeat(2,1fr);
+}
+
+}
+
+@media(max-width:600px){
+
+.servicios{
+grid-template-columns:1fr;
+}
 
 }
 
@@ -156,167 +144,101 @@ background:#63a987;
 
 <body>
 
-
-<div class="header">
-
-<img src="img/logo.png">
-
-</div>
-
-
-<h1>Tratamientos</h1>
-
-
 <div class="container">
 
+<img src="img/logo.png" class="logo">
 
-<div class="servicio-card">
+<h1>Servicios disponibles</h1>
 
-<h3>Faciales</h3>
+<div class="servicios">
 
-<p>
-Tratamientos orientados a mejorar la salud y calidad de la piel,
-trabajando sobre acné, manchas, cicatrices, poros dilatados
-y signos de envejecimiento.
-</p>
+<div class="servicio">
+<div>
+<h3>Consulta estética</h3>
+<div class="duracion">60 min</div>
+<p>No estás seguro de qué tratamiento elegir. En esta consulta se evalúa tu piel, tus objetivos y se recomienda el tratamiento más adecuado.</p>
+</div>
+<button onclick="reservar('Consulta estética')">Reservar</button>
+</div>
 
-<button class="btn-reservar"
-onclick="irReserva('facial','Tratamiento Facial')">
-Reservar
-</button>
+<div class="servicio">
+<div>
+<h3>Tratamiento Facial</h3>
+<div class="duracion">60 min</div>
+<p>Tratamientos orientados a mejorar la salud y calidad de la piel, trabajando sobre acné, manchas, poros dilatados y signos de envejecimiento.</p>
+</div>
+<button onclick="reservar('Tratamiento Facial')">Reservar</button>
+</div>
+
+<div class="servicio">
+<div>
+<h3>Tratamientos Corporales</h3>
+<div class="duracion">60 min</div>
+<p>Tratamientos destinados a mejorar la apariencia de la piel y el contorno corporal, trabajando sobre adiposidad localizada, celulitis y estrías.</p>
+</div>
+<button onclick="reservar('Tratamientos Corporales')">Reservar</button>
+</div>
+
+<div class="servicio">
+<div>
+<h3>Tratamiento Manchas Corporales</h3>
+<div class="duracion">60 min</div>
+<p>Procedimientos orientados a mejorar hiperpigmentaciones en distintas zonas del cuerpo, ayudando a unificar el tono de la piel.</p>
+</div>
+<button onclick="reservar('Tratamiento Manchas Corporales')">Reservar</button>
+</div>
+
+<div class="servicio">
+<div>
+<h3>Detox Drenante</h3>
+<div class="duracion">60 min</div>
+<p>Tratamiento destinado a favorecer la eliminación de líquidos retenidos, mejorar la circulación y generar sensación de liviandad corporal.</p>
+</div>
+<button onclick="reservar('Detox Drenante')">Reservar</button>
+</div>
+
+<div class="servicio">
+<div>
+<h3>Tonificación Muscular MioUp</h3>
+<div class="duracion">30 min</div>
+<p>Tecnología electromagnética que estimula y fortalece grupos musculares, ayudando a mejorar el tono muscular y la firmeza corporal.</p>
+</div>
+<button onclick="reservar('MioUp')">Reservar</button>
+</div>
+
+<div class="servicio">
+<div>
+<h3>Limpieza Facial Profunda</h3>
+<div class="duracion">60 min</div>
+<p>Procedimiento completo de higiene facial para eliminar impurezas, puntos negros y renovar la piel.</p>
+</div>
+<button onclick="reservar('Limpieza Facial')">Reservar</button>
+</div>
+
+<div class="servicio">
+<div>
+<h3>Radiofrecuencia Facial</h3>
+<div class="duracion">60 min</div>
+<p>Tratamiento que estimula colágeno y elastina ayudando a mejorar firmeza y rejuvenecimiento facial.</p>
+</div>
+<button onclick="reservar('Radiofrecuencia Facial')">Reservar</button>
+</div>
 
 </div>
 
-
-
-<div class="servicio-card">
-
-<h3>Corporales</h3>
-
-<p>
-Tratamientos destinados a mejorar la apariencia de la piel
-y el contorno corporal, trabajando sobre adiposidad localizada,
-celulitis y estrías.
-</p>
-
-<button class="btn-reservar"
-onclick="irReserva('corporal','Tratamientos Corporales')">
-Reservar
-</button>
-
 </div>
-
-
-
-<div class="servicio-card">
-
-<h3>Manchas</h3>
-
-<p>
-Procedimientos orientados a mejorar hiperpigmentaciones
-en distintas zonas del cuerpo, ayudando a unificar
-el tono de la piel.
-</p>
-
-<button class="btn-reservar"
-onclick="irReserva('manchas','Tratamiento Manchas')">
-Reservar
-</button>
-
-</div>
-
-
-
-<div class="servicio-card">
-
-<h3>Detox</h3>
-
-<p>
-Tratamientos destinados a favorecer la eliminación
-de líquidos retenidos y mejorar la circulación,
-generando bienestar corporal.
-</p>
-
-<button class="btn-reservar"
-onclick="irReserva('detox','Tratamiento Detox Drenante')">
-Reservar
-</button>
-
-</div>
-
-
-
-<div class="servicio-card">
-
-<h3>Tonificación</h3>
-
-<p>
-Tratamientos que estimulan y fortalecen grupos musculares
-mediante tecnología electromagnética,
-mejorando tono y firmeza.
-</p>
-
-<button class="btn-reservar"
-onclick="irReserva('tonificacion','Tonificación MioUp')">
-Reservar
-</button>
-
-</div>
-
-
-
-<div class="servicio-card">
-
-<h3>Criolipólisis</h3>
-
-<p>
-Tratamiento no invasivo que utiliza frío controlado
-para reducir adiposidad localizada de forma progresiva.
-</p>
-
-<button class="btn-reservar"
-onclick="irReserva('crio','Lipocell Cryo 360')">
-Reservar
-</button>
-
-</div>
-
-
-
-<div class="servicio-card">
-
-<h3>Labios</h3>
-
-<p>
-Tratamiento diseñado para mejorar hidratación,
-textura y apariencia de los labios,
-restaurando suavidad y luminosidad.
-</p>
-
-<button class="btn-reservar"
-onclick="irReserva('labios','Hidratación y Revitalización de Labios')">
-Reservar
-</button>
-
-</div>
-
-
-</div>
-
-
 
 <script>
 
-function irReserva(id,nombre){
+function reservar(servicio){
 
-window.location.href=
-`fecha.html?sid=${id}&servicio=${encodeURIComponent(nombre)}`
+localStorage.setItem("servicioSeleccionado",servicio)
+
+window.location.href="fecha.html"
 
 }
 
 </script>
 
-
 </body>
-
 </html>

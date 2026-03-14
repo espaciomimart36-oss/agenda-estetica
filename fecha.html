@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
 <meta charset="UTF-8">
@@ -7,242 +8,279 @@
 
 <title>Elegir fecha | Espacio Mimar</title>
 
-<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
 <style>
 
 body{
-background:#f4f7f6;
-font-family:Arial;
 margin:0;
+background:#f4f7f6;
+font-family:'Montserrat',sans-serif;
+color:#2c3e3a;
 }
-
-
-/* CONTENEDOR */
 
 .container{
-
-max-width:900px;
-
-margin:40px auto;
-
-padding:20px;
-
+max-width:1050px;
+margin:auto;
+padding:40px 20px;
 text-align:center;
-
 }
-
 
 /* LOGO */
 
 .logo{
-
-width:220px;
-
-margin-bottom:10px;
-
+width:400px;
+margin-bottom:15px;
 }
 
+/* ANUNCIO */
 
-/* TITULO */
-
-h2{
-
-margin-top:5px;
-
-color:#2d3748;
-
+.anuncio{
+background:#72bd99;
+color:white;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:35px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
 }
 
+.anuncioTrack{
+display:flex;
+gap:120px;
+white-space:nowrap;
+padding:12px 0;
+animation:scrollAnuncio 28s linear infinite;
+font-size:14px;
+font-weight:500;
+}
 
-/* TARJETA CALENDARIO */
+@keyframes scrollAnuncio{
+0%{transform:translateX(100%)}
+100%{transform:translateX(-100%)}
+}
 
-.calendar{
+/* INFO RESERVAS */
 
+.infoReservas{
 background:white;
-
+border-radius:18px;
 padding:35px;
-
-border-radius:20px;
-
-margin-top:20px;
-
-box-shadow:0 10px 35px rgba(0,0,0,0.08);
-
+margin-bottom:40px;
+box-shadow:0 10px 30px rgba(0,0,0,0.07);
+border-top:4px solid #72bd99;
 }
 
-
-/* HEADER CALENDARIO */
-
-.calendar-header{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-margin-bottom:20px;
-
-font-weight:bold;
-
+.infoReservas h2{
+margin-top:0;
+margin-bottom:30px;
+font-family:'Playfair Display',serif;
+font-size:26px;
+color:#3f8f6f;
 }
 
-
-/* GRID */
-
-.calendar-grid{
-
+.infoGrid{
 display:grid;
-
-grid-template-columns:repeat(7,1fr);
-
-gap:12px;
-
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:22px;
+margin-bottom:20px;
 }
 
-
-/* DIAS */
-
-.day{
-
-aspect-ratio:1;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-background:#f8f9fa;
-
+.infoBox{
+background:#f7faf9;
 border-radius:12px;
+padding:22px;
+border:1px solid #e4ece9;
+transition:.2s;
+}
 
+.infoBox:hover{
+transform:translateY(-2px);
+box-shadow:0 5px 12px rgba(0,0,0,0.05);
+}
+
+.icon{
+font-size:28px;
+margin-bottom:10px;
+}
+
+.infoBox h4{
+margin:8px 0;
+font-size:16px;
+}
+
+.infoBox p{
+font-size:14px;
+color:#555;
+line-height:1.5;
+}
+
+.infoExtra{
+margin-top:18px;
+font-size:14px;
+color:#555;
+line-height:1.6;
+}
+
+/* CALENDARIO */
+
+.calendario{
+background:white;
+border-radius:20px;
+padding:30px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+margin-bottom:30px;
+}
+
+.mes{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+font-weight:600;
+}
+
+.mes button{
+border:none;
+background:#72bd99;
+color:white;
+padding:8px 12px;
+border-radius:8px;
 cursor:pointer;
-
-font-weight:bold;
-
-transition:0.2s;
-
+font-size:14px;
 }
 
-
-.day:hover{
-
-background:#e9ecef;
-
+.semana{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+margin-bottom:10px;
+font-weight:600;
+color:#666;
 }
 
+.grid{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:10px;
+}
 
-/* DIA SELECCIONADO */
+.dia{
+padding:16px;
+border-radius:10px;
+background:#f1f1f1;
+cursor:pointer;
+transition:.2s;
+}
 
-.day.selected{
+.dia:hover{
+background:#72bd99;
+color:white;
+}
 
+.seleccionado{
 border:2px solid #72bd99;
-
 color:#72bd99;
-
+font-weight:600;
 }
 
-
-/* DIA BLOQUEADO */
-
-.day.blocked{
-
-background:#ffe3e3;
-
-border:2px solid #ff7675;
-
-color:#d63031;
-
+.domingo{
+background:#ffd9d9;
+color:#b00000;
+cursor:not-allowed;
 }
-
 
 /* HORARIOS */
 
-#horarios{
-
+.horarios{
 display:grid;
-
 grid-template-columns:repeat(4,1fr);
-
 gap:10px;
-
-margin-top:25px;
-
+margin-bottom:20px;
 }
 
-
-/* BOTON HORARIO */
-
-.hora-btn{
-
-padding:12px;
-
-border-radius:10px;
-
-border:1px solid #ddd;
-
+.hora{
 background:white;
-
+border-radius:8px;
+padding:10px;
 cursor:pointer;
-
-transition:0.2s;
-
+border:1px solid #ddd;
+transition:.2s;
 }
 
-
-.hora-btn:hover{
-
-background:#f0f0f0;
-
-}
-
-
-.hora-btn.selected{
-
+.hora:hover{
 background:#72bd99;
-
 color:white;
-
-border:none;
-
 }
 
-
-/* BOTON PRINCIPAL */
-
-.btn-principal{
-
-margin-top:30px;
-
+.hora.selected{
 background:#72bd99;
-
 color:white;
+}
 
-border:none;
+.hora.ocupado{
+background:#eee;
+color:#aaa;
+cursor:not-allowed;
+}
 
-padding:15px;
+/* BOTON */
 
-border-radius:12px;
-
+.boton{
 width:100%;
-
-cursor:pointer;
-
-font-weight:bold;
-
+padding:14px;
+background:#72bd99;
+border:none;
+border-radius:10px;
+color:white;
 font-size:16px;
-
-transition:0.2s;
-
+cursor:pointer;
+transition:.2s;
 }
 
+.boton:hover{
+background:#5da987;
+}
 
-.btn-principal:hover{
+.boton:disabled{
+background:#ccc;
+cursor:not-allowed;
+}
 
-background:#63a987;
+/* MODAL */
 
+.modalAviso{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.35);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:1000;
+}
+
+.modalContenido{
+background:white;
+padding:35px;
+border-radius:20px;
+text-align:center;
+max-width:420px;
+box-shadow:0 10px 40px rgba(0,0,0,0.15);
+}
+
+.modalContenido h2{
+color:#3f8f6f;
+margin-bottom:10px;
+}
+
+.modalContenido button{
+background:#72bd99;
+border:none;
+color:white;
+padding:10px 20px;
+border-radius:10px;
+cursor:pointer;
 }
 
 </style>
@@ -255,337 +293,247 @@ background:#63a987;
 
 <img src="img/logo.png" class="logo">
 
-<h2 id="titulo-servicio"></h2>
+<div class="anuncio">
+<div class="anuncioTrack">
 
-<div class="calendar">
+<span>✨ Gracias por confiar en Espacio Mimar</span>
+<span>📖 Recordá leer con atención las recomendaciones antes de reservar</span>
+<span>⏱️ Elegí correctamente la duración según tu paquete</span>
+<span>💚 Nuestro objetivo es que tu experiencia sea excelente</span>
 
-<div class="calendar-header">
+</div>
+</div>
 
-<button id="prevMonth">◀</button>
+<div class="infoReservas">
 
-<div id="monthLabel"></div>
+<h2>Información sobre reservas</h2>
 
-<button id="nextMonth">▶</button>
+<div class="infoGrid">
+
+<div class="infoBox">
+<div class="icon">⏱️</div>
+<h4>Paquete 2 horas</h4>
+<p>Reservá un turno cada <b>15 días</b> aproximadamente.</p>
+</div>
+
+<div class="infoBox">
+<div class="icon">📅</div>
+<h4>Paquete 4 horas</h4>
+<p>Reservá <b>1 turno por semana</b> durante 4 semanas, en lo posible el mismo horario.</p>
+</div>
+
+<div class="infoBox">
+<div class="icon">⚡</div>
+<h4>Paquete 8 horas</h4>
+<p>Reservá <b>2 horas consecutivas</b> por sesión durante 4 semanas.</p>
+</div>
 
 </div>
 
-<div class="calendar-grid" id="calendarGrid"></div>
+<div class="infoExtra">
+
+<p><b>Importante:</b> Debés reservar la cantidad total de horas que adquiriste.</p>
+
+<p><b>Horarios especiales:</b> 12:00–13:00 y 20:00–21:00 se recomienda dejarlos disponibles para personas que trabajan o tratamientos cortos de Mio Up (30 minutos).</p>
 
 </div>
 
-<div id="horarios"></div>
+</div>
 
-<button id="btn-finalizar" class="btn-principal">
+<div class="calendario">
 
+<div class="mes">
+<button onclick="cambiarMes(-1)">◀</button>
+<div id="mes"></div>
+<button onclick="cambiarMes(1)">▶</button>
+</div>
+
+<div class="semana">
+<div>Lun</div>
+<div>Mar</div>
+<div>Mié</div>
+<div>Jue</div>
+<div>Vie</div>
+<div>Sáb</div>
+<div>Dom</div>
+</div>
+
+<div class="grid" id="dias"></div>
+
+</div>
+
+<div class="horarios" id="horarios"></div>
+
+<button class="boton" id="reservarBtn" disabled>
 Reservar turno
-
 </button>
 
 </div>
 
+<div class="modalAviso" id="modalAviso">
 
-<script type="module">
+<div class="modalContenido">
 
-import { db } from "./js/firebase.js";
+<h2>Agenda aún no disponible</h2>
 
-import {
+<p>
+Actualmente estamos trabajando con la membresía de <b>Abril</b>.<br>
+La agenda de <b>Mayo</b> será habilitada próximamente.
+</p>
 
-collection,
+<button onclick="cerrarAviso()">Entendido</button>
 
-query,
+</div>
 
-where,
+</div>
 
-getDocs,
+<script>
 
-addDoc,
+let fechaActual = new Date()
+let fechaSeleccionada = null
+let horaSeleccionada = null
 
-doc,
+const hoy = new Date()
 
-getDoc
+const reservarBtn = document.getElementById("reservarBtn")
+
+function renderCalendario(){
+
+const year=fechaActual.getFullYear()
+const month=fechaActual.getMonth()
+
+const meses=[
+"Enero","Febrero","Marzo","Abril","Mayo","Junio",
+"Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+]
+
+document.getElementById("mes").innerText=meses[month]+" "+year
+
+const primerDia=new Date(year,month,1).getDay()
+const diasMes=new Date(year,month+1,0).getDate()
+
+const contenedor=document.getElementById("dias")
+contenedor.innerHTML=""
+
+let offset=primerDia===0?6:primerDia-1
+
+for(let i=0;i<offset;i++){
+let empty=document.createElement("div")
+contenedor.appendChild(empty)
+}
+
+for(let d=1; d<=diasMes; d++){
+
+let fecha=new Date(year,month,d)
+
+let div=document.createElement("div")
+div.className="dia"
+div.innerText=d
+
+if(fecha.getDay()===0){
+div.classList.add("domingo")
+contenedor.appendChild(div)
+continue
+}
+
+if(fecha < new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate())){
+div.style.opacity=".4"
+div.style.cursor="not-allowed"
+contenedor.appendChild(div)
+continue
+}
+
+div.onclick=()=>{
+
+document.querySelectorAll(".dia").forEach(e=>e.classList.remove("seleccionado"))
+div.classList.add("seleccionado")
+
+fechaSeleccionada=fecha
+
+generarHorarios()
 
 }
 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-
-/* PARAMETROS */
-
-const params=new URLSearchParams(window.location.search);
-
-const servicioId=params.get("sid");
-
-const servicioNombre=decodeURIComponent(params.get("servicio")||"Servicio");
-
-document.getElementById("titulo-servicio").innerText=servicioNombre;
-
-
-/* CLIENTE */
-
-const userDni=sessionStorage.getItem("userDni");
-
-let clientName="";
-
-let clientEmail="";
-
-
-if(userDni){
-
-const snap=await getDoc(doc(db,"clients",userDni));
-
-if(snap.exists()){
-
-clientName=snap.data().fullName;
-
-clientEmail=snap.data().email;
-
-}
-
-}
-
-
-/* DIAS BLOQUEADOS */
-
-const fechasBloqueadas=["2026-04-03"];
-
-const motivosBloqueo={
-
-"2026-04-03":"Viernes Santo"
-
-};
-
-
-/* CALENDARIO */
-
-let current=new Date();
-
-const grid=document.getElementById("calendarGrid");
-
-const label=document.getElementById("monthLabel");
-
-
-function renderCalendar(){
-
-grid.innerHTML="";
-
-const year=current.getFullYear();
-
-const month=current.getMonth();
-
-label.innerText=current.toLocaleString("es",{month:"long",year:"numeric"});
-
-
-const firstDay=new Date(year,month,1).getDay();
-
-const days=new Date(year,month+1,0).getDate();
-
-
-for(let i=0;i<firstDay;i++){
-
-const empty=document.createElement("div");
-
-grid.appendChild(empty);
-
-}
-
-
-for(let d=1;d<=days;d++){
-
-const day=document.createElement("div");
-
-day.className="day";
-
-day.innerText=d;
-
-
-const fecha=`${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-
-
-if(fechasBloqueadas.includes(fecha)){
-
-day.classList.add("blocked");
-
-}
-
-
-day.onclick=()=>{
-
-if(fechasBloqueadas.includes(fecha)){
-
-alert("Día cerrado: "+motivosBloqueo[fecha]);
-
-return;
-
-}
-
-selectDay(day,d);
-
-};
-
-
-grid.appendChild(day);
+contenedor.appendChild(div)
 
 }
 
 }
 
+function generarHorarios(){
 
-renderCalendar();
-
-
-document.getElementById("prevMonth").onclick=()=>{
-
-current.setMonth(current.getMonth()-1);
-
-renderCalendar();
-
-};
-
-
-document.getElementById("nextMonth").onclick=()=>{
-
-current.setMonth(current.getMonth()+1);
-
-renderCalendar();
-
-};
-
-
-let fechaGlobal="";
-
-let horaGlobal="";
-
-
-function selectDay(el,day){
-
-document.querySelectorAll(".day")
-
-.forEach(d=>d.classList.remove("selected"));
-
-el.classList.add("selected");
-
-
-const y=current.getFullYear();
-
-const m=String(current.getMonth()+1).padStart(2,"0");
-
-const d=String(day).padStart(2,"0");
-
-
-fechaGlobal=`${y}-${m}-${d}`;
-
-cargarHorarios(fechaGlobal);
-
-}
-
-
-/* HORARIOS */
-
-async function cargarHorarios(fecha){
-
-const container=document.getElementById("horarios");
-
-container.innerHTML="Cargando...";
-
-
-const q=query(collection(db,"reservas"),where("fecha","==",fecha));
-
-const snap=await getDocs(q);
-
-
-const ocupados=snap.docs.map(d=>d.data().hora);
-
-
-container.innerHTML="";
-
+const horariosContainer=document.getElementById("horarios")
+horariosContainer.innerHTML=""
 
 const horarios=[
+"09:00","10:00","11:00",
+"12:00","13:00","14:00",
+"15:00","16:00","17:00"
+]
 
-"07:00","08:00","09:00","10:00","11:00","12:00",
+horarios.forEach(hora=>{
 
-"12:30","16:00","17:00","18:00","19:00","20:00","20:30"
+let div=document.createElement("div")
+div.className="hora"
+div.innerText=hora
 
-];
+div.onclick=()=>{
 
+document.querySelectorAll(".hora").forEach(e=>e.classList.remove("selected"))
+div.classList.add("selected")
 
-horarios.forEach(h=>{
+horaSeleccionada=hora
 
-const btn=document.createElement("button");
-
-btn.className="hora-btn";
-
-btn.innerText=h;
-
-
-if(ocupados.includes(h)){
-
-btn.disabled=true;
-
-}
-
-
-btn.onclick=()=>{
-
-document.querySelectorAll(".hora-btn")
-
-.forEach(b=>b.classList.remove("selected"));
-
-btn.classList.add("selected");
-
-horaGlobal=h;
-
-};
-
-
-container.appendChild(btn);
-
-});
+reservarBtn.disabled=false
 
 }
 
+horariosContainer.appendChild(div)
 
-/* RESERVAR */
-
-document.getElementById("btn-finalizar").onclick=async()=>{
-
-if(!horaGlobal){
-
-alert("Seleccioná horario");
-
-return;
+})
 
 }
 
+function cambiarMes(n){
 
-await addDoc(collection(db,"reservas"),{
+let nuevoMes = fechaActual.getMonth() + n
 
-clientId:userDni,
+if(nuevoMes > 3){
 
-clientName,
+document.getElementById("modalAviso").style.display="flex"
 
-clientEmail,
+return
+}
 
-servicioId,
+fechaActual.setMonth(nuevoMes)
 
-servicioNombre,
+renderCalendario()
 
-fecha:fechaGlobal,
+}
 
-hora:horaGlobal,
+function cerrarAviso(){
+document.getElementById("modalAviso").style.display="none"
+}
 
-timestamp:new Date()
+reservarBtn.addEventListener("click",function(){
 
-});
+if(!fechaSeleccionada || !horaSeleccionada){
+alert("Seleccioná fecha y horario")
+return
+}
 
+let fechaISO = fechaSeleccionada.toISOString().split("T")[0]
 
-alert("Turno reservado correctamente");
+localStorage.setItem("fechaSeleccionada",fechaISO)
+localStorage.setItem("horaSeleccionada",horaSeleccionada)
 
-window.location.href="index.html";
+window.location.href="confirmar.html"
 
-};
+})
+
+renderCalendario()
 
 </script>
 
 </body>
-
 </html>
