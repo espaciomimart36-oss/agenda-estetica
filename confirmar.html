@@ -1,136 +1,298 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmar turno | Espacio Mimar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <style>
-        body{ background:#f4f7f6; font-family:'Montserrat',sans-serif; margin:0; display:flex; justify-content:center; align-items:center; height:100vh; }
-        .container{ background:white; padding:40px; border-radius:20px; text-align:center; box-shadow:0 12px 35px rgba(0,0,0,0.08); max-width:420px; width:90%; }
-        .logo{ width:180px; margin-bottom:20px; }
-        h2{ margin-bottom:25px; font-family:'Playfair Display',serif; color:#2c3e3a; }
-        .info{ font-size:18px; margin:10px 0; color:#444; }
-        #btnConfirmar{ margin-top:25px; background:#72bd99; color:white; border:none; padding:14px 22px; border-radius:12px; cursor:pointer; font-weight:bold; font-size:16px; width:100%; }
-        #btnConfirmar:disabled { background: #ccc; }
-        .modal{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.45); display:none; justify-content:center; align-items:center; }
-        .modal-box{ background:white; padding:40px; border-radius:18px; text-align:center; box-shadow:0 20px 45px rgba(0,0,0,0.25); max-width:380px; width:90%; }
-        .modal-box button{ margin-top:20px; background:#72bd99; border:none; padding:12px 22px; border-radius:10px; color:white; font-weight:bold; cursor:pointer; }
-    </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Confirmar turno | Espacio Mimar</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+background:#f4f7f6;
+font-family:'Montserrat',sans-serif;
+margin:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+/* TARJETA */
+
+.container{
+background:white;
+padding:40px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 12px 35px rgba(0,0,0,0.08);
+max-width:420px;
+width:90%;
+}
+
+.logo{
+width:180px;
+margin-bottom:20px;
+}
+
+h2{
+margin-bottom:25px;
+font-family:'Playfair Display',serif;
+color:#2c3e3a;
+}
+
+.info{
+font-size:18px;
+margin:10px 0;
+color:#444;
+}
+
+/* BOTON */
+
+#btnConfirmar{
+margin-top:25px;
+background:#72bd99;
+color:white;
+border:none;
+padding:14px 22px;
+border-radius:12px;
+cursor:pointer;
+font-weight:bold;
+font-size:16px;
+width:100%;
+transition:.25s;
+}
+
+#btnConfirmar:hover{
+transform:translateY(-2px);
+box-shadow:0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* MODAL */
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.45);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal-box{
+background:white;
+padding:40px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 20px 45px rgba(0,0,0,0.25);
+max-width:380px;
+width:90%;
+}
+
+.modal-box h3{
+margin-top:0;
+color:#2c3e3a;
+font-family:'Playfair Display',serif;
+}
+
+.modal-box p{
+color:#555;
+margin:12px 0;
+line-height:1.6;
+}
+
+.modal-box button{
+margin-top:20px;
+background:#72bd99;
+border:none;
+padding:12px 22px;
+border-radius:10px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+</style>
+
 </head>
+
 <body>
 
 <div class="container">
-    <img src="img/logo.png" class="logo">
-    <h2>Confirmar turno</h2>
-    <div class="info"><strong>Servicio:</strong> <span id="servicioTexto"></span></div>
-    <div class="info"><strong>Fecha:</strong> <span id="fechaTexto"></span></div>
-    <div class="info"><strong>Hora:</strong> <span id="horaTexto"></span></div>
-    <button id="btnConfirmar">Confirmar turno</button>
+
+<img src="img/logo.png" class="logo">
+
+<h2>Confirmar turno</h2>
+
+<div class="info">
+<strong>Servicio:</strong>
+<span id="servicioTexto"></span>
 </div>
+
+<div class="info">
+<strong>Fecha:</strong>
+<span id="fechaTexto"></span>
+</div>
+
+<div class="info">
+<strong>Hora:</strong>
+<span id="horaTexto"></span>
+</div>
+
+<button id="btnConfirmar">
+Confirmar turno
+</button>
+
+</div>
+
+<!-- MODAL -->
 
 <div class="modal" id="modalConfirmado">
-    <div class="modal-box">
-        <h3>¡Turno confirmado!</h3>
-        <p>Tu turno fue reservado correctamente.</p>
-        <p>Te enviamos la confirmación por correo electrónico.</p>
-        <button onclick="volverInicio()">Aceptar</button>
-    </div>
+
+<div class="modal-box">
+
+<h3>Turno confirmado</h3>
+
+<p>
+Tu turno fue reservado correctamente.
+</p>
+
+<p>
+Te enviamos la confirmación por correo electrónico.
+</p>
+
+<p>
+Por favor revisá tu email para ver los detalles del turno.
+</p>
+
+<button onclick="volverInicio()">Aceptar</button>
+
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+</div>
 
-    // Inicializar EmailJS con tu Public Key
-    emailjs.init("AU6Z1JJBvWY9zpSnn");
+<script>
 
-    const firebaseConfig = {
-        apiKey: "AIzaSy...", // Reemplaza con tu Key real
-        projectId: "estetica-8d067",
-        authDomain: "estetica-8d067.firebaseapp.com"
-    };
+function volverInicio(){
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+localStorage.clear();
 
-    /* RECUPERAR DATOS DEL LOCALSTORAGE */
-    const servicio = localStorage.getItem("servicioSeleccionado");
-    const fecha = localStorage.getItem("fechaSeleccionada");
-    const hora = localStorage.getItem("horaSeleccionada");
-    const dni = localStorage.getItem("clienteDNI") || "43154201";
-    const nombre = localStorage.getItem("clienteNombre") || "Cliente";
-    const email = localStorage.getItem("clienteEmail") || "espaciomimart36@gmail.com";
+window.location.href="index.html";
 
-    if(!servicio || !fecha || !hora){
-        alert("Falta información del turno");
-        window.location.href="fecha.html";
-    }
+}
 
-    /* FORMATEAR FECHA PARA MOSTRAR */
-    const fechaObj = new Date(fecha + "T00:00:00");
-    const fechaBonita = fechaObj.toLocaleDateString("es-AR",{ weekday:"long", day:"numeric", month:"long" });
-
-    document.getElementById("servicioTexto").innerText = servicio;
-    document.getElementById("fechaTexto").innerText = fechaBonita;
-    document.getElementById("horaTexto").innerText = hora + " hs";
-
-    const boton = document.getElementById("btnConfirmar");
-    const modal = document.getElementById("modalConfirmado");
-
-    boton.onclick = async function(){
-        boton.innerText = "Reservando...";
-        boton.disabled = true;
-
-        try {
-            // 1. GUARDAR EN FIREBASE (Colección reservas)
-            await addDoc(collection(db, "reservas"), {
-                clientName: nombre,
-                dni: dni,
-                email: email,
-                servicioNombre: servicio,
-                fecha: fecha,
-                hora: hora,
-                createdAt: serverTimestamp()
-            });
-
-            // 2. DESCONTAR EL SALDO (Opcional si no lo hiciste en la página anterior)
-            const clientRef = doc(db, "clients", dni);
-            const clientSnap = await getDoc(clientRef);
-            if(clientSnap.exists()) {
-                let saldoActual = clientSnap.data().hoursBalance || 0;
-                await updateDoc(clientRef, { hoursBalance: saldoActual - 1 });
-            }
-
-            // 3. MANDAR EL MAIL CON EMAILJS
-            const templateParams = {
-                to_name: nombre,
-                to_email: email,
-                servicio: servicio,
-                fecha: fecha,
-                hora: hora
-            };
-
-            await emailjs.send("service_p8k8xah", "template_3nk7shm", templateParams);
-
-            // 4. MOSTRAR ÉXITO
-            modal.style.display = "flex";
-
-        } catch (error) {
-            console.error("Error confirmando:", error);
-            alert("Hubo un error al confirmar. Por favor intenta de nuevo.");
-            boton.disabled = false;
-            boton.innerText = "Confirmar turno";
-        }
-    }
-
-    window.volverInicio = function(){
-        localStorage.removeItem("servicioSeleccionado");
-        localStorage.removeItem("fechaSeleccionada");
-        localStorage.removeItem("horaSeleccionada");
-        window.location.href="index.html";
-    }
 </script>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+const firebaseConfig = {
+projectId:"estetica-8d067",
+apiKey:"AIzaSy...",
+authDomain:"estetica-8d067.firebaseapp.com"
+}
+
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
+
+/* DATOS TURNOS */
+
+const servicio = localStorage.getItem("servicioSeleccionado")
+const fecha = localStorage.getItem("fechaSeleccionada")
+const hora = localStorage.getItem("horaSeleccionada")
+
+const dniUsuario = localStorage.getItem("clienteDNI")
+
+if(!servicio || !fecha || !hora){
+alert("Falta información del turno")
+window.location.href="fecha.html"
+}
+
+/* FORMATEAR FECHA */
+
+const fechaObj = new Date(fecha)
+
+const fechaBonita = fechaObj.toLocaleDateString("es-AR",{
+weekday:"long",
+day:"numeric",
+month:"long"
+})
+
+/* MOSTRAR */
+
+document.getElementById("servicioTexto").innerText = servicio
+document.getElementById("fechaTexto").innerText = fechaBonita
+document.getElementById("horaTexto").innerText = hora + " hs"
+
+/* BOTON */
+
+const boton = document.getElementById("btnConfirmar")
+const modal = document.getElementById("modalConfirmado")
+
+boton.onclick = async function(){
+
+const snap = await getDoc(doc(db,"clients",dniUsuario))
+
+if(!snap.exists()){
+alert("No se encontró el cliente")
+return
+}
+
+const telefono = snap.data().telefono
+const nombre = snap.data().nombre
+
+const mensaje = `Hola ${nombre} 👋
+
+Tu turno en Espacio Mimar fue confirmado.
+
+Servicio: ${servicio}
+Fecha: ${fechaBonita}
+Hora: ${hora} hs
+
+Te esperamos 💚`
+
+try{
+
+await fetch("https://graph.facebook.com/v19.0/995248997010108/messages",{
+
+method:"POST",
+
+headers:{
+"Authorization":"Bearer TU_TOKEN_AQUI",
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+messaging_product:"whatsapp",
+to:telefono,
+type:"text",
+text:{body:mensaje}
+
+})
+
+})
+
+}catch(error){
+
+console.log("Error enviando WhatsApp",error)
+
+}
+
+modal.style.display="flex"
+
+}
+
+</script>
+
 </body>
 </html>

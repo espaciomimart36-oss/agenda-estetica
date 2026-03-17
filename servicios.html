@@ -18,6 +18,39 @@ background:#f4f7f6;
 font-family:'Montserrat',sans-serif;
 }
 
+/* HERO */
+
+.hero{
+width:100%;
+height:200px;
+background:url("img/cabina.jpeg") center center/cover no-repeat;
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+}
+
+/* Capa de claridad sobre la imagen para que el verde oscuro resalte */
+.hero::after{
+content:"";
+position:absolute;
+inset:0;
+background:rgba(255, 255, 255, 0.3); /* Un velo blanco suave */
+}
+
+.hero h1{
+position:relative;
+z-index: 1;
+font-family:'Playfair Display',serif;
+color:#2c3e3a; /* Verde oscuro elegante */
+font-size:48px;
+letter-spacing:2px;
+margin: 0;
+text-shadow: 1px 1px 0px rgba(255,255,255,0.5); /* Sombra clara para legibilidad */
+}
+
+/* CONTENEDOR */
+
 .container{
 width:95%;
 max-width:1600px;
@@ -26,23 +59,29 @@ padding:40px;
 text-align:center;
 }
 
+/* LOGO */
+
 .logo{
-width:420px;
-margin-bottom:1px;
+width:380px;
+margin-top:-60px;
+margin-bottom:30px;
+background:white;
+padding:12px 30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+position: relative;
+z-index: 2;
 }
 
-h1{
-font-family:'Playfair Display',serif;
-color:#2c3e3a;
-margin-bottom:50px;
-font-size:36px;
-}
+/* GRID SERVICIOS */
 
 .servicios{
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:35px;
 }
+
+/* CARD */
 
 .servicio{
 background:white;
@@ -98,6 +137,8 @@ button:hover{
 background:#63ab8a;
 }
 
+/* RESPONSIVE */
+
 @media(max-width:1200px){
 .servicios{
 grid-template-columns:repeat(2,1fr);
@@ -105,9 +146,23 @@ grid-template-columns:repeat(2,1fr);
 }
 
 @media(max-width:600px){
+
 .servicios{
 grid-template-columns:1fr;
 }
+
+.hero{
+height:160px;
+}
+
+.hero h1{
+font-size:36px;
+}
+
+.logo{
+width:260px;
+}
+
 }
 
 </style>
@@ -116,11 +171,13 @@ grid-template-columns:1fr;
 
 <body>
 
+<div class="hero">
+<h1>Servicios</h1>
+</div>
+
 <div class="container">
 
 <img src="img/logo.png" class="logo">
-
-<h1>Servicios disponibles</h1>
 
 <div class="servicios" id="listaServicios"></div>
 
