@@ -191,6 +191,20 @@ width:100%;
 
 <body>
 
+<script>
+
+/* PROTECCIÓN SIMPLE ADMIN */
+
+const password = prompt("Acceso administrador");
+
+if(password !== "mimar2026"){
+
+document.body.innerHTML="Acceso restringido";
+
+}
+
+</script>
+
 <div class="header">
 
 <h1>Panel Administrativo</h1>
@@ -260,7 +274,7 @@ document.getElementById("historiasPanel").style.display="block";
 function cerrarSesion(){
 
 localStorage.clear();
-window.location.href="login-admin.html";
+window.location.href="index.html";
 
 }
 

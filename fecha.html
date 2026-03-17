@@ -261,8 +261,9 @@ width:100%;
 <li>Si reservaste 4 horas, reservá una sesión por semana durante cuatro semanas, preferentemente en el mismo horario.</li>
 <li>Si reservaste 8 horas, podés realizar dos sesiones en la misma semana durante cuatro semanas.</li>
 <li>Los horarios de 12:00 a 13:00 y de 20:00 a 21:00 se recomienda dejarlos para personas que trabajan o no pueden asistir en otro horario.</li>
-<li>Si querés realizar una sola sesión de Mio-Up, podés reservar un bloque de 30 minutos.</li>
-
+<li>Las sesiones de Mio-Up se reservan en bloques de 30 minutos.</li>
+<li>1 bloque (30 min) corresponde a Mio-Up en 1 zona.</li>
+<li>Si reservás 2 bloques seguidos (1 hora), la sesión será de Mio-Up en 2 zonas.</li>
 </ul>
 
 </div>
@@ -418,9 +419,21 @@ const ocupados=snapRes.docs.map(doc=>doc.data().hora)
 
 container.innerHTML=""
 
-for(let h=9;h<=20;h++){
+const diaSemana = fecha.getDay();
 
-let hora=`${h.toString().padStart(2,'0')}:00`
+// Configuración de horarios basada en la base de datos de Firebase
+const horariosPorDia = {
+  1: ["16:00", "17:00", "18:00", "19:00", "20:00", "20:30"], // Lunes
+  2: ["08:00", "09:00", "10:00", "11:00", "12:00", "12:30", "16:00", "17:00", "18:00", "19:00", "20:00", "20:30"], // Martes
+  3: ["16:00", "17:00", "18:00", "19:00", "20:00", "20:30"], // Miércoles
+  4: ["08:00", "09:00", "10:00", "11:00", "12:00", "12:30", "16:00", "17:00", "18:00", "19:00", "20:00", "20:30"], // Jueves
+  5: ["16:00", "17:00", "18:00", "19:00"], // Viernes (Bloque 20:00 a 21:00 es activo: false)
+  6: ["08:00", "09:00", "10:00", "11:00", "12:00", "12:30"]  // Sábado
+};
+
+const horasDisponibles = horariosPorDia[diaSemana] || [];
+
+for(let hora of horasDisponibles){
 
 let div=document.createElement("div")
 

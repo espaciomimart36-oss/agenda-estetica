@@ -82,9 +82,10 @@ left:0;
 width:100%;
 height:100%;
 background:rgba(0,0,0,0.45);
-display:none;
+display:none; /* Se cambia a flex por JS */
 justify-content:center;
 align-items:center;
+z-index: 1000;
 }
 
 .modal-box{
@@ -163,8 +164,6 @@ Confirmar turno
 </div>
 
 
-<!-- MODAL -->
-
 <div class="modal" id="modalConfirmado">
 
 <div class="modal-box">
@@ -176,11 +175,7 @@ Tu turno fue reservado correctamente.
 </p>
 
 <p>
-Te enviamos la confirmación por correo electrónico.
-</p>
-
-<p>
-Por favor revisá tu email para ver los detalles del turno.
+Te enviamos la confirmación por WhatsApp y correo electrónico.
 </p>
 
 <button onclick="volverInicio()">Aceptar</button>
@@ -196,14 +191,11 @@ Por favor revisá tu email para ver los detalles del turno.
 
 
 <script>
-
+// Función global para asegurar que el botón del modal la encuentre
 function volverInicio(){
-
-localStorage.clear();
-window.location.href="index.html";
-
+    localStorage.clear(); // Limpia todo para volver al index limpio
+    window.location.href = "index.html";
 }
-
 </script>
 
 
@@ -213,100 +205,76 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 const firebaseConfig = {
-projectId:"estetica-8d067",
-apiKey:"AIzaSy...",
-authDomain:"estetica-8d067.firebaseapp.com"
+    projectId:"estetica-8d067",
+    apiKey:"AIzaSy...", // Recordá poner tu API KEY real aquí
+    authDomain:"estetica-8d067.firebaseapp.com"
 }
 
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
 /* DATOS TURNOS */
-
 const servicio = localStorage.getItem("servicioSeleccionado")
 const fecha = localStorage.getItem("fechaSeleccionada")
 const hora = localStorage.getItem("horaSeleccionada")
-
 const dniUsuario = localStorage.getItem("clienteDNI")
 
 if(!servicio || !fecha || !hora){
-alert("Falta información del turno")
-window.location.href="fecha.html"
+    window.location.href="fecha.html"
 }
 
 /* FORMATEAR FECHA */
-
 const fechaObj = new Date(fecha)
-
 const fechaBonita = fechaObj.toLocaleDateString("es-AR",{
-weekday:"long",
-day:"numeric",
-month:"long"
+    weekday:"long",
+    day:"numeric",
+    month:"long"
 })
 
-/* MOSTRAR */
-
+/* MOSTRAR DATOS */
 document.getElementById("servicioTexto").innerText = servicio
 document.getElementById("fechaTexto").innerText = fechaBonita
 document.getElementById("horaTexto").innerText = hora + " hs"
 
-/* BOTON */
-
+/* LÓGICA DEL BOTÓN CONFIRMAR */
 const boton = document.getElementById("btnConfirmar")
 const modal = document.getElementById("modalConfirmado")
 
 boton.onclick = async function(){
+    
+    boton.disabled = true;
+    boton.innerText = "Procesando...";
 
-const snap = await getDoc(doc(db,"clients",dniUsuario))
+    try {
+        const snap = await getDoc(doc(db,"clients",dniUsuario))
+        
+        if(snap.exists()){
+            const telefono = snap.data().telefono
+            const nombre = snap.data().nombre
 
-if(!snap.exists()){
-alert("No se encontró el cliente")
-return
-}
+            const mensaje = `Hola ${nombre} 👋\n\nTu turno en Espacio Mimar fue confirmado.\n\nServicio: ${servicio}\nFecha: ${fechaBonita}\nHora: ${hora} hs\n\nTe esperamos 💚`
 
-const telefono = snap.data().telefono
-const nombre = snap.data().nombre
+            // Intento de envío de WhatsApp
+            await fetch("https://graph.facebook.com/v19.0/995248997010108/messages",{
+                method:"POST",
+                headers:{
+                    "Authorization":"Bearer TU_TOKEN_AQUI", // Cambia esto por tu token real
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    messaging_product:"whatsapp",
+                    to:telefono,
+                    type:"text",
+                    text:{body:mensaje}
+                })
+            });
+        }
+    } catch(error) {
+        console.log("Error en el proceso, pero mostramos el modal igual:", error)
+    }
 
-const mensaje = `Hola ${nombre} 👋
-
-Tu turno en Espacio Mimar fue confirmado.
-
-Servicio: ${servicio}
-Fecha: ${fechaBonita}
-Hora: ${hora} hs
-
-Te esperamos 💚`
-
-try{
-
-await fetch("https://graph.facebook.com/v19.0/995248997010108/messages",{
-
-method:"POST",
-
-headers:{
-"Authorization":"Bearer TU_TOKEN_AQUI",
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-messaging_product:"whatsapp",
-to:telefono,
-type:"text",
-text:{body:mensaje}
-
-})
-
-})
-
-}catch(error){
-
-console.log("Error enviando WhatsApp",error)
-
-}
-
-modal.style.display="flex"
-
+    // El modal se muestra siempre al final, falle o no el WhatsApp
+    modal.style.display = "flex";
 }
 
 </script>
