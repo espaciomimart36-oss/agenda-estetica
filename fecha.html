@@ -14,7 +14,6 @@
         .container{ max-width:1050px; margin:auto; padding:20px; text-align:center; margin-top:-80px; position:relative; }
         .logo{ width:280px; max-width: 80%; margin-bottom:15px; display:block; margin-left:auto; margin-right:auto; }
         
-        /* Estilos del Cartel de Guía de Membresía */
         .cartel-guia { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: left; border: 1px solid #e0e0e0; }
         .cartel-guia h2 { font-family: 'Playfair Display', serif; color: var(--verde-oscuro); font-size: 1.3rem; margin-top: 0; text-align: center; }
         .guia-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 15px; }
@@ -22,7 +21,6 @@
         .guia-item strong { color: var(--verde-oscuro); display: block; margin-bottom: 3px; }
         .guia-item span { font-size: 0.9rem; color: #555; }
         
-        /* Ajuste de centrado y responsive para el aviso */
         .aviso-mio { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; border: 1px solid #e0e0e0; }
         .aviso-mio h3 { font-family: 'Playfair Display', serif; color: var(--verde-oscuro); font-size: 1.2rem; margin-top: 0; }
         .aviso-mio ul { list-style: none; padding: 0; margin: 15px 0 0 0; text-align: left; }
@@ -76,7 +74,11 @@
         </div>
 
         <div class="anuncio-scroll">
-            <div class="anuncio-text">🔔 <strong>Información:</strong> Turnos de 60 min. En <strong>Mio-Up</strong>, 12:00 o 20:00 (30 min) consumen 1 zona; resto consumen 2 zonas.</div>
+           <div class="anuncio-text">
+⚠️ <strong>Importante:</strong> En sesiones de <strong>Mio-Up</strong>, cada turno de 30 minutos corresponde a 1 zona.  
+Si deseás tratar 2 zonas, debés reservar dos turnos consecutivos (por ejemplo, 12:00 y 12:30).  
+Los turnos de 60 minutos equivalen a 2 zonas.
+</div>
         </div>
 
         <div class="calendario">
@@ -104,7 +106,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
         const firebaseConfig={ projectId:"estetica-8d067", apiKey:"AIzaSyBc5435tsDnJ_yJqO1ppwSjxSpCIhpjgew" };
         const app=initializeApp(firebaseConfig);
@@ -208,18 +210,18 @@
             document.getElementById("modalMimar").style.display = "flex";
         }
 
-        async function ejecutarReserva(){
+        // --- FUNCIÓN CORREGIDA: SOLO GUARDA EN LOCALSTORAGE, NO ESCRIBE EN FIREBASE ---
+        async function prepararReserva(){
             const btn = document.getElementById("btnFinalizar");
-            btn.disabled = true; btn.innerText = "Reservando...";
+            btn.disabled = true; btn.innerText = "Preparando...";
             const fStr = `${fechaSeleccionada.getFullYear()}-${String(fechaSeleccionada.getMonth()+1).padStart(2,'0')}-${String(fechaSeleccionada.getDate()).padStart(2,'0')}`;
-            let descuento = (esMioUp && duracionTurno === 60) ? 2 : 1;
             
+            // Guardamos todo en el bolsillo para que confirmar.html lo procese al final
             localStorage.setItem("fechaSeleccionada", fStr);
             localStorage.setItem("horaSeleccionada", horaSeleccionada);
             localStorage.setItem("duracionSeleccionada", duracionTurno);
 
-            await addDoc(collection(db,"reservas"),{ dni: dniUsuario, fecha: fStr, hora: horaSeleccionada, servicio: servicioGuardado });
-            await updateDoc(doc(db,"clients",dniUsuario),{ hoursBalance: saldoActual - descuento });
+            // Saltamos a la página de confirmación sin ocupar el lugar todavía
             window.location.href="confirmar.html";
         }
 
@@ -231,9 +233,9 @@
                 zonas.style.display = "block";
                 zonas.innerHTML = duracionTurno === 60 ? "⚠️ Bloque de 1 hora: se usarán 2 zonas." : "✅ Bloque de 30 min: se usará 1 zona.";
                 document.getElementById("btnFinalizar").innerText = "Confirmar";
-                document.getElementById("btnFinalizar").onclick = ejecutarReserva;
+                document.getElementById("btnFinalizar").onclick = prepararReserva;
                 document.getElementById("modalMimar").style.display = "flex";
-            } else { ejecutarReserva(); }
+            } else { prepararReserva(); }
         };
 
         document.getElementById("btnCancelarModal").onclick = () => document.getElementById("modalMimar").style.display="none";
