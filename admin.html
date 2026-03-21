@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Mimar T | Gestión</title>
+    <title>Admin Mimar T | Gestión Oficial</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
-        :root { --verde: #72bd99; --verde-oscuro: #3f8f6f; --rojo: #ff4d4d; --texto: #2c3e3a; --whatsapp: #25D366; }
+        :root { --verde: #72bd99; --verde-oscuro: #3f8f6f; --rojo: #ff4d4d; --azul: #4a90e2; --texto: #2c3e3a; --whatsapp: #25D366; }
         body { font-family: 'Montserrat', sans-serif; background: #f4f7f6; margin: 0; color: var(--texto); padding-bottom: 50px; }
         .header { background: white; padding: 15px; text-align: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
         .menu-nav { margin-top: 15px; display: flex; justify-content: center; gap: 10px; }
@@ -23,9 +23,15 @@
         .day.selected { background: var(--verde) !important; color: white !important; }
         .detalle-dia-card { background: white; border-radius: 20px; padding: 20px; margin-top: 20px; border-top: 4px solid var(--verde); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         textarea { width: 100%; height: 80px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; box-sizing: border-box; background: #fdfdfd; margin-top: 10px; }
-        .btn-save { background: var(--verde); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1; }
-        .btn-ws { background: var(--whatsapp); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .ficha-paciente { background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 5px solid var(--verde); box-shadow: 0 5px 10px rgba(0,0,0,0.03); }
+        
+        /* GRID DE ACCIONES ACTUALIZADO */
+        .grid-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
+        .btn-save { width: 100%; background: var(--verde); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 5px; }
+        .btn-ws { border: none; padding: 10px 5px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 11px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+        
+        .btn-confirmar { background: var(--whatsapp); }
+        .btn-recordar { background: var(--azul); }
+        .btn-cancelar { background: var(--rojo); }
     </style>
 </head>
 <body>
@@ -65,7 +71,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // CONFIGURACIÓN META (VERIFICADO)
         const WHATSAPP_TOKEN = "EAAMzA3ngIUkBQ630dPYUcq6NBWPoybtHpMw8KbMEqTzv49lsAXW9honZCnblqcVdlxltSO35kXQc42D8P6dNwgx2YN4JWxpCwUxoZAziQVyK5jZArVQYaL63CZChQNZCdZBppqIEymvfBbZCsrdBJbXnUnlpdj06DSpYorrgnkmZCJ4wda6M3pQEdIh1PRHOfwZDZD";
         const PHONE_NUMBER_ID = "995248997010108"; 
 
@@ -79,14 +84,14 @@
                 mapaClientes = {};
                 snapC.forEach(d => {
                     const c = d.data();
-                    if(c.dni) mapaClientes[c.dni] = { nombre: c.fullName, tel: c.phone };
+                    if(c.dni) mapaClientes[c.dni] = { nombre: c.fullName || c.nombre, tel: c.phone };
                 });
 
                 const snapR = await getDocs(collection(db, "reservas"));
                 todasLasReservas = [];
                 snapR.forEach(d => {
                     const r = d.data();
-                    const info = mapaClientes[r.dni] || { nombre: r.fullName || "Sin Nombre", tel: r.phone };
+                    const info = mapaClientes[r.dni] || { nombre: r.clienteNombre || "Sin Nombre", tel: r.phone };
                     todasLasReservas.push({ id: d.id, ...r, nombreReal: info.nombre, telReal: info.tel });
                 });
                 renderCalendario();
@@ -97,14 +102,11 @@
             const grid = document.getElementById("calendarGrid");
             grid.innerHTML = "";
             ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'].forEach(d => grid.innerHTML += `<div class="day-name">${d}</div>`);
-            
             const mes = fechaActual.getMonth();
             const año = fechaActual.getFullYear();
             document.getElementById("monthTitle").innerText = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(fechaActual);
-
             const primerDia = (new Date(año, mes, 1).getDay() + 6) % 7;
             const diasMes = new Date(año, mes + 1, 0).getDate();
-
             for (let i = 0; i < primerDia; i++) grid.innerHTML += `<div></div>`;
             for (let d = 1; d <= diasMes; d++) {
                 const fStr = `${año}-${String(mes + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
@@ -126,29 +128,67 @@
             panel.innerHTML = filtrados.length ? filtrados.map(r => `
                 <div class="detalle-dia-card">
                     <b>${r.nombreReal}</b><br>
-                    <small>${r.servicio} | ${r.hora} hs</small>
-                    <textarea id="n-${r.id}" placeholder="Notas...">${r.detalleSesion || ''}</textarea>
-                    <div style="display:flex; gap:10px; margin-top:10px;">
-                        <button class="btn-save" onclick="guardarN('${r.id}')">Guardar ✓</button>
-                        <button class="btn-ws" onclick="enviarW('${r.telReal}')">Confirmar 📲</button>
+                    <small>${r.servicio || 'Tratamiento'} | ${r.hora} hs</small>
+                    <textarea id="n-${r.id}" placeholder="Notas de la sesión...">${r.detalleSesion || ''}</textarea>
+                    
+                    <button class="btn-save" onclick="guardarN('${r.id}')">Guardar Nota ✓</button>
+                    
+                    <div class="grid-acciones">
+                        <button class="btn-ws btn-confirmar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'confirmar')">
+                            <span>✅</span><span>Conf.</span>
+                        </button>
+                        
+                        <button class="btn-ws btn-recordar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'recordar')">
+                            <span>🔔</span><span>Rec.</span>
+                        </button>
+
+                        <button class="btn-ws btn-cancelar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'cancelar')">
+                            <span>❌</span><span>Canc.</span>
+                        </button>
                     </div>
-                </div>`).join('') : '<p style="text-align:center; opacity:0.4;">Sin turnos para hoy</p>';
+                </div>`).join('') : '<p style="text-align:center; opacity:0.4; margin-top:20px;">Sin turnos para hoy</p>';
         };
 
-        window.enviarW = async (tel) => {
+        window.enviarW = async (tel, nombre, fecha, hora, servicio, accion) => {
             if(!tel) return alert("No hay teléfono registrado.");
             
             let num = tel.toString().replace(/\D/g, "");
             if (!num.startsWith("54")) num = "549" + num;
 
-            // EL PAYLOAD AHORA ESTÁ VACÍO DE PARÁMETROS (REQUERIDO PARA TU PLANTILLA)
+            const [y, m, d] = fecha.split('-');
+            const fechaLinda = `${d}/${m}`;
+
+            let templateName = "";
+            let languageCode = "";
+
+            // LOGICA DE PLANTILLAS SEGUN ACCION
+            if (accion === 'confirmar') {
+                templateName = "turno_confirmado";
+                languageCode = "en"; 
+            } else if (accion === 'recordar') {
+                templateName = "recordatorio_de_cita";
+                languageCode = "es"; 
+            } else {
+                templateName = "turno_cancelado";
+                languageCode = "es_AR"; 
+            }
+
             const payload = {
                 messaging_product: "whatsapp",
                 to: num,
                 type: "template",
                 template: {
-                    name: "turno_confirmado", 
-                    language: { code: "en" }
+                    name: templateName, 
+                    language: { code: languageCode }, 
+                    components: [{
+                        type: "body",
+                        parameters: [
+                            { type: "text", text: nombre },
+                            { type: "text", text: servicio || "Tratamiento" },
+                            { type: "text", text: fechaLinda },
+                            { type: "text", text: hora }
+                        ]
+                    }]
                 }
             };
 
@@ -161,8 +201,8 @@
                 
                 const data = await res.json();
                 if(res.ok) alert("✅ Mensaje enviado!");
-                else alert("❌ Error: " + data.error.message);
-            } catch (e) { alert("Error de red"); }
+                else alert("❌ Error de Meta: " + data.error.message);
+            } catch (e) { alert("Error de conexión."); }
         };
 
         window.guardarN = async (id) => {
@@ -171,24 +211,11 @@
             alert("Nota guardada");
         };
 
-        window.navegar = async (s) => {
+        window.navegar = (s) => {
             document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
             document.querySelectorAll('.btn-nav').forEach(x => x.classList.remove('active'));
             document.getElementById(`sec-${s}`).classList.add('active');
             document.getElementById(`btn-${s}`).classList.add('active');
-            if(s === 'historias') {
-                const list = document.getElementById("listaHistorias");
-                list.innerHTML = "Cargando...";
-                const snap = await getDocs(collection(db, "historias"));
-                list.innerHTML = "";
-                snap.forEach(d => {
-                    const p = d.data();
-                    list.innerHTML += `<div class="ficha-paciente">
-                        <b>${p.nombre}</b><br><small>Tel: ${p.telefono}</small><br>
-                        <p style="font-size:12px; margin-top:5px;">${p.objetivo || 'Sin objetivo cargado'}</p>
-                    </div>`;
-                });
-            }
         };
 
         window.cambiarMes = (n) => { fechaActual.setMonth(fechaActual.getMonth() + n); renderCalendario(); };
