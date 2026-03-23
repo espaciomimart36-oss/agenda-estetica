@@ -15,23 +15,30 @@
         .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
         .section { display: none; }
         .section.active { display: block; }
+
+        /* Estilos Calendario */
         .calendar-container { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; margin-top: 15px; }
         .day-name { font-size: 10px; color: #aaa; font-weight: 600; text-transform: uppercase; padding-bottom: 5px; }
         .day { padding: 12px 5px; border-radius: 10px; font-size: 13px; cursor: pointer; border: 1px solid #f8f8f8; background: white; transition: 0.2s; }
         .day.has-reserva { background: #fff0f0; border: 1.5px solid var(--rojo); color: var(--rojo); font-weight: 600; }
         .day.selected { background: var(--verde) !important; color: white !important; }
-        .detalle-dia-card { background: white; border-radius: 20px; padding: 20px; margin-top: 20px; border-top: 4px solid var(--verde); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+
+        /* Tarjetas de Turnos y Historias */
+        .detalle-dia-card, .historia-card { background: white; border-radius: 20px; padding: 20px; margin-top: 20px; border-top: 4px solid var(--verde); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .historia-card { border-top: none; border-left: 5px solid var(--verde); margin-top: 15px; }
+        .historia-header { display: flex; justify-content: space-between; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; margin-bottom: 10px; }
+        .dato-linea { font-size: 13px; margin-bottom: 5px; }
+        .dato-label { font-weight: 600; color: var(--verde-oscuro); }
+
         textarea { width: 100%; height: 80px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; box-sizing: border-box; background: #fdfdfd; margin-top: 10px; }
-        
-        /* GRID DE ACCIONES ACTUALIZADO */
         .grid-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
         .btn-save { width: 100%; background: var(--verde); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 5px; }
         .btn-ws { border: none; padding: 10px 5px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 11px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
-        
         .btn-confirmar { background: var(--whatsapp); }
         .btn-recordar { background: var(--azul); }
         .btn-cancelar { background: var(--rojo); }
+        .search-box { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 20px; box-sizing: border-box; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -41,6 +48,7 @@
         <div class="menu-nav">
             <button class="btn-nav active" id="btn-agenda" onclick="navegar('agenda')">📅 Agenda</button>
             <button class="btn-nav" id="btn-historias" onclick="navegar('historias')">📁 Historias</button>
+            <button class="btn-nav" id="btn-buscar" onclick="navegar('buscar')">🔍 Buscar</button>
         </div>
     </div>
 
@@ -58,8 +66,15 @@
         </div>
 
         <div id="sec-historias" class="section">
-            <h3 style="font-family:'Playfair Display'; color:var(--verde-oscuro);">Fichas de Pacientes</h3>
-            <div id="listaHistorias"></div>
+            <h3 style="font-family:'Playfair Display'; color:var(--verde-oscuro);">Historias Clínicas</h3>
+            <input type="text" id="filtroHistorias" class="search-box" placeholder="Filtrar por nombre o DNI..." onkeyup="filtrarFichas()">
+            <div id="listaHistoriasReal"></div>
+        </div>
+
+        <div id="sec-buscar" class="section">
+            <h3 style="font-family:'Playfair Display'; color:var(--verde-oscuro);">Buscar Turnos</h3>
+            <input type="text" id="inputBusqueda" class="search-box" placeholder="🔍 Buscar por nombre o tratamiento..." onkeyup="filtrarTurnos()">
+            <div id="resultadosBusqueda"></div>
         </div>
     </div>
 
@@ -77,6 +92,7 @@
         let fechaActual = new Date();
         let todasLasReservas = [];
         let mapaClientes = {};
+        let todasLasHistorias = [];
 
         async function cargarTodo() {
             try {
@@ -98,6 +114,71 @@
             } catch (e) { console.error(e); }
         }
 
+        // --- LÓGICA DE HISTORIAS (COLECCIÓN 'HISTORIAS') ---
+        async function cargarSeccionHistorias() {
+            const container = document.getElementById("listaHistoriasReal");
+            container.innerHTML = "<p style='text-align:center;'>Cargando historias...</p>";
+            try {
+                const snapH = await getDocs(collection(db, "historias"));
+                todasLasHistorias = [];
+                snapH.forEach(docSnap => {
+                    todasLasHistorias.push({ dni: docSnap.id, ...docSnap.data() });
+                });
+                renderHistorias(todasLasHistorias);
+            } catch (e) { container.innerHTML = "Error al cargar."; }
+        }
+
+        function renderHistorias(lista) {
+            const container = document.getElementById("listaHistoriasReal");
+            container.innerHTML = lista.map(h => `
+                <div class="historia-card">
+                    <div class="historia-header">
+                        <b style="font-size:16px; color:var(--verde-oscuro)">${h.nombre || 'Sin nombre'}</b>
+                        <span style="font-size:11px; color:#888;">DNI: ${h.dni}</span>
+                    </div>
+                    <div class="dato-linea"><span class="dato-label">Objetivo:</span> ${h.objetivo || '-'}</div>
+                    <div class="dato-linea"><span class="dato-label">Enfermedad:</span> ${h.enfermedad || 'No'}</div>
+                    <div class="dato-linea"><span class="dato-label">Medicación:</span> ${h.medicacion || 'No'}</div>
+                    <div class="dato-linea"><span class="dato-label">Hijos:</span> ${h.hijos || '0'}</div>
+                    <div style="font-size:10px; color:#aaa; margin-top:10px; text-align:right;">${h.fechaRegistro || ''}</div>
+                </div>
+            `).join('');
+        }
+
+        window.filtrarFichas = () => {
+            const term = document.getElementById("filtroHistorias").value.toLowerCase();
+            const filtradas = todasLasHistorias.filter(h => h.nombre.toLowerCase().includes(term) || h.dni.includes(term));
+            renderHistorias(filtradas);
+        };
+
+        // --- LÓGICA DE BÚSQUEDA DE TURNOS ---
+        window.filtrarTurnos = () => {
+            const term = document.getElementById("inputBusqueda").value.toLowerCase();
+            const div = document.getElementById("resultadosBusqueda");
+            if (term.length < 3) { div.innerHTML = ""; return; }
+            const filtrados = todasLasReservas.filter(r => 
+                r.nombreReal.toLowerCase().includes(term) || (r.servicio && r.servicio.toLowerCase().includes(term))
+            );
+            div.innerHTML = filtrados.map(r => renderTarjetaTurno(r)).join('');
+        };
+
+        function renderTarjetaTurno(r) {
+            return `
+                <div class="detalle-dia-card">
+                    <span style="font-size:10px; background:#eee; padding:2px 6px; border-radius:4px;">${r.fecha}</span>
+                    <b style="display:block; margin-top:5px;">${r.nombreReal}</b>
+                    <small>${r.servicio || 'Tratamiento'} | ${r.hora} hs</small>
+                    <textarea id="n-${r.id}" placeholder="Notas de la sesión...">${r.detalleSesion || ''}</textarea>
+                    <button class="btn-save" onclick="guardarN('${r.id}')">Guardar Nota ✓</button>
+                    <div class="grid-acciones">
+                        <button class="btn-ws btn-confirmar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'confirmar')"><span>✅</span><span>Conf.</span></button>
+                        <button class="btn-ws btn-recordar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'recordar')"><span>🔔</span><span>Rec.</span></button>
+                        <button class="btn-ws btn-cancelar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'cancelar')"><span>❌</span><span>Canc.</span></button>
+                    </div>
+                </div>`;
+        }
+
+        // --- CALENDARIO Y AGENDA ---
         function renderCalendario() {
             const grid = document.getElementById("calendarGrid");
             grid.innerHTML = "";
@@ -124,85 +205,30 @@
             el.classList.add('selected');
             const filtrados = todasLasReservas.filter(r => r.fecha === f).sort((a,b) => a.hora.localeCompare(b.hora));
             const panel = document.getElementById("panelDetalleDia");
-            
-            panel.innerHTML = filtrados.length ? filtrados.map(r => `
-                <div class="detalle-dia-card">
-                    <b>${r.nombreReal}</b><br>
-                    <small>${r.servicio || 'Tratamiento'} | ${r.hora} hs</small>
-                    <textarea id="n-${r.id}" placeholder="Notas de la sesión...">${r.detalleSesion || ''}</textarea>
-                    
-                    <button class="btn-save" onclick="guardarN('${r.id}')">Guardar Nota ✓</button>
-                    
-                    <div class="grid-acciones">
-                        <button class="btn-ws btn-confirmar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'confirmar')">
-                            <span>✅</span><span>Conf.</span>
-                        </button>
-                        
-                        <button class="btn-ws btn-recordar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'recordar')">
-                            <span>🔔</span><span>Rec.</span>
-                        </button>
-
-                        <button class="btn-ws btn-cancelar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'cancelar')">
-                            <span>❌</span><span>Canc.</span>
-                        </button>
-                    </div>
-                </div>`).join('') : '<p style="text-align:center; opacity:0.4; margin-top:20px;">Sin turnos para hoy</p>';
+            panel.innerHTML = filtrados.length ? filtrados.map(r => renderTarjetaTurno(r)).join('') : '<p style="text-align:center; opacity:0.4; margin-top:20px;">Sin turnos para hoy</p>';
         };
 
+        // --- FUNCIONES COMUNES ---
         window.enviarW = async (tel, nombre, fecha, hora, servicio, accion) => {
-            if(!tel) return alert("No hay teléfono registrado.");
-            
+            if(!tel) return alert("No hay teléfono.");
             let num = tel.toString().replace(/\D/g, "");
             if (!num.startsWith("54")) num = "549" + num;
-
             const [y, m, d] = fecha.split('-');
             const fechaLinda = `${d}/${m}`;
-
-            let templateName = "";
-            let languageCode = "";
-
-            // LOGICA DE PLANTILLAS SEGUN ACCION
-            if (accion === 'confirmar') {
-                templateName = "turno_confirmado";
-                languageCode = "en"; 
-            } else if (accion === 'recordar') {
-                templateName = "recordatorio_de_cita";
-                languageCode = "es"; 
-            } else {
-                templateName = "turno_cancelado";
-                languageCode = "es_AR"; 
-            }
-
-            const payload = {
-                messaging_product: "whatsapp",
-                to: num,
-                type: "template",
-                template: {
-                    name: templateName, 
-                    language: { code: languageCode }, 
-                    components: [{
-                        type: "body",
-                        parameters: [
-                            { type: "text", text: nombre },
-                            { type: "text", text: servicio || "Tratamiento" },
-                            { type: "text", text: fechaLinda },
-                            { type: "text", text: hora }
-                        ]
-                    }]
-                }
-            };
+            let template = (accion==='confirmar') ? "turno_confirmado" : (accion==='recordar') ? "recordatorio_de_cita" : "turno_cancelado";
+            let lang = (accion==='confirmar') ? "en" : (accion==='recordar') ? "es" : "es_AR";
 
             try {
-                const res = await fetch(`https://graph.facebook.com/v21.0/${PHONE_NUMBER_ID}/messages`, {
+                await fetch(`https://graph.facebook.com/v21.0/${PHONE_NUMBER_ID}/messages`, {
                     method: "POST",
                     headers: { "Authorization": `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        messaging_product: "whatsapp", to: num, type: "template",
+                        template: { name: template, language: { code: lang }, components: [{ type: "body", parameters: [{type:"text", text:nombre}, {type:"text", text:servicio||"Tratamiento"}, {type:"text", text:fechaLinda}, {type:"text", text:hora}]}] }
+                    })
                 });
-                
-                const data = await res.json();
-                if(res.ok) alert("✅ Mensaje enviado!");
-                else alert("❌ Error de Meta: " + data.error.message);
-            } catch (e) { alert("Error de conexión."); }
+                alert("✅ Mensaje enviado!");
+            } catch (e) { alert("Error"); }
         };
 
         window.guardarN = async (id) => {
@@ -216,6 +242,7 @@
             document.querySelectorAll('.btn-nav').forEach(x => x.classList.remove('active'));
             document.getElementById(`sec-${s}`).classList.add('active');
             document.getElementById(`btn-${s}`).classList.add('active');
+            if(s === 'historias') cargarSeccionHistorias();
         };
 
         window.cambiarMes = (n) => { fechaActual.setMonth(fechaActual.getMonth() + n); renderCalendario(); };
