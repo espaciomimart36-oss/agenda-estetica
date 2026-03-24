@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Mimar T | Gestión Oficial</title>
+    <title>Admin Mimar T | Gestión Completa</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
         :root { --verde: #72bd99; --verde-oscuro: #3f8f6f; --rojo: #ff4d4d; --azul: #4a90e2; --texto: #2c3e3a; --whatsapp: #25D366; }
@@ -15,28 +15,21 @@
         .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
         .section { display: none; }
         .section.active { display: block; }
-
-        /* Calendario */
         .calendar-container { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; margin-top: 15px; }
         .day-name { font-size: 10px; color: #aaa; font-weight: 600; text-transform: uppercase; padding-bottom: 5px; }
         .day { padding: 12px 5px; border-radius: 10px; font-size: 13px; cursor: pointer; border: 1px solid #f8f8f8; background: white; transition: 0.2s; }
         .day.has-reserva { background: #fff0f0; border: 1.5px solid var(--rojo); color: var(--rojo); font-weight: 600; }
         .day.selected { background: var(--verde) !important; color: white !important; }
-
-        /* Tarjetas */
         .detalle-dia-card { background: white; border-radius: 20px; padding: 20px; margin-top: 20px; border-top: 4px solid var(--verde); box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left; }
-        .historia-card { background: white; border-radius: 20px; padding: 20px; border-left: 5px solid var(--verde); margin-top: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left; }
-        
         textarea { width: 100%; height: 80px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; box-sizing: border-box; margin-top: 10px; }
-        .grid-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
         .btn-save { width: 100%; background: var(--verde); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 5px; }
+        .grid-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
         .btn-ws { border: none; padding: 10px 5px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 11px; color: white; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .btn-confirmar { background: var(--whatsapp); }
         .btn-recordar { background: var(--azul); }
         .btn-cancelar { background: var(--rojo); }
-        .search-box { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 20px; box-sizing: border-box; font-size: 14px; }
-        .fecha-badge { background: #eee; padding: 2px 8px; border-radius: 5px; font-size: 11px; color: #666; font-weight: bold; margin-bottom: 5px; display: inline-block; }
+        input[type="text"], input[type="date"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -65,13 +58,16 @@
 
         <div id="sec-historias" class="section">
             <h3 style="font-family:'Playfair Display'; color:var(--verde-oscuro);">Historias Clínicas</h3>
-            <input type="text" id="filtroHistorias" class="search-box" placeholder="Buscar paciente..." onkeyup="filtrarFichas()">
+            <input type="text" id="filtroHistorias" placeholder="Buscar paciente por nombre..." onkeyup="filtrarHistorias()">
             <div id="listaHistoriasReal"></div>
         </div>
 
         <div id="sec-buscar" class="section">
-            <h3 style="font-family:'Playfair Display'; color:var(--verde-oscuro);">Buscar Turnos</h3>
-            <input type="text" id="inputBusqueda" class="search-box" placeholder="Nombre o tratamiento..." onkeyup="filtrarTurnos()">
+            <h3 style="font-family:'Playfair Display'; color:var(--verde-oscuro);">Buscador de Citas</h3>
+            <div style="background:white; padding:15px; border-radius:15px; margin-bottom:15px;">
+                <input type="text" id="busquedaNombre" placeholder="Nombre del cliente..." onkeyup="filtrarCitas()">
+                <input type="date" id="busquedaFecha" onchange="filtrarCitas()">
+            </div>
             <div id="resultadosBusqueda"></div>
         </div>
     </div>
@@ -94,48 +90,46 @@
         let fechaSeleccionadaGlobal = "";
 
         async function cargarTodo() {
-            try {
-                const snapC = await getDocs(collection(db, "clients"));
-                mapaClientes = {};
-                snapC.forEach(d => {
-                    const c = d.data();
-                    if(c.dni) mapaClientes[c.dni] = { nombre: c.fullName || c.nombre, tel: c.phone };
-                });
+            const snapC = await getDocs(collection(db, "clients"));
+            mapaClientes = {}; 
+            snapC.forEach(d => { 
+                const c = d.data(); 
+                if(c.dni) mapaClientes[c.dni] = { nombre: c.fullName || c.nombre, tel: c.phone }; 
+            });
 
-                const snapR = await getDocs(collection(db, "reservas"));
-                todasLasReservas = [];
-                snapR.forEach(d => {
-                    const r = d.data();
-                    const info = mapaClientes[r.dni] || { nombre: r.clienteNombre || "Sin Nombre", tel: r.phone };
-                    todasLasReservas.push({ id: d.id, ...r, nombreReal: info.nombre, telReal: info.tel });
-                });
+            const snapR = await getDocs(collection(db, "reservas"));
+            todasLasReservas = []; 
+            snapR.forEach(d => { 
+                const r = d.data(); 
+                const info = mapaClientes[r.dni] || { nombre: r.clienteNombre || "Sin Nombre", tel: r.phone }; 
+                todasLasReservas.push({ id: d.id, ...r, nombreReal: info.nombre, telReal: info.tel }); 
+            });
 
-                const snapH = await getDocs(collection(db, "historias"));
-                todasLasHistorias = [];
-                snapH.forEach(d => todasLasHistorias.push({ id: d.id, ...d.data() }));
+            const snapH = await getDocs(collection(db, "historias"));
+            todasLasHistorias = []; 
+            snapH.forEach(d => todasLasHistorias.push({ id: d.id, ...d.data() }));
 
-                renderCalendario();
-                if(fechaSeleccionadaGlobal) verTurnos(fechaSeleccionadaGlobal);
-            } catch (e) { console.error(e); }
+            renderCalendario();
+            if(fechaSeleccionadaGlobal) verTurnos(fechaSeleccionadaGlobal);
+            filtrarCitas(); 
+            filtrarHistorias();
         }
 
         function renderCalendario() {
             const grid = document.getElementById("calendarGrid");
             grid.innerHTML = "";
             ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'].forEach(d => grid.innerHTML += `<div class="day-name">${d}</div>`);
-            const mes = fechaActual.getMonth();
-            const año = fechaActual.getFullYear();
+            const mes = fechaActual.getMonth(); const año = fechaActual.getFullYear();
             document.getElementById("monthTitle").innerText = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(fechaActual);
-            const primerDia = (new Date(año, mes, 1).getDay() + 6) % 7;
-            const diasMes = new Date(año, mes + 1, 0).getDate();
+            const primerDia = (new Date(año, mes, 1).getDay() + 6) % 7; const diasMes = new Date(año, mes + 1, 0).getDate();
             for (let i = 0; i < primerDia; i++) grid.innerHTML += `<div></div>`;
             for (let d = 1; d <= diasMes; d++) {
                 const fStr = `${año}-${String(mes + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 const tiene = todasLasReservas.some(r => r.fecha === fStr);
-                const div = document.createElement("div");
+                const div = document.createElement("div"); 
                 div.className = `day ${tiene ? 'has-reserva' : ''} ${fechaSeleccionadaGlobal === fStr ? 'selected' : ''}`;
-                div.innerText = d;
-                div.onclick = () => verTurnos(fStr, div);
+                div.innerText = d; 
+                div.onclick = () => verTurnos(fStr, div); 
                 grid.appendChild(div);
             }
         }
@@ -149,129 +143,108 @@
             const filtrados = todasLasReservas.filter(r => r.fecha === f).sort((a,b) => a.hora.localeCompare(b.hora));
             const horasOcupadas = filtrados.map(r => r.hora);
 
-            const dateObj = new Date(f + "T00:00:00");
-            const diasSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
-            const nombreDia = diasSemana[dateObj.getDay()];
-
             let htmlBloqueo = "";
+            const diasSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+            const nombreDia = diasSemana[new Date(f + "T00:00:00").getDay()];
             const docSnap = await getDoc(doc(db, "horarios", nombreDia));
+
             if (docSnap.exists()) {
                 let botones = "";
-                (docSnap.data().bloques || []).forEach(b => {
-                    let hI = parseInt(b.inicio.split(':')[0]);
-                    let hF = parseInt(b.fin.split(':')[0]);
-                    for(let i = hI; i < hF; i++){
-                        let h = `${String(i).padStart(2, '0')}:00`;
-                        if (!horasOcupadas.includes(h)) {
-                            botones += `<button class="btn-nav" style="border-color:var(--rojo); color:var(--rojo); margin:2px;" onclick="confirmarBloqueo('${f}', '${h}')">${h}</button>`;
+                const bloques = docSnap.data().bloques || [];
+                bloques.forEach(b => {
+                    let inicio = parseInt(b.inicio.split(':')[0]);
+                    let fin = parseInt(b.fin.split(':')[0]);
+                    // Bucle corregido: incluye el inicio y fin exactos configurados
+                    for(let i = inicio; i < fin; i++) { 
+                        let hFormateada = `${String(i).padStart(2, '0')}:00`;
+                        if (!horasOcupadas.includes(hFormateada)) {
+                            botones += `<button class="btn-nav" style="border-color:var(--rojo); color:var(--rojo); margin:2px;" onclick="confirmarBloqueo('${f}', '${hFormateada}')">${hFormateada}</button>`;
                         }
                     }
                 });
-                if(botones) htmlBloqueo = `<div style="background:white; padding:15px; border-radius:15px; margin-top:15px; border:1px solid #ffecec"><small style="color:var(--rojo); font-weight:bold">BLOQUEAR:</small><br>${botones}</div>`;
+                if(botones) htmlBloqueo = `<div style="background:white; padding:15px; border-radius:15px; margin-top:15px; border:1px solid #ffecec"><small style="color:var(--rojo); font-weight:bold">BLOQUEAR HORARIO:</small><br>${botones}</div>`;
             }
-            panel.innerHTML = htmlBloqueo + (filtrados.length ? filtrados.map(r => renderTarjeta(r, false)).join('') : '<p style="text-align:center; padding:20px; opacity:0.5">Sin turnos hoy</p>');
+            panel.innerHTML = htmlBloqueo + (filtrados.length ? filtrados.map(r => renderTarjeta(r)).join('') : '<p style="text-align:center; padding:20px; opacity:0.5">Sin actividad para este día</p>');
         };
 
-        function renderTarjeta(r, mostrarFecha = false) {
+        function renderTarjeta(r) {
             const esB = r.dni === "BLOQUEO";
-            const fFormateada = r.fecha ? r.fecha.split('-').reverse().join('/') : '';
             return `
                 <div class="detalle-dia-card" style="${esB ? 'border-top-color:var(--rojo)' : ''}">
-                    ${mostrarFecha ? `<span class="fecha-badge">📅 ${fFormateada}</span><br>` : ''}
-                    <b style="color:${esB ? 'var(--rojo)' : 'inherit'}">${r.nombreReal}</b><br>
-                    <small>${r.servicio} | ${r.hora} hs</small>
+                    <div style="display:flex; justify-content:space-between;">
+                        <b style="color:${esB ? 'var(--rojo)' : 'inherit'}">${r.nombreReal || r.clienteNombre}</b>
+                        <span>${r.hora} hs</span>
+                    </div>
+                    <small>${r.servicio} | Fecha: ${r.fecha.split('-').reverse().join('/')}</small>
                     ${!esB ? `
-                        <textarea id="n-${r.id}">${r.detalleSesion || ''}</textarea>
+                        <textarea id="n-${r.id}" placeholder="Notas de la sesión...">${r.detalleSesion || ''}</textarea>
                         <button class="btn-save" onclick="guardarN('${r.id}')">Guardar Nota</button>
                         <div class="grid-acciones">
                             <button class="btn-ws btn-confirmar" onclick="enviarW('${r.telReal}','${r.nombreReal}','${r.fecha}','${r.hora}','${r.servicio}','confirmar')">✅ Conf.</button>
                             <button class="btn-ws btn-recordar" onclick="enviarW('${r.telReal}','${r.nombreReal}','${r.fecha}','${r.hora}','${r.servicio}','recordar')">🔔 Rec.</button>
                             <button class="btn-ws btn-cancelar" onclick="eliminarTurno('${r.id}')">❌ Canc.</button>
                         </div>
-                    ` : `<button onclick="eliminarTurno('${r.id}')" style="width:100%; margin-top:10px; border:1px solid var(--rojo); background:none; color:var(--rojo); padding:8px; border-radius:10px; cursor:pointer">Desbloquear</button>`}
+                    ` : `<button onclick="eliminarTurno('${r.id}')" style="width:100%; margin-top:10px; border:1px solid var(--rojo); background:none; color:var(--rojo); padding:8px; border-radius:10px; cursor:pointer">Desbloquear Horario</button>`}
                 </div>`;
         }
 
-        window.confirmarBloqueo = async (f, h) => {
-            if(confirm(`¿Bloquear ${h} hs?`)) {
-                const id = "b_" + Date.now();
-                const obj = { clienteNombre: "BLOQUEADO POR ADMIN", dni: "BLOQUEO", fecha: f, hora: h, servicio: "No disponible" };
-                await setDoc(doc(db, "reservas", id), obj);
-                todasLasReservas.push({ id, ...obj, nombreReal: obj.clienteNombre });
-                verTurnos(f);
-                renderCalendario();
-            }
-        };
-
-        window.eliminarTurno = async (id) => {
-            if(confirm("¿Seguro?")) {
-                await deleteDoc(doc(db, "reservas", id));
-                todasLasReservas = todasLasReservas.filter(x => x.id !== id);
-                if(fechaSeleccionadaGlobal) verTurnos(fechaSeleccionadaGlobal);
-                renderCalendario();
-            }
-        };
-
-        window.filtrarTurnos = () => {
-            const t = document.getElementById("inputBusqueda").value.toLowerCase();
+        window.filtrarCitas = () => {
+            const nom = document.getElementById("busquedaNombre").value.toLowerCase();
+            const fec = document.getElementById("busquedaFecha").value;
             const res = document.getElementById("resultadosBusqueda");
-            if(t.length < 3) { res.innerHTML = ""; return; }
-            const filtrados = todasLasReservas.filter(r => 
-                (r.nombreReal && r.nombreReal.toLowerCase().includes(t)) || 
-                (r.servicio && r.servicio.toLowerCase().includes(t))
-            );
-            res.innerHTML = filtrados.map(r => renderTarjeta(r, true)).join('');
+            const filtrados = todasLasReservas.filter(r => {
+                const coincideNombre = (r.nombreReal || r.clienteNombre).toLowerCase().includes(nom);
+                const coincideFecha = fec ? r.fecha === fec : true;
+                return coincideNombre && coincideFecha && r.dni !== "BLOQUEO";
+            }).sort((a,b) => b.fecha.localeCompare(a.fecha));
+            res.innerHTML = filtrados.length ? filtrados.map(r => renderTarjeta(r)).join('') : '<p style="text-align:center; opacity:0.5">No se encontraron citas</p>';
         };
 
-        window.filtrarFichas = () => {
-            const t = document.getElementById("filtroHistorias").value.toLowerCase();
-            const lista = document.getElementById("listaHistoriasReal");
-            const filtradas = todasLasHistorias.filter(h => 
-                (h.nombre && h.nombre.toLowerCase().includes(t)) || 
-                (h.dni && h.dni.toString().includes(t))
-            );
-            lista.innerHTML = filtradas.map(h => `
-                <div class="historia-card">
-                    <b style="font-size:16px; color:var(--verde-oscuro)">${h.nombre || 'Sin nombre'}</b><br>
-                    <small>DNI: ${h.dni || '-'}</small>
-                    <p style="margin:8px 0; font-size:13px;"><b>Objetivo:</b> ${h.objetivo || '-'}</p>
-                    <div style="font-size:12px; opacity:0.8"><b>Observaciones:</b> ${h.observaciones || '-'}</div>
+        window.filtrarHistorias = () => {
+            const nom = document.getElementById("filtroHistorias").value.toLowerCase();
+            const res = document.getElementById("listaHistoriasReal");
+            const filtradas = todasLasHistorias.filter(h => (h.nombre || "").toLowerCase().includes(nom));
+            res.innerHTML = filtradas.map(h => `
+                <div class="detalle-dia-card">
+                    <b>${h.nombre}</b><br><small>DNI: ${h.dni}</small><br>
+                    <button class="btn-save" style="margin-top:10px;" onclick="verFicha('${h.id}')">Ver Ficha Completa</button>
                 </div>`).join('');
         };
 
-        window.navegar = (s) => {
-            document.querySelectorAll('.section, .btn-nav').forEach(x => x.classList.remove('active'));
-            document.getElementById(`sec-${s}`).classList.add('active');
-            document.getElementById(`btn-${s}`).classList.add('active');
-            if(s === 'historias') filtrarFichas();
+        window.confirmarBloqueo = async (f, h) => {
+            if(confirm(`¿Bloquear turno de las ${h} hs para el día ${f}?`)) {
+                const id = "b_" + Date.now();
+                const obj = { clienteNombre: "BLOQUEADO POR ADMIN", dni: "BLOQUEO", fecha: f, hora: h, servicio: "Cerrado por Admin" };
+                await setDoc(doc(db, "reservas", id), obj);
+                cargarTodo();
+            }
         };
 
+        window.eliminarTurno = async (id) => { if(confirm("¿Estás seguro de eliminar/desbloquear?")) { await deleteDoc(doc(db, "reservas", id)); cargarTodo(); } };
+        window.navegar = (s) => { 
+            document.querySelectorAll('.section, .btn-nav').forEach(x => x.classList.remove('active')); 
+            document.getElementById(`sec-${s}`).classList.add('active'); 
+            document.getElementById(`btn-${s}`).classList.add('active'); 
+        };
         window.cambiarMes = (n) => { fechaActual.setMonth(fechaActual.getMonth() + n); renderCalendario(); };
         window.guardarN = async (id) => { 
-            const n = document.getElementById(`n-${id}`).value;
-            await updateDoc(doc(db, "reservas", id), { detalleSesion: n });
-            alert("Nota guardada");
-            cargarTodo();
+            const n = document.getElementById(`n-${id}`).value; 
+            await updateDoc(doc(db, "reservas", id), { detalleSesion: n }); 
+            alert("Nota actualizada correctamente"); 
+            cargarTodo(); 
         };
-
+        
         window.enviarW = async (tel, nombre, fecha, hora, servicio, accion) => {
-            if(!tel) return alert("Sin teléfono");
-            let num = tel.toString().replace(/\D/g, "");
-            if (!num.startsWith("54")) num = "549" + num;
-            const [y, m, d] = fecha.split('-');
-            const fL = `${d}/${m}`;
+            let num = tel.toString().replace(/\D/g, ""); if (!num.startsWith("54")) num = "549" + num;
+            const fL = fecha.split('-').reverse().slice(0,2).join('/');
             let t = (accion==='confirmar') ? "turno_confirmado" : (accion==='recordar') ? "recordatorio_de_cita" : "turno_cancelado";
-            let l = (accion==='confirmar') ? "en" : (accion==='recordar') ? "es" : "es_AR";
-
-            await fetch(`https://graph.facebook.com/v21.0/${PHONE_NUMBER_ID}/messages`, {
-                method: "POST",
-                headers: { "Authorization": `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    messaging_product: "whatsapp", to: num, type: "template",
-                    template: { name: t, language: { code: l }, components: [{ type: "body", parameters: [{type:"text", text:nombre}, {type:"text", text:servicio||"Tratamiento"}, {type:"text", text:fL}, {type:"text", text:hora}]}] }
-                })
-            });
-            alert("WhatsApp enviado");
+            try {
+                await fetch(`https://graph.facebook.com/v21.0/${PHONE_NUMBER_ID}/messages`, {
+                    method: "POST", headers: { "Authorization": `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({ messaging_product: "whatsapp", to: num, type: "template", template: { name: t, language: { code: "es_AR" }, components: [{ type: "body", parameters: [{type:"text", text:nombre}, {type:"text", text:servicio||"Tratamiento"}, {type:"text", text:fL}, {type:"text", text:hora}]}] } })
+                });
+                alert("Mensaje enviado a " + nombre);
+            } catch(e) { alert("Error al enviar WhatsApp"); }
         };
 
         cargarTodo();
