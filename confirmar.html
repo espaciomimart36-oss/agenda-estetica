@@ -57,39 +57,34 @@
             <div style="font-size: 50px; margin-bottom: 10px;">✅</div>
             <h3>¡Turno Reservado!</h3>
             <p>Tu reserva se realizó con éxito. Te enviamos los detalles por WhatsApp.</p>
-            <button class="btn-cerrar" onclick="window.location.href='index.html'">Finalizar</button>
+            <button class="btn-cerrar" id="btnFinalizar">Finalizar</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DIRECTA (EVITA ERROR 404)
+        // --- CONFIGURACIÓN WHATSAPP ---
+        const WHATSAPP_TOKEN = "EAAMzA3ngIUkBQ630dPYUcq6NBWPoybtHpMw8KbMEqTzv49lsAXW9honZCnblqcVdlxltSO35kXQc42D8P6dNwgx2YN4JWxpCwUxoZAziQVyK5jZArVQYaL63CZChQNZCdZBppqIEymvfBbZCsrdBJbXnUnlpdj06DSpYorrgnkmZCJ4wda6M3pQEdIh1PRHOfwZDZD";
+        const PHONE_NUMBER_ID = "995248997010108";
+        // ------------------------------
+
         const firebaseConfig = { projectId: "estetica-8d067", apiKey: "AIzaSyBc5435tsDnJ_yJqO1ppwSjxSpCIhpjgew" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // LEER DATOS CON PROTECCIÓN (si es null, no rompe el script)
         const servicio = localStorage.getItem("servicioSeleccionado") || "";
         const fechaRaw = localStorage.getItem("fechaSeleccionada") || "";
         const horaRaw = localStorage.getItem("horaSeleccionada") || "";
         const dniUsuario = localStorage.getItem("clienteDNI") || "";
         const duracion = parseInt(localStorage.getItem("duracionSeleccionada")) || 60;
 
-        if(!servicio || !fechaRaw || !horaRaw || !dniUsuario){
-            alert("Faltan datos de la reserva. Reintentá.");
-            window.location.href="fecha.html";
-        }
-
         const horaLimpia = horaRaw.replace(" hs","").trim();
-
-        // FORMATEAR FECHA PARA MOSTRAR
         const [year, month, day] = fechaRaw.split("-");
         const fechaObj = new Date(year, month - 1, day); 
         const fechaBonita = fechaObj.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" });
 
-        // MOSTRAR EN PANTALLA
         document.getElementById("servicioTexto").innerText = servicio;
         document.getElementById("fechaTexto").innerText = fechaBonita.charAt(0).toUpperCase() + fechaBonita.slice(1);
         document.getElementById("horaTexto").innerText = horaLimpia + " hs";
@@ -101,78 +96,105 @@
             boton.innerText = "Procesando...";
 
             try {
-                // 1. VALIDAR DISPONIBILIDAD (Doble check por si otro reservó mientras tanto)
-                const snap = await getDocs(query(collection(db,"reservas"), where("fecha","==",fechaRaw)));
-                let ocupado = false;
-
-                snap.forEach(doc => {
-                    const hDB = (doc.data().hora || "").replace(" hs","").trim();
-                    if(hDB === horaLimpia) ocupado = true;
-                });
-
-                if(ocupado){
-                    alert("Lo sentimos, este horario se acaba de ocupar.");
+                // 1. VALIDAR DISPONIBILIDAD
+                const snap = await getDocs(query(collection(db,"reservas"), where("fecha","==",fechaRaw), where("hora","==",horaLimpia)));
+                if(!snap.empty){
+                    alert("Este horario se ocupó recién.");
                     window.location.href = "fecha.html";
                     return;
                 }
 
-                // 2. DESCONTAR SALDO
+                // 2. DATOS DEL CLIENTE
                 const clientRef = doc(db, "clients", dniUsuario);
                 const snapClient = await getDoc(clientRef);
-                
-                if(!snapClient.exists()){
-                    alert("Error con el usuario.");
-                    return;
-                }
-
                 const data = snapClient.data();
+
+                // --- LÓGICA DE LIMPIEZA DE TELÉFONO (VERSIÓN PRO) ---
+                let nro = (data.telefono || data.phone || "").toString().replace(/\D/g, '');
+                if (nro.startsWith("0")) nro = nro.substring(1);
+                if (nro.startsWith("54")) nro = nro.substring(2);
+                if (nro.startsWith("9")) nro = nro.substring(1);
+                
+                // Si tiene 12 dígitos es porque quedó un "15" en el medio
+                if (nro.length === 12 && (nro.includes("15", 2) || nro.includes("15", 3) || nro.includes("15", 4))) {
+                    nro = nro.replace("15", "");
+                }
+                // Estandarizar a 549 + 10 dígitos
+                if (nro.length === 10) nro = "549" + nro;
+                else if (!nro.startsWith("549")) nro = "549" + nro;
+                // ---------------------------------------------------
+
+                const finalNombre = data.nombre || data.fullName || "Cliente";
                 const saldoActual = data.hoursBalance || 0;
-                const descuento = duracion / 60; // 1 hora = 1 punto, 30 min = 0.5 puntos
+                const descuento = duracion / 60;
 
                 if (saldoActual < descuento) {
-                    alert("No tienes saldo suficiente para esta sesión.");
-                    window.location.href = "servicios.html";
+                    alert("Saldo insuficiente.");
+                    boton.disabled = false;
+                    boton.innerText = "Confirmar y Finalizar";
                     return;
                 }
 
-                // 3. GUARDAR RESERVA
-                await addDoc(collection(db,"reservas"), {
+                // 3. GUARDAR EN FIRESTORE
+                const nombreID = finalNombre.replace(/\s+/g, '_');
+                const customID = `${nombreID}_${fechaRaw}_${horaLimpia.replace(':','')}`;
+
+                await setDoc(doc(db, "reservas", customID), {
                     fecha: fechaRaw,
                     hora: horaLimpia,
                     duracion: duracion,
                     dni: dniUsuario,
                     servicio: servicio,
-                    clienteNombre: data.nombre || data.fullName || "Cliente",
+                    clienteNombre: finalNombre,
+                    telefono: nro,
                     timestamp: new Date()
                 });
 
-                // 4. ACTUALIZAR SALDO EN FIRESTORE
                 await updateDoc(clientRef, { hoursBalance: saldoActual - descuento });
 
-                // 5. DISPARAR WHATSAPP (OPCIONAL)
+                // 4. DISPARAR WHATSAPP DIRECTO
                 try {
-                    const urlCloudFunction = "https://enviarconfirmacionturno-iccpnou5ja-uc.a.run.app"; 
-                    fetch(urlCloudFunction, {
+                    await fetch(`https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`, {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: {
+                            "Authorization": `Bearer ${WHATSAPP_TOKEN}`,
+                            "Content-Type": "application/json"
+                        },
                         body: JSON.stringify({
-                            nombre: data.nombre || data.fullName,
-                            servicio: servicio,
-                            fecha: fechaBonita,
-                            hora: horaLimpia + " hs"
+                            messaging_product: "whatsapp",
+                            to: nro,
+                            type: "template",
+                            template: {
+                                name: "confirmacion_turno",
+                                language: { code: "es_AR" },
+                                components: [{
+                                    type: "body",
+                                    parameters: [
+                                        { type: "text", text: finalNombre },
+                                        { type: "text", text: servicio },
+                                        { type: "text", text: fechaBonita },
+                                        { type: "text", text: horaLimpia + " hs" }
+                                    ]
+                                }]
+                            }
                         })
                     });
-                } catch(e) { console.log("WhatsApp error silencioso", e); }
+                } catch(e) { console.error("Error WhatsApp:", e); }
 
-                // ÉXITO
                 document.getElementById("modalConfirmado").style.display = "flex";
 
             } catch(error) {
-                console.error("Error confirmando:", error);
-                alert("Hubo un problema técnico. Reintentá.");
+                console.error("Error general:", error);
                 boton.disabled = false;
                 boton.innerText = "Confirmar y Finalizar";
             }
+        };
+
+        document.getElementById("btnFinalizar").onclick = function() {
+            localStorage.removeItem("servicioSeleccionado");
+            localStorage.removeItem("fechaSeleccionada");
+            localStorage.removeItem("horaSeleccionada");
+            window.location.href = "index.html";
         };
     </script>
 </body>
