@@ -16,7 +16,7 @@
         .section { display: none; }
         .section.active { display: block; }
 
-        /* Estilos Calendario */
+        /* Calendario */
         .calendar-container { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; margin-top: 15px; }
         .day-name { font-size: 10px; color: #aaa; font-weight: 600; text-transform: uppercase; padding-bottom: 5px; }
@@ -24,17 +24,14 @@
         .day.has-reserva { background: #fff0f0; border: 1.5px solid var(--rojo); color: var(--rojo); font-weight: 600; }
         .day.selected { background: var(--verde) !important; color: white !important; }
 
-        /* Tarjetas de Turnos y Historias */
-        .detalle-dia-card, .historia-card { background: white; border-radius: 20px; padding: 20px; margin-top: 20px; border-top: 4px solid var(--verde); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .historia-card { border-top: none; border-left: 5px solid var(--verde); margin-top: 15px; }
-        .historia-header { display: flex; justify-content: space-between; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; margin-bottom: 10px; }
-        .dato-linea { font-size: 13px; margin-bottom: 5px; }
-        .dato-label { font-weight: 600; color: var(--verde-oscuro); }
-
-        textarea { width: 100%; height: 80px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; box-sizing: border-box; background: #fdfdfd; margin-top: 10px; }
+        /* Tarjetas */
+        .detalle-dia-card { background: white; border-radius: 20px; padding: 20px; margin-top: 20px; border-top: 4px solid var(--verde); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .historia-card { background: white; border-radius: 20px; padding: 20px; border-left: 5px solid var(--verde); margin-top: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left; }
+        
+        textarea { width: 100%; height: 80px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; box-sizing: border-box; margin-top: 10px; }
         .grid-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
-        .btn-save { width: 100%; background: var(--verde); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 5px; }
-        .btn-ws { border: none; padding: 10px 5px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 11px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+        .btn-save { width: 100%; background: var(--verde); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 5px; }
+        .btn-ws { border: none; padding: 10px 5px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 11px; color: white; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .btn-confirmar { background: var(--whatsapp); }
         .btn-recordar { background: var(--azul); }
         .btn-cancelar { background: var(--rojo); }
@@ -56,9 +53,9 @@
         <div id="sec-agenda" class="section active">
             <div class="calendar-container">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <button onclick="cambiarMes(-1)" style="border:none; background:none; cursor:pointer; font-size:18px;">◀</button>
+                    <button onclick="cambiarMes(-1)" style="border:none; background:none; cursor:pointer;">◀</button>
                     <h3 id="monthTitle" style="font-family:'Playfair Display'; margin:0; text-transform: capitalize;"></h3>
-                    <button onclick="cambiarMes(1)" style="border:none; background:none; cursor:pointer; font-size:18px;">▶</button>
+                    <button onclick="cambiarMes(1)" style="border:none; background:none; cursor:pointer;">▶</button>
                 </div>
                 <div class="calendar-grid" id="calendarGrid"></div>
             </div>
@@ -67,20 +64,20 @@
 
         <div id="sec-historias" class="section">
             <h3 style="font-family:'Playfair Display'; color:var(--verde-oscuro);">Historias Clínicas</h3>
-            <input type="text" id="filtroHistorias" class="search-box" placeholder="Filtrar por nombre o DNI..." onkeyup="filtrarFichas()">
+            <input type="text" id="filtroHistorias" class="search-box" placeholder="Buscar paciente por nombre o DNI..." onkeyup="filtrarFichas()">
             <div id="listaHistoriasReal"></div>
         </div>
 
         <div id="sec-buscar" class="section">
             <h3 style="font-family:'Playfair Display'; color:var(--verde-oscuro);">Buscar Turnos</h3>
-            <input type="text" id="inputBusqueda" class="search-box" placeholder="🔍 Buscar por nombre o tratamiento..." onkeyup="filtrarTurnos()">
+            <input type="text" id="inputBusqueda" class="search-box" placeholder="Escribí nombre o tratamiento..." onkeyup="filtrarTurnos()">
             <div id="resultadosBusqueda"></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBc5435tsDnJ_yJqO1ppwSjxSpCIhpjgew", projectId: "estetica-8d067" };
         const app = initializeApp(firebaseConfig);
@@ -91,11 +88,13 @@
 
         let fechaActual = new Date();
         let todasLasReservas = [];
-        let mapaClientes = {};
         let todasLasHistorias = [];
+        let mapaClientes = {};
+        let fechaSeleccionadaGlobal = "";
 
         async function cargarTodo() {
             try {
+                // Clientes
                 const snapC = await getDocs(collection(db, "clients"));
                 mapaClientes = {};
                 snapC.forEach(d => {
@@ -103,6 +102,7 @@
                     if(c.dni) mapaClientes[c.dni] = { nombre: c.fullName || c.nombre, tel: c.phone };
                 });
 
+                // Reservas
                 const snapR = await getDocs(collection(db, "reservas"));
                 todasLasReservas = [];
                 snapR.forEach(d => {
@@ -110,75 +110,17 @@
                     const info = mapaClientes[r.dni] || { nombre: r.clienteNombre || "Sin Nombre", tel: r.phone };
                     todasLasReservas.push({ id: d.id, ...r, nombreReal: info.nombre, telReal: info.tel });
                 });
+
+                // Historias
+                const snapH = await getDocs(collection(db, "historias"));
+                todasLasHistorias = [];
+                snapH.forEach(d => todasLasHistorias.push({ id: d.id, ...d.data() }));
+
                 renderCalendario();
+                if(fechaSeleccionadaGlobal) verTurnos(fechaSeleccionadaGlobal);
             } catch (e) { console.error(e); }
         }
 
-        // --- LÓGICA DE HISTORIAS (COLECCIÓN 'HISTORIAS') ---
-        async function cargarSeccionHistorias() {
-            const container = document.getElementById("listaHistoriasReal");
-            container.innerHTML = "<p style='text-align:center;'>Cargando historias...</p>";
-            try {
-                const snapH = await getDocs(collection(db, "historias"));
-                todasLasHistorias = [];
-                snapH.forEach(docSnap => {
-                    todasLasHistorias.push({ dni: docSnap.id, ...docSnap.data() });
-                });
-                renderHistorias(todasLasHistorias);
-            } catch (e) { container.innerHTML = "Error al cargar."; }
-        }
-
-        function renderHistorias(lista) {
-            const container = document.getElementById("listaHistoriasReal");
-            container.innerHTML = lista.map(h => `
-                <div class="historia-card">
-                    <div class="historia-header">
-                        <b style="font-size:16px; color:var(--verde-oscuro)">${h.nombre || 'Sin nombre'}</b>
-                        <span style="font-size:11px; color:#888;">DNI: ${h.dni}</span>
-                    </div>
-                    <div class="dato-linea"><span class="dato-label">Objetivo:</span> ${h.objetivo || '-'}</div>
-                    <div class="dato-linea"><span class="dato-label">Enfermedad:</span> ${h.enfermedad || 'No'}</div>
-                    <div class="dato-linea"><span class="dato-label">Medicación:</span> ${h.medicacion || 'No'}</div>
-                    <div class="dato-linea"><span class="dato-label">Hijos:</span> ${h.hijos || '0'}</div>
-                    <div style="font-size:10px; color:#aaa; margin-top:10px; text-align:right;">${h.fechaRegistro || ''}</div>
-                </div>
-            `).join('');
-        }
-
-        window.filtrarFichas = () => {
-            const term = document.getElementById("filtroHistorias").value.toLowerCase();
-            const filtradas = todasLasHistorias.filter(h => h.nombre.toLowerCase().includes(term) || h.dni.includes(term));
-            renderHistorias(filtradas);
-        };
-
-        // --- LÓGICA DE BÚSQUEDA DE TURNOS ---
-        window.filtrarTurnos = () => {
-            const term = document.getElementById("inputBusqueda").value.toLowerCase();
-            const div = document.getElementById("resultadosBusqueda");
-            if (term.length < 3) { div.innerHTML = ""; return; }
-            const filtrados = todasLasReservas.filter(r => 
-                r.nombreReal.toLowerCase().includes(term) || (r.servicio && r.servicio.toLowerCase().includes(term))
-            );
-            div.innerHTML = filtrados.map(r => renderTarjetaTurno(r)).join('');
-        };
-
-        function renderTarjetaTurno(r) {
-            return `
-                <div class="detalle-dia-card">
-                    <span style="font-size:10px; background:#eee; padding:2px 6px; border-radius:4px;">${r.fecha}</span>
-                    <b style="display:block; margin-top:5px;">${r.nombreReal}</b>
-                    <small>${r.servicio || 'Tratamiento'} | ${r.hora} hs</small>
-                    <textarea id="n-${r.id}" placeholder="Notas de la sesión...">${r.detalleSesion || ''}</textarea>
-                    <button class="btn-save" onclick="guardarN('${r.id}')">Guardar Nota ✓</button>
-                    <div class="grid-acciones">
-                        <button class="btn-ws btn-confirmar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'confirmar')"><span>✅</span><span>Conf.</span></button>
-                        <button class="btn-ws btn-recordar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'recordar')"><span>🔔</span><span>Rec.</span></button>
-                        <button class="btn-ws btn-cancelar" onclick="enviarW('${r.telReal}', '${r.nombreReal}', '${r.fecha}', '${r.hora}', '${r.servicio}', 'cancelar')"><span>❌</span><span>Canc.</span></button>
-                    </div>
-                </div>`;
-        }
-
-        // --- CALENDARIO Y AGENDA ---
         function renderCalendario() {
             const grid = document.getElementById("calendarGrid");
             grid.innerHTML = "";
@@ -193,59 +135,147 @@
                 const fStr = `${año}-${String(mes + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 const tiene = todasLasReservas.some(r => r.fecha === fStr);
                 const div = document.createElement("div");
-                div.className = `day ${tiene ? 'has-reserva' : ''}`;
+                div.className = `day ${tiene ? 'has-reserva' : ''} ${fechaSeleccionadaGlobal === fStr ? 'selected' : ''}`;
                 div.innerText = d;
                 div.onclick = () => verTurnos(fStr, div);
                 grid.appendChild(div);
             }
         }
 
-        window.verTurnos = (f, el) => {
+        window.verTurnos = async (f, el) => {
+            fechaSeleccionadaGlobal = f;
             document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
-            el.classList.add('selected');
-            const filtrados = todasLasReservas.filter(r => r.fecha === f).sort((a,b) => a.hora.localeCompare(b.hora));
+            if(el) el.classList.add('selected');
+
             const panel = document.getElementById("panelDetalleDia");
-            panel.innerHTML = filtrados.length ? filtrados.map(r => renderTarjetaTurno(r)).join('') : '<p style="text-align:center; opacity:0.4; margin-top:20px;">Sin turnos para hoy</p>';
-        };
+            const filtrados = todasLasReservas.filter(r => r.fecha === f).sort((a,b) => a.hora.localeCompare(b.hora));
+            const horasOcupadas = filtrados.map(r => r.hora);
 
-        // --- FUNCIONES COMUNES ---
-        window.enviarW = async (tel, nombre, fecha, hora, servicio, accion) => {
-            if(!tel) return alert("No hay teléfono.");
-            let num = tel.toString().replace(/\D/g, "");
-            if (!num.startsWith("54")) num = "549" + num;
-            const [y, m, d] = fecha.split('-');
-            const fechaLinda = `${d}/${m}`;
-            let template = (accion==='confirmar') ? "turno_confirmado" : (accion==='recordar') ? "recordatorio_de_cita" : "turno_cancelado";
-            let lang = (accion==='confirmar') ? "en" : (accion==='recordar') ? "es" : "es_AR";
+            const dateObj = new Date(f + "T00:00:00");
+            const diasSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+            const nombreDia = diasSemana[dateObj.getDay()];
 
-            try {
-                await fetch(`https://graph.facebook.com/v21.0/${PHONE_NUMBER_ID}/messages`, {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        messaging_product: "whatsapp", to: num, type: "template",
-                        template: { name: template, language: { code: lang }, components: [{ type: "body", parameters: [{type:"text", text:nombre}, {type:"text", text:servicio||"Tratamiento"}, {type:"text", text:fechaLinda}, {type:"text", text:hora}]}] }
-                    })
+            let htmlBloqueo = "";
+            const docSnap = await getDoc(doc(db, "horarios", nombreDia));
+            if (docSnap.exists()) {
+                let botones = "";
+                (docSnap.data().bloques || []).forEach(b => {
+                    let hI = parseInt(b.inicio.split(':')[0]);
+                    let hF = parseInt(b.fin.split(':')[0]);
+                    for(let i = hI; i < hF; i++){
+                        let h = `${String(i).padStart(2, '0')}:00`;
+                        if (!horasOcupadas.includes(h)) {
+                            botones += `<button class="btn-nav" style="border-color:var(--rojo); color:var(--rojo); margin:2px;" onclick="confirmarBloqueo('${f}', '${h}')">${h}</button>`;
+                        }
+                    }
                 });
-                alert("✅ Mensaje enviado!");
-            } catch (e) { alert("Error"); }
+                if(botones) htmlBloqueo = `<div style="background:white; padding:15px; border-radius:15px; margin-top:15px; border:1px solid #ffecec"><small style="color:var(--rojo); font-weight:bold">BLOQUEAR HORARIO:</small><br>${botones}</div>`;
+            }
+
+            panel.innerHTML = htmlBloqueo + (filtrados.length ? filtrados.map(r => renderTarjeta(r)).join('') : '<p style="text-align:center; padding:20px; opacity:0.5">Sin turnos para hoy</p>');
         };
 
-        window.guardarN = async (id) => {
-            const val = document.getElementById(`n-${id}`).value;
-            await updateDoc(doc(db, "reservas", id), { detalleSesion: val });
-            alert("Nota guardada");
+        function renderTarjeta(r) {
+            const esB = r.dni === "BLOQUEO";
+            return `
+                <div class="detalle-dia-card" style="${esB ? 'border-top-color:var(--rojo)' : ''}">
+                    <b style="color:${esB ? 'var(--rojo)' : 'inherit'}">${r.nombreReal}</b><br>
+                    <small>${r.servicio} | ${r.hora} hs</small>
+                    ${!esB ? `
+                        <textarea id="n-${r.id}">${r.detalleSesion || ''}</textarea>
+                        <button class="btn-save" onclick="guardarN('${r.id}')">Guardar Nota</button>
+                        <div class="grid-acciones">
+                            <button class="btn-ws btn-confirmar" onclick="enviarW('${r.telReal}','${r.nombreReal}','${r.fecha}','${r.hora}','${r.servicio}','confirmar')">✅ Conf.</button>
+                            <button class="btn-ws btn-recordar" onclick="enviarW('${r.telReal}','${r.nombreReal}','${r.fecha}','${r.hora}','${r.servicio}','recordar')">🔔 Rec.</button>
+                            <button class="btn-ws btn-cancelar" onclick="eliminarTurno('${r.id}')">❌ Canc.</button>
+                        </div>
+                    ` : `<button onclick="eliminarTurno('${r.id}')" style="width:100%; margin-top:10px; border:1px solid var(--rojo); background:none; color:var(--rojo); padding:8px; border-radius:10px; cursor:pointer">Desbloquear Horario</button>`}
+                </div>`;
+        }
+
+        window.confirmarBloqueo = async (f, h) => {
+            if(confirm(`¿Bloquear ${h} hs?`)) {
+                const id = "b_" + Date.now();
+                const obj = { clienteNombre: "BLOQUEADO POR ADMIN", dni: "BLOQUEO", fecha: f, hora: h, servicio: "No disponible" };
+                await setDoc(doc(db, "reservas", id), obj);
+                todasLasReservas.push({ id, ...obj, nombreReal: obj.clienteNombre });
+                verTurnos(f);
+                renderCalendario();
+            }
+        };
+
+        window.eliminarTurno = async (id) => {
+            if(confirm("¿Seguro que deseas eliminar/desbloquear?")) {
+                await deleteDoc(doc(db, "reservas", id));
+                todasLasReservas = todasLasReservas.filter(x => x.id !== id);
+                verTurnos(fechaSeleccionadaGlobal);
+                renderCalendario();
+            }
+        };
+
+        window.filtrarTurnos = () => {
+            const t = document.getElementById("inputBusqueda").value.toLowerCase();
+            const res = document.getElementById("resultadosBusqueda");
+            if(t.length < 3) { res.innerHTML = ""; return; }
+            const filtrados = todasLasReservas.filter(r => 
+                (r.nombreReal && r.nombreReal.toLowerCase().includes(t)) || 
+                (r.servicio && r.servicio.toLowerCase().includes(t)) ||
+                (r.dni && r.dni.includes(t))
+            );
+            res.innerHTML = filtrados.map(r => renderTarjeta(r)).join('');
+        };
+
+        window.filtrarFichas = () => {
+            const t = document.getElementById("filtroHistorias").value.toLowerCase();
+            const lista = document.getElementById("listaHistoriasReal");
+            const filtradas = todasLasHistorias.filter(h => 
+                (h.nombre && h.nombre.toLowerCase().includes(t)) || 
+                (h.dni && h.dni.toString().includes(t))
+            );
+            lista.innerHTML = filtradas.map(h => `
+                <div class="historia-card">
+                    <b style="font-size:16px; color:var(--verde-oscuro)">${h.nombre || 'Sin nombre'}</b><br>
+                    <small>DNI: ${h.dni || '-'}</small>
+                    <p style="margin:8px 0; font-size:13px;"><b>Objetivo:</b> ${h.objetivo || 'No especificado'}</p>
+                    <div style="font-size:12px; opacity:0.8"><b>Observaciones:</b> ${h.observaciones || '-'}</div>
+                </div>`).join('');
         };
 
         window.navegar = (s) => {
-            document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
-            document.querySelectorAll('.btn-nav').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.section, .btn-nav').forEach(x => x.classList.remove('active'));
             document.getElementById(`sec-${s}`).classList.add('active');
             document.getElementById(`btn-${s}`).classList.add('active');
-            if(s === 'historias') cargarSeccionHistorias();
+            if(s === 'historias') filtrarFichas();
         };
 
         window.cambiarMes = (n) => { fechaActual.setMonth(fechaActual.getMonth() + n); renderCalendario(); };
+        window.guardarN = async (id) => { 
+            const n = document.getElementById(`n-${id}`).value;
+            await updateDoc(doc(db, "reservas", id), { detalleSesion: n });
+            alert("Nota guardada correctamente");
+            cargarTodo(); // Recarga para sincronizar array local
+        };
+
+        window.enviarW = async (tel, nombre, fecha, hora, servicio, accion) => {
+            if(!tel) return alert("El cliente no tiene teléfono registrado");
+            let num = tel.toString().replace(/\D/g, "");
+            if (!num.startsWith("54")) num = "549" + num;
+            const [y, m, d] = fecha.split('-');
+            const fL = `${d}/${m}`;
+            let t = (accion==='confirmar') ? "turno_confirmado" : (accion==='recordar') ? "recordatorio_de_cita" : "turno_cancelado";
+            let l = (accion==='confirmar') ? "en" : (accion==='recordar') ? "es" : "es_AR";
+
+            await fetch(`https://graph.facebook.com/v21.0/${PHONE_NUMBER_ID}/messages`, {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    messaging_product: "whatsapp", to: num, type: "template",
+                    template: { name: t, language: { code: l }, components: [{ type: "body", parameters: [{type:"text", text:nombre}, {type:"text", text:servicio||"Tratamiento"}, {type:"text", text:fL}, {type:"text", text:hora}]}] }
+                })
+            });
+            alert("Mensaje de WhatsApp enviado");
+        };
+
         cargarTodo();
     </script>
 </body>
