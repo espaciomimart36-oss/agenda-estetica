@@ -29,7 +29,6 @@
         .btn-confirmar { background: var(--whatsapp); }
         .btn-recordar { background: var(--azul); }
         .btn-cancelar { background: var(--rojo); }
-        input[type="text"], input[type="date"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -58,16 +57,13 @@
 
         <div id="sec-historias" class="section">
             <h3 style="font-family:'Playfair Display'; color:var(--verde-oscuro);">Historias Clínicas</h3>
-            <input type="text" id="filtroHistorias" placeholder="Buscar paciente por nombre..." onkeyup="filtrarHistorias()">
+            <input type="text" id="filtroHistorias" placeholder="Buscar paciente..." onkeyup="filtrarHistorias()" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
             <div id="listaHistoriasReal"></div>
         </div>
 
         <div id="sec-buscar" class="section">
             <h3 style="font-family:'Playfair Display'; color:var(--verde-oscuro);">Buscador de Citas</h3>
-            <div style="background:white; padding:15px; border-radius:15px; margin-bottom:15px;">
-                <input type="text" id="busquedaNombre" placeholder="Nombre del cliente..." onkeyup="filtrarCitas()">
-                <input type="date" id="busquedaFecha" onchange="filtrarCitas()">
-            </div>
+            <input type="text" id="busquedaNombre" placeholder="Nombre..." onkeyup="filtrarCitas()" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd; margin-bottom:10px;">
             <div id="resultadosBusqueda"></div>
         </div>
     </div>
@@ -80,39 +76,19 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const WHATSAPP_TOKEN = "EAAMzA3ngIUkBQ630dPYUcq6NBWPoybtHpMw8KbMEqTzv49lsAXW9honZCnblqcVdlxltSO35kXQc42D8P6dNwgx2YN4JWxpCwUxoZAziQVyK5jZArVQYaL63CZChQNZCdZBppqIEymvfBbZCsrdBJbXnUnlpdj06DSpYorrgnkmZCJ4wda6M3pQEdIh1PRHOfwZDZD";
-        const PHONE_NUMBER_ID = "995248997010108"; 
+        const WHATSAPP_TOKEN = "EAAMzA3ngIUkBRMpXw5ZBCCzVCFZAum3yF3dcHlgOPZAigiAIXERNfxpGfq21VCEgiByPN5xhm9mZBUyJ0WWqTl0xoB8ZBEs8EEh2FVC82aDHizTv0bKvMrcH7mkO99svZCMymZAi07nnmnBZCeHlI8XdnMBfJI1pnjVFWQZCdCIOBZA8fDa71OuvkVZCJu5bTR91wZDZD";
+        const PHONE_NUMBER_ID = "995248997010108";
 
         let fechaActual = new Date();
         let todasLasReservas = [];
-        let todasLasHistorias = [];
-        let mapaClientes = {};
         let fechaSeleccionadaGlobal = "";
 
         async function cargarTodo() {
-            const snapC = await getDocs(collection(db, "clients"));
-            mapaClientes = {}; 
-            snapC.forEach(d => { 
-                const c = d.data(); 
-                if(c.dni) mapaClientes[c.dni] = { nombre: c.fullName || c.nombre, tel: c.phone || c.telefono }; 
-            });
-
             const snapR = await getDocs(collection(db, "reservas"));
             todasLasReservas = []; 
-            snapR.forEach(d => { 
-                const r = d.data(); 
-                const info = mapaClientes[r.dni] || { nombre: r.clienteNombre || "Sin Nombre", tel: r.phone || r.telefono }; 
-                todasLasReservas.push({ id: d.id, ...r, nombreReal: info.nombre, telReal: info.tel }); 
-            });
-
-            const snapH = await getDocs(collection(db, "historias"));
-            todasLasHistorias = []; 
-            snapH.forEach(d => todasLasHistorias.push({ id: d.id, ...d.data() }));
-
+            snapR.forEach(d => todasLasReservas.push({ id: d.id, ...d.data() }));
             renderCalendario();
             if(fechaSeleccionadaGlobal) verTurnos(fechaSeleccionadaGlobal);
-            filtrarCitas(); 
-            filtrarHistorias();
         }
 
         function renderCalendario() {
@@ -134,92 +110,65 @@
             }
         }
 
-        window.verTurnos = async (f, el) => {
+        window.verTurnos = (f, el) => {
             fechaSeleccionadaGlobal = f;
             document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
             if(el) el.classList.add('selected');
-
             const panel = document.getElementById("panelDetalleDia");
             const filtrados = todasLasReservas.filter(r => r.fecha === f).sort((a,b) => a.hora.localeCompare(b.hora));
-            const horasOcupadas = filtrados.map(r => r.hora);
-
-            let htmlBloqueo = "";
-            const diasSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
-            const nombreDia = diasSemana[new Date(f + "T00:00:00").getDay()];
-            const docSnap = await getDoc(doc(db, "horarios", nombreDia));
-
-            if (docSnap.exists()) {
-                let botones = "";
-                const bloques = docSnap.data().bloques || [];
-                bloques.forEach(b => {
-                    let inicio = parseInt(b.inicio.split(':')[0]);
-                    let fin = parseInt(b.fin.split(':')[0]);
-                    for(let i = inicio; i < fin; i++) { 
-                        let hFormateada = `${String(i).padStart(2, '0')}:00`;
-                        if (!horasOcupadas.includes(hFormateada)) {
-                            botones += `<button class="btn-nav" style="border-color:var(--rojo); color:var(--rojo); margin:2px;" onclick="confirmarBloqueo('${f}', '${hFormateada}')">${hFormateada}</button>`;
-                        }
-                    }
-                });
-                if(botones) htmlBloqueo = `<div style="background:white; padding:15px; border-radius:15px; margin-top:15px; border:1px solid #ffecec"><small style="color:var(--rojo); font-weight:bold">BLOQUEAR HORARIO:</small><br>${botones}</div>`;
-            }
-            panel.innerHTML = htmlBloqueo + (filtrados.length ? filtrados.map(r => renderTarjeta(r)).join('') : '<p style="text-align:center; padding:20px; opacity:0.5">Sin actividad para este día</p>');
+            panel.innerHTML = filtrados.length ? filtrados.map(r => renderTarjeta(r)).join('') : '<p style="text-align:center; padding:20px; opacity:0.5">Sin turnos</p>';
         };
 
         function renderTarjeta(r) {
-            const esB = r.dni === "BLOQUEO";
             return `
-                <div class="detalle-dia-card" style="${esB ? 'border-top-color:var(--rojo)' : ''}">
-                    <div style="display:flex; justify-content:space-between;">
-                        <b style="color:${esB ? 'var(--rojo)' : 'inherit'}">${r.nombreReal || r.clienteNombre}</b>
-                        <span>${r.hora} hs</span>
+                <div class="detalle-dia-card">
+                    <b>${r.clienteNombre}</b> - ${r.hora} hs<br>
+                    <small>${r.servicio} | ${r.fecha.split('-').reverse().join('/')}</small>
+                    <textarea id="n-${r.id}" placeholder="Notas...">${r.detalleSesion || ''}</textarea>
+                    <button class="btn-save" onclick="guardarN('${r.id}')">Guardar Nota</button>
+                    <div class="grid-acciones">
+                        <button class="btn-ws btn-confirmar" onclick="enviarW('${r.telefono}','${r.clienteNombre}','${r.fecha}','${r.hora}','${r.servicio}','confirmar')">✅ Conf.</button>
+                        <button class="btn-ws btn-recordar" onclick="enviarW('${r.telefono}','${r.clienteNombre}','${r.fecha}','${r.hora}','${r.servicio}','recordar')">🔔 Rec.</button>
+                        <button class="btn-ws btn-cancelar" onclick="eliminarYNotificar('${r.id}','${r.telefono}','${r.clienteNombre}','${r.fecha}','${r.hora}','${r.servicio}')">❌ Canc.</button>
                     </div>
-                    <small>${r.servicio || 'Tratamiento'} | Fecha: ${r.fecha.split('-').reverse().join('/')}</small>
-                    ${!esB ? `
-                        <textarea id="n-${r.id}" placeholder="Notas de la sesión...">${r.detalleSesion || ''}</textarea>
-                        <button class="btn-save" onclick="guardarN('${r.id}')">Guardar Nota</button>
-                        <div class="grid-acciones">
-                            <button class="btn-ws btn-confirmar" onclick="enviarW('${r.telReal}','${r.nombreReal}','${r.fecha}','${r.hora}','${r.servicio}','confirmar')">✅ Conf.</button>
-                            <button class="btn-ws btn-recordar" onclick="enviarW('${r.telReal}','${r.nombreReal}','${r.fecha}','${r.hora}','${r.servicio}','recordar')">🔔 Rec.</button>
-                            <button class="btn-ws btn-cancelar" onclick="eliminarTurno('${r.id}')">❌ Canc.</button>
-                        </div>
-                    ` : `<button onclick="eliminarTurno('${r.id}')" style="width:100%; margin-top:10px; border:1px solid var(--rojo); background:none; color:var(--rojo); padding:8px; border-radius:10px; cursor:pointer">Desbloquear Horario</button>`}
                 </div>`;
         }
 
-        window.filtrarCitas = () => {
-            const nom = document.getElementById("busquedaNombre").value.toLowerCase();
-            const fec = document.getElementById("busquedaFecha").value;
-            const res = document.getElementById("resultadosBusqueda");
-            const filtrados = todasLasReservas.filter(r => {
-                const coincideNombre = (r.nombreReal || r.clienteNombre).toLowerCase().includes(nom);
-                const coincideFecha = fec ? r.fecha === fec : true;
-                return coincideNombre && coincideFecha && r.dni !== "BLOQUEO";
-            }).sort((a,b) => b.fecha.localeCompare(a.fecha));
-            res.innerHTML = filtrados.length ? filtrados.map(r => renderTarjeta(r)).join('') : '<p style="text-align:center; opacity:0.5">No se encontraron citas</p>';
+        window.enviarW = async (tel, nombre, fecha, hora, servicio, accion) => {
+            if (!tel) return alert("Sin teléfono");
+            let num = tel.toString().replace(/\D/g, ""); 
+            if (!num.startsWith("549")) num = "549" + num.slice(-10);
+            
+            let tName = (accion === 'confirmar') ? "turno_confirmado" : (accion === 'recordar') ? "recordatorio_turno" : "turno_cancelado";
+            let tLang = (accion === 'confirmar') ? "en" : "es_AR"; // Confirmar está en English según tu panel[cite: 8]
+
+            const payload = {
+                messaging_product: "whatsapp", to: num, type: "template",
+                template: { name: tName, language: { code: tLang },
+                    components: [{ type: "body", parameters: [
+                        { type: "text", text: nombre }, { type: "text", text: servicio },
+                        { type: "text", text: fecha.split('-').reverse().join('/') }, { type: "text", text: hora }
+                    ]}]
+                }
+            };
+
+            try {
+                const res = await fetch(`https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`, {
+                    method: "POST", headers: { "Authorization": `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) alert("Mensaje enviado");
+            } catch (e) { alert("Error"); }
         };
 
-        window.filtrarHistorias = () => {
-            const nom = document.getElementById("filtroHistorias").value.toLowerCase();
-            const res = document.getElementById("listaHistoriasReal");
-            const filtradas = todasLasHistorias.filter(h => (h.nombre || "").toLowerCase().includes(nom));
-            res.innerHTML = filtradas.map(h => `
-                <div class="detalle-dia-card">
-                    <b>${h.nombre}</b><br><small>DNI: ${h.dni}</small><br>
-                    <button class="btn-save" style="margin-top:10px;" onclick="verFicha('${h.id}')">Ver Ficha Completa</button>
-                </div>`).join('');
-        };
-
-        window.confirmarBloqueo = async (f, h) => {
-            if(confirm(`¿Bloquear turno de las ${h} hs para el día ${f}?`)) {
-                const id = "b_" + Date.now();
-                const obj = { clienteNombre: "BLOQUEADO POR ADMIN", dni: "BLOQUEO", fecha: f, hora: h, servicio: "Cerrado por Admin" };
-                await setDoc(doc(db, "reservas", id), obj);
+        window.eliminarYNotificar = async (id, tel, nombre, fecha, hora, servicio) => {
+            if (confirm("¿Eliminar turno?")) {
+                if (confirm("¿Notificar cancelación?")) await enviarW(tel, nombre, fecha, hora, servicio, 'cancelar');
+                await deleteDoc(doc(db, "reservas", id));
                 cargarTodo();
             }
         };
 
-        window.eliminarTurno = async (id) => { if(confirm("¿Estás seguro de eliminar/desbloquear?")) { await deleteDoc(doc(db, "reservas", id)); cargarTodo(); } };
         window.navegar = (s) => { 
             document.querySelectorAll('.section, .btn-nav').forEach(x => x.classList.remove('active')); 
             document.getElementById(`sec-${s}`).classList.add('active'); 
@@ -227,72 +176,8 @@
         };
         window.cambiarMes = (n) => { fechaActual.setMonth(fechaActual.getMonth() + n); renderCalendario(); };
         window.guardarN = async (id) => { 
-            const n = document.getElementById(`n-${id}`).value; 
-            await updateDoc(doc(db, "reservas", id), { detalleSesion: n }); 
-            alert("Nota actualizada correctamente"); 
-            cargarTodo(); 
-        };
-        
-        window.enviarW = async (tel, nombre, fecha, hora, servicio, accion) => {
-            if (!tel || tel === "undefined") {
-                alert("Atención: Este paciente no tiene un número de teléfono guardado o es inválido.");
-                return;
-            }
-
-            // LIMPIEZA DE NÚMERO EXTREMA (Igual al confirmar)
-            let num = tel.toString().replace(/\D/g, ""); 
-            if (num.startsWith("0")) num = num.substring(1);
-            if (num.startsWith("54")) num = num.substring(2);
-            if (num.startsWith("9")) num = num.substring(1);
-            if (num.length === 12 && (num.includes("15", 2) || num.includes("15", 3) || num.includes("15", 4))) {
-                num = num.replace("15", "");
-            }
-            if (num.length === 10) num = "549" + num;
-            else if (!num.startsWith("549")) num = "549" + num;
-
-            const fL = fecha.split('-').reverse().slice(0,2).join('/');
-            let t = (accion==='confirmar') ? "turno_confirmado" : (accion==='recordar') ? "recordatorio_de_cita" : "turno_cancelado";
-            
-            try {
-                // FIJADO EN VERSIÓN v18.0 PARA EVITAR EL ERROR 404
-                const res = await fetch(`https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`, {
-                    method: "POST", 
-                    headers: { 
-                        "Authorization": `Bearer ${WHATSAPP_TOKEN}`, 
-                        "Content-Type": "application/json" 
-                    },
-                    body: JSON.stringify({ 
-                        messaging_product: "whatsapp", 
-                        to: num, 
-                        type: "template", 
-                        template: { 
-                            name: t, 
-                            language: { code: "es_AR" }, 
-                            components: [{ 
-                                type: "body", 
-                                parameters: [
-                                    {type:"text", text: String(nombre || "Cliente")}, 
-                                    {type:"text", text: String(servicio || "Tratamiento")}, 
-                                    {type:"text", text: String(fL)}, 
-                                    {type:"text", text: String(hora + " hs")}
-                                ]
-                            }] 
-                        } 
-                    })
-                });
-
-                const data = await res.json();
-                
-                if(data.error) {
-                    console.error("Error de Meta (WhatsApp):", data.error);
-                    alert("No se pudo enviar el mensaje a " + nombre + ".\nMotivo: " + data.error.message);
-                } else {
-                    alert("Mensaje enviado con éxito a " + nombre);
-                }
-            } catch(e) { 
-                console.error("Fallo de conexión enviando WhatsApp:", e);
-                alert("Error de red al intentar enviar el WhatsApp."); 
-            }
+            await updateDoc(doc(db, "reservas", id), { detalleSesion: document.getElementById(`n-${id}`).value }); 
+            alert("Nota guardada"); 
         };
 
         cargarTodo();
