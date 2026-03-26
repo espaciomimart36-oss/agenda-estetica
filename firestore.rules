@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    function esAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "espaciomimart36@gmail.com";
+    }
+
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    // ── clients ──────────────────────────────────────────────────────────────
+    // Admin: lectura y escritura total.
+    // Cliente autenticado: solo puede leer/editar su propio documento.
+    match /clients/{clientId} {
+      allow read:   if esAdmin() || (estaAutenticado() && request.auth.uid == clientId);
+      allow write:  if esAdmin() || (estaAutenticado() && request.auth.uid == clientId);
+    }
+
+    // ── reservas ─────────────────────────────────────────────────────────────
+    match /reservas/{reservaId} {
+      allow read:  if estaAutenticado();
+      allow write: if esAdmin();
+    }
+
+    // ── historias ────────────────────────────────────────────────────────────
+    match /historias/{historiaId} {
+      allow read:  if estaAutenticado();
+      allow write: if esAdmin();
+    }
+
+    // ── horarios ─────────────────────────────────────────────────────────────
+    match /horarios/{horarioId} {
+      allow read:  if estaAutenticado();
+      allow write: if esAdmin();
+    }
+
+    // ── calendarExceptions (bloqueos) ────────────────────────────────────────
+    match /calendarExceptions/{excId} {
+      allow read:  if estaAutenticado();
+      allow write: if esAdmin();
+    }
+
+    // ── configuracion ────────────────────────────────────────────────────────
+    match /configuracion/{docId} {
+      allow read:  if estaAutenticado();
+      allow write: if esAdmin();
+    }
+
+    // ── services ─────────────────────────────────────────────────────────────
+    match /services/{serviceId} {
+      allow read:  if true;
+      allow write: if esAdmin();
+    }
+
+  }
+}
