@@ -896,7 +896,7 @@
                         <button class="btn-ws btn-recordar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','recordar')">Recordar</button>
                         <button class="btn-ws btn-cancelar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','cancelar')">Cancelar</button>
                     </div>
-                    ${tieneNota ? `<button onclick="enviarDetalleManual('${r.id}')" style="width:100%; margin-top:8px; padding:10px; border-radius:10px; border:none; background:#25d366; color:white; font-weight:700; cursor:pointer; font-size:13px">📲 Enviar resumen de sesión</button>` : ''}
+                    <button onclick="enviarDetalleManual('${r.id}')" style="width:100%; margin-top:8px; padding:10px; border-radius:10px; border:none; background:#25d366; color:white; font-weight:700; cursor:pointer; font-size:13px">📲 Enviar resumen de sesión</button>
                 </div>`;
             }).join('') : '<p style="text-align:center; opacity:0.5">Sin turnos.</p>';
 
