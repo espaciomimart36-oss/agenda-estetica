@@ -8,9 +8,16 @@
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f4f4f4; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        .info-box { background: #f9f9f9; padding: 15px; border-radius: 10px; text-align: left; margin-bottom: 20px; border-left: 4px solid #72bd99; }
-        .btn-confirmar { background-color: #72bd99; color: white; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; font-size: 16px; width: 100%; transition: 0.3s; }
-        .btn-confirmar:disabled { background-color: #ccc; cursor: not-allowed; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #f6fff8, #e5f7ec); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2.2rem; border-radius: 20px; box-shadow: 0 14px 36px rgba(0,0,0,0.12); width: 100%; max-width: 430px; text-align: center; color: #2c3e3a; }
+        h2 { margin-top: 0; color: #2f7261; letter-spacing: 0.3px; }
+        .info-box { background: #fcfffe; padding: 18px; border-radius: 14px; text-align: left; margin-bottom: 20px; border: 1px solid #d7f1e7; position: relative; }
+        .info-box p { margin: 8px 0; font-size: 0.95rem; }
+        .info-box p span { font-weight: 600; color: #344d46; }
+        .info-box small { display: block; margin-top: 10px; color: #5c7d75; font-size: 0.83rem; }
+        .btn-confirmar { background-color: #3f8f6f; color: white; border: none; padding: 14px 25px; border-radius: 30px; cursor: pointer; font-size: 17px; width: 100%; transition: transform 0.25s ease, opacity 0.2s ease; box-shadow: 0 8px 20px rgba(63, 143, 111, 0.35); }
+        .btn-confirmar:hover:not(:disabled) { transform: translateY(-2px); }
+        .btn-confirmar:disabled { background-color: #b8d1c4; cursor: not-allowed; opacity: 0.85; }
         #modalConfirmado { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; color: white; flex-direction: column; z-index: 1000; }
     </style>
 </head>
@@ -19,11 +26,10 @@
     <div class="card">
         <h2>Confirmar Turno</h2>
         <div class="info-box">
-            <p><strong>CLIENTE:</strong> <span id="txtNombre">Cargando...</span></p>
-            <p><strong>TELÉFONO:</strong> <span id="txtTelefono">Buscando en base de datos...</span></p>
-            <p><strong>SERVICIO:</strong> <span id="txtServicio">Cargando...</span></p>
-            <p><strong>DÍA:</strong> <span id="txtFecha">Cargando...</span></p>
-            <p><strong>HORA:</strong> <span id="txtHora">Cargando...</span></p>
+            <p>¡Hola <span id="txtNombre">Cargando...</span>! 😊</p>
+            <p><span id="txtServicio">Cargando...</span> - <span id="txtFecha">Cargando...</span> a las <span id="txtHora">Cargando...</span></p>
+            <p>Te contactaremos al: <span id="txtTelefono">Buscando en base de datos...</span></p>
+            <small>Revisá tu turno y confirma para finalizar.</small>
         </div>
         <button id="btnConfirmar" class="btn-confirmar" disabled>Cargando datos...</button>
     </div>
@@ -88,7 +94,7 @@
                         boton.innerText = "Falta teléfono en ficha";
                     }
                 } else {
-                    document.getElementById("txtTelefono").innerText = "Cliente no registrado";
+                    document.getElementById("txtTelefono").innerText = "Usuario no registrado";
                     boton.innerText = "Error de registro";
                 }
             } catch (error) {
