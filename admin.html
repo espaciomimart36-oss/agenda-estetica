@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Mimar T | Gestión Completa</title>
+    <title>Admin Mimar T | Gestión Total</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
         :root { --verde: #72bd99; --verde-oscuro: #3f8f6f; --rojo: #ff4d4d; --azul: #4a90e2; --texto: #2c3e3a; --whatsapp: #25D366; }
         body { font-family: 'Montserrat', sans-serif; background: #f4f7f6; margin: 0; color: var(--texto); padding-bottom: 50px; }
+        
+        /* LOGIN */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f7f6; z-index: 99999; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; }
+        .login-box h2 { font-family: 'Playfair Display', serif; color: var(--verde-oscuro); margin-bottom: 25px; }
+        .login-box input { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; font-size: 16px; outline: none; }
+        .btn-entrar { width: 100%; padding: 15px; background: var(--verde); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 16px; }
+
+        /* NAVEGACIÓN */
         .header { background: white; padding: 15px; text-align: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
         .menu-nav { margin-top: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .btn-nav { padding: 8px 20px; border: 1px solid #eee; background: white; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.3s; }
@@ -15,120 +24,95 @@
         .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
         .section { display: none; }
         .section.active { display: block; }
+        #admin-content { display: none; }
+
+        /* CALENDARIO */
         .calendar-container { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; margin-top: 15px; }
         .day-name { font-size: 10px; color: #aaa; font-weight: 600; text-transform: uppercase; padding-bottom: 5px; }
         .day { padding: 12px 5px; border-radius: 10px; font-size: 13px; cursor: pointer; border: 1px solid #f8f8f8; background: white; transition: 0.2s; }
         .day.has-reserva { background: #fff0f0; border: 1.5px solid var(--rojo); color: var(--rojo); font-weight: 600; }
         .day.selected { background: var(--verde) !important; color: white !important; }
-        .detalle-dia-card { background: white; border-radius: 20px; padding: 20px; margin-top: 20px; border-top: 4px solid var(--verde); box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left; }
+
+        /* CARDS */
+        .detalle-dia-card { background: white; border-radius: 20px; padding: 20px; margin-top: 20px; border-top: 4px solid var(--verde); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         textarea { width: 100%; height: 80px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; box-sizing: border-box; margin-top: 10px; }
         .btn-save { width: 100%; background: var(--verde); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 5px; }
+
+        /* BOTONES WHATSAPP */
         .grid-acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
-        .btn-ws { border: none; padding: 10px 5px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 11px; color: white; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .btn-ws { border: none; padding: 10px 5px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 11px; color: white; text-align: center; }
         .btn-confirmar { background: var(--whatsapp); }
         .btn-recordar { background: var(--azul); }
         .btn-cancelar { background: var(--rojo); }
-        .busc-input { width: 100%; padding: 12px; border-radius: 15px; border: 1px solid #ddd; margin-bottom: 15px; box-sizing: border-box; font-family: inherit; outline: none; }
+
+        .busc-input { width: 100%; padding: 12px; border-radius: 15px; border: 1px solid #ddd; margin-bottom: 15px; box-sizing: border-box; outline: none; }
         .tag-fecha { background: #eee; padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; color: #666; }
 
-        /* Estilos nuevos para Exportación */
-        .grid-export { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .item-export { background: white; padding: 10px; border-radius: 10px; border: 1px solid #eee; font-size: 11px; line-height: 1.4; }
-        h2.print-only { display: none; }
-
-        @media print {
-            .header, .menu-nav, .busc-input, .btn-save, .grid-acciones, .calendar-container, #panelDetalleDia { display: none !important; }
-            .section { display: none !important; }
-            #sec-export { display: block !important; }
-            .grid-export { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 15px; }
-            .item-export { border: 1px solid #eee; page-break-inside: avoid; }
-            h2.print-only { display: block !important; text-align: center; font-family: 'Playfair Display'; margin-bottom: 20px; }
-        }
-
-        /* --- ESTILOS NOTIFICACIÓN PROLIJA Y CENTRADA (LO ÚNICO QUE CAMBIÉ) --- */
-        #toast-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* Centrado perfecto */
-            z-index: 9999;
-            pointer-events: none; /* No interrumpe clics */
-        }
-
-        .toast {
-            background: rgba(114, 189, 153, 0.9); /* Verde suave con transparencia */
-            color: white;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 14px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            backdrop-filter: blur(5px); /* Efecto esmerilado delicado */
-            border: 1px solid rgba(255,255,255,0.2);
-            opacity: 0;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            transform: translateY(20px); /* Empieza un poco abajo */
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 200px;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0) translate(-50%, -50%); /* Se arregla el transform al mostrar */
-            pointer-events: auto;
-        }
-        /* Ajuste necesario para el centrado dinámico de múltiples toasts si los hubiera */
-        #toast-container .toast.show {
-            transform: translateY(0);
-        }
+        /* TOAST */
+        #toast-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 999999; pointer-events: none; }
+        .toast { background: rgba(114, 189, 153, 0.9); color: white; padding: 15px 30px; border-radius: 25px; font-weight: 600; opacity: 0; transition: 0.4s; }
+        .toast.show { opacity: 1; }
+        
+        /* EXPORT */
+        .btn-export-main { background: var(--verde-oscuro); color: white; border: none; padding: 20px; border-radius: 15px; width: 100%; font-weight: 600; cursor: pointer; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <div id="toast-container"></div>
-
-    <div class="header">
-        <h2 style="font-family:'Playfair Display'; margin:0; color:var(--verde-oscuro)">Gimena Knack | Panel</h2>
-        <div class="menu-nav">
-            <button class="btn-nav active" id="btn-agenda" onclick="navegar('agenda')">📅 Agenda</button>
-            <button class="btn-nav" id="btn-historias" onclick="navegar('historias')">📁 Historias</button>
-            <button class="btn-nav" id="btn-buscar" onclick="navegar('buscar')">🔍 Buscar</button>
-            <button class="btn-nav" id="btn-export" onclick="navegar('export')">📄 Exportar</button>
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Acceso Mimar T</h2>
+            <input type="text" id="userAdmin" placeholder="Usuario">
+            <input type="password" id="passAdmin" placeholder="Contraseña">
+            <button class="btn-entrar" id="btnEntrarSeguro">Ingresar</button>
+            <p id="error-login" style="color:red; font-size:13px; margin-top:10px; display:none;">Incorrecto</p>
         </div>
     </div>
 
-    <div class="container">
-        <div id="sec-agenda" class="section active">
-            <div class="calendar-container">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <button onclick="cambiarMes(-1)" style="border:none; background:none; cursor:pointer;">◀</button>
-                    <h3 id="monthTitle" style="font-family:'Playfair Display'; margin:0; text-transform: capitalize;"></h3>
-                    <button onclick="cambiarMes(1)" style="border:none; background:none; cursor:pointer;">▶</button>
-                </div>
-                <div class="calendar-grid" id="calendarGrid"></div>
+    <div id="admin-content">
+        <div id="toast-container"></div>
+        <div class="header">
+            <h2 style="font-family:'Playfair Display'; margin:0; color:var(--verde-oscuro)">Gimena Knack | Panel</h2>
+            <div class="menu-nav">
+                <button class="btn-nav active" id="btn-agenda" onclick="navegar('agenda')">📅 Agenda</button>
+                <button class="btn-nav" id="btn-historias" onclick="navegar('historias')">📁 Historias</button>
+                <button class="btn-nav" id="btn-buscar" onclick="navegar('buscar')">🔍 Buscar</button>
+                <button class="btn-nav" id="btn-export" onclick="navegar('export')">📄 Exportar</button>
+                <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
             </div>
-            <div id="panelDetalleDia"></div>
         </div>
 
-        <div id="sec-historias" class="section">
-            <input type="text" class="busc-input" id="inpBusHistorias" placeholder="Buscar paciente o DNI..." oninput="filtrarHistorias()">
-            <div id="contenedorHistorias"></div>
-        </div>
+        <div class="container">
+            <div id="sec-agenda" class="section active">
+                <div class="calendar-container">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <button onclick="cambiarMes(-1)" style="border:none; background:none; cursor:pointer;">◀</button>
+                        <h3 id="monthTitle" style="font-family:'Playfair Display'; margin:0; text-transform: capitalize;"></h3>
+                        <button onclick="cambiarMes(1)" style="border:none; background:none; cursor:pointer;">▶</button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                </div>
+                <div id="panelDetalleDia"></div>
+            </div>
 
-        <div id="sec-buscar" class="section">
-            <input type="text" class="busc-input" id="inpBusReservas" placeholder="Nombre del paciente para ver sus turnos..." oninput="filtrarReservas()">
-            <div id="contenedorBusqueda"></div>
-        </div>
+            <div id="sec-historias" class="section">
+                <input type="text" class="busc-input" id="inpBusHistorias" placeholder="Buscar paciente o DNI..." oninput="filtrarHistorias()">
+                <div id="contenedorHistorias"></div>
+            </div>
 
-        <div id="sec-export" class="section">
-            <h2 class="print-only">Reporte de Reservas - Mimar T</h2>
-            <button class="btn-save" onclick="prepararImpresion()" style="background: var(--azul); margin-bottom: 15px;">💾 Descargar PDF / Imprimir</button>
-            <div class="grid-export" id="contenedorExport"></div>
+            <div id="sec-buscar" class="section">
+                <input type="text" class="busc-input" id="inpBusReservas" placeholder="Nombre del paciente..." oninput="filtrarReservas()">
+                <div id="contenedorBusqueda"></div>
+            </div>
+
+            <div id="sec-export" class="section">
+                <div class="detalle-dia-card">
+                    <h3 style="margin-top:0">Reportes de Reservas</h3>
+                    <p style="font-size:14px; color:#666">Descarga todas las reservas registradas en formato CSV para abrir en Excel.</p>
+                    <button class="btn-export-main" onclick="exportarCSV()">📥 Descargar Todo (.csv)</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -140,112 +124,84 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const WHATSAPP_TOKEN = "EAAMzA3ngIUkBRMpXw5ZBCCzVCFZAum3yF3dcHlgOPZAigiAIXERNfxpGfq21VCEgiByPN5xhm9mZBUyJ0WWqTl0xoB8ZBEs8EEh2FVC82aDHizTv0bKvMrcH7mkO99svZCMymZAi07nnmnBZCeHlI8XdnMBfJI1pnjVFWQZCdCIOBZA8fDa71OuvkVZCJu5bTR91wZDZD";
-        const PHONE_NUMBER_ID = "995248997010108";
+        const CREDENCIALES = { usuario: "GimenaAdmin", clave: "Mimar2026" };
+
+        document.getElementById("btnEntrarSeguro").addEventListener("click", () => {
+            if (document.getElementById("userAdmin").value === CREDENCIALES.usuario && document.getElementById("passAdmin").value === CREDENCIALES.clave) {
+                sessionStorage.setItem("mimar_auth", "true");
+                validarAcceso();
+            } else { document.getElementById("error-login").style.display = "block"; }
+        });
+
+        window.cerrarSesion = () => { sessionStorage.removeItem("mimar_auth"); location.reload(); };
+
+        function validarAcceso() {
+            if (sessionStorage.getItem("mimar_auth") === "true") {
+                document.getElementById("login-overlay").style.display = "none";
+                document.getElementById("admin-content").style.display = "block";
+                cargarTodo();
+            }
+        }
 
         let fechaActual = new Date();
         let todasLasReservas = [];
-        let todosLosClientes = [];
         let todasLasHistorias = [];
-        let fechaSeleccionadaGlobal = "";
-
-        // --- SISTEMA DE NOTIFICACIÓN DELICADO Y CENTRADO (NUEVO) ---
-        window.mostrarAviso = (mensaje) => {
-            const container = document.getElementById("toast-container");
-            const toast = document.createElement("div");
-            toast.className = "toast";
-            toast.innerText = mensaje;
-            container.appendChild(toast);
-
-            // Trigger reflow para la animación
-            toast.offsetHeight;
-
-            toast.classList.add("show");
-
-            setTimeout(() => {
-                toast.classList.remove("show");
-                setTimeout(() => container.removeChild(toast), 400); // Borrar del DOM tras la animación
-            }, 3000);
-        };
 
         async function cargarTodo() {
-            const [snapR, snapC, snapH] = await Promise.all([
-                getDocs(collection(db, "reservas")),
-                getDocs(collection(db, "clients")),
-                getDocs(collection(db, "historias"))
-            ]);
-            
+            const [snapR, snapH] = await Promise.all([getDocs(collection(db, "reservas")), getDocs(collection(db, "historias"))]);
             todasLasReservas = snapR.docs.map(d => ({ id: d.id, ...d.data() }));
-            todosLosClientes = snapC.docs.map(d => ({ ...d.data() }));
             todasLasHistorias = snapH.docs.map(d => ({ id: d.id, ...d.data() }));
-            
             renderCalendario();
             renderHistorias(todasLasHistorias);
-            if(fechaSeleccionadaGlobal) verTurnos(fechaSeleccionadaGlobal);
         }
 
-        // --- NUEVA FUNCIÓN PARA RENDERIZAR EXPORTACIÓN ---
-        window.renderExportar = () => {
-            const contenedor = document.getElementById("contenedorExport");
-            if(todasLasReservas.length === 0) {
-                 contenedor.innerHTML = '<p style="text-align:center; opacity:0.5">No hay reservas para exportar.</p>';
-                 return;
-            }
-            const ordenadas = [...todasLasReservas].sort((a, b) => {
-                return new Date(`${a.fecha}T${a.hora}`) - new Date(`${b.fecha}T${b.hora}`);
-            });
-
-            contenedor.innerHTML = ordenadas.map(r => `
-                <div class="item-export">
-                    <strong style="color:var(--verde-oscuro)">${r.fecha.split('-').reverse().join('/')} - ${r.hora}hs</strong><br>
-                    <b>${r.clienteNombre || 'Sin nombre'}</b><br>
-                    <small>${r.servicio || '-'}</small>
-                </div>
-            `).join('');
+        window.enviarW = (tel, nombre, fecha, hora, servicio, accion) => {
+            const f = fecha.split('-').reverse().join('/');
+            let msj = "";
+            if(accion === 'confirmar') msj = `Hola ${nombre}, te confirmo tu turno para ${servicio} el día ${f} a las ${hora} hs.`;
+            if(accion === 'recordar') msj = `Hola ${nombre}, te recordamos tu turno de hoy ${f} a las ${hora} hs.`;
+            if(accion === 'cancelar') msj = `Hola ${nombre}, lamentamos informarte que debemos cancelar tu turno del ${f}.`;
+            const num = tel.replace(/\D/g, '');
+            window.open(`https://wa.me/${num.startsWith('54') ? num : '54' + num}?text=${encodeURIComponent(msj)}`, '_blank');
         };
 
-        // Función para preparar la impresión y avisar delicadamente
-        window.prepararImpresion = () => {
-            mostrarAviso("Generando vista de impresión...");
-            setTimeout(() => {
-                window.print();
-            }, 500);
-        }
+        window.verTurnos = (f, el) => {
+            document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
+            if(el) el.classList.add('selected');
+            const filtrados = todasLasReservas.filter(r => r.fecha === f).sort((a,b) => a.hora.localeCompare(b.hora));
+            document.getElementById("panelDetalleDia").innerHTML = filtrados.length ? filtrados.map(r => `
+                <div class="detalle-dia-card">
+                    <b>${r.clienteNombre || r.nombre || 'Sin nombre'}</b> - ${r.hora} hs<br>
+                    <small>${r.servicio || 'Servicio'}</small>
+                    <textarea id="n-${r.id}">${r.detalleSesion || ''}</textarea>
+                    <button class="btn-save" onclick="guardarN('${r.id}')">Guardar Nota</button>
+                    <div class="grid-acciones">
+                        <button class="btn-ws btn-confirmar" onclick="enviarW('${r.phone || r.telefono || ''}','${r.clienteNombre || r.nombre}','${r.fecha}','${r.hora}','${r.servicio}','confirmar')">Confirmo</button>
+                        <button class="btn-ws btn-recordar" onclick="enviarW('${r.phone || r.telefono || ''}','${r.clienteNombre || r.nombre}','${r.fecha}','${r.hora}','${r.servicio}','recordar')">Recordar</button>
+                        <button class="btn-ws btn-cancelar" onclick="enviarW('${r.phone || r.telefono || ''}','${r.clienteNombre || r.nombre}','${r.fecha}','${r.hora}','${r.servicio}','cancelar')">Cancelar</button>
+                    </div>
+                </div>`).join('') : '<p style="text-align:center; opacity:0.5">Sin turnos.</p>';
+        };
 
-        // --- LÓGICA DE BÚSQUEDA DE RESERVAS (ORIGINAL) ---
         window.filtrarReservas = () => {
             const txt = document.getElementById("inpBusReservas").value.toLowerCase();
             const contenedor = document.getElementById("contenedorBusqueda");
-            if(txt.length < 2) { contenedor.innerHTML = '<p style="text-align:center; opacity:0.5">Escribí al menos 2 letras...</p>'; return; }
-            const filtradas = todasLasReservas.filter(r => r.clienteNombre?.toLowerCase().includes(txt))
-                .sort((a, b) => new Date(`${a.fecha}T${a.hora}`) - new Date(`${b.fecha}T${b.hora}`));
-            if(filtradas.length === 0) { contenedor.innerHTML = '<p style="text-align:center; opacity:0.5">No se encontraron turnos.</p>'; return; }
+            if(txt.length < 2) { contenedor.innerHTML = ''; return; }
+            const filtradas = todasLasReservas.filter(r => (r.clienteNombre || r.nombre || "").toLowerCase().includes(txt)).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
             contenedor.innerHTML = filtradas.map(r => `
-                <div class="detalle-dia-card" style="border-top-color: ${new Date(r.fecha) < new Date().setHours(0,0,0,0) ? '#ccc' : 'var(--verde)'}">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span class="tag-fecha">${r.fecha.split('-').reverse().join('/')} - ${r.hora} hs</span>
-                        <small style="color:var(--verde-oscuro); font-weight:600">${r.servicio}</small>
-                    </div>
-                    <b>${r.clienteNombre}</b>
-                    <p style="font-size:12px; margin: 8px 0 0 0; color:#666 italic">
-                        ${r.detalleSesion ? '📝 ' + r.detalleSesion : '<i>Sin notas</i>'}
-                    </p>
+                <div class="detalle-dia-card">
+                    <span class="tag-fecha">${r.fecha.split('-').reverse().join('/')}</span>
+                    <b>${r.clienteNombre || r.nombre}</b> - ${r.servicio || 'Servicio'}
                 </div>`).join('');
         };
 
-        // --- LÓGICA DE HISTORIAS (ORIGINAL) ---
         window.renderHistorias = (datos) => {
-            const lista = document.getElementById("contenedorHistorias");
-            if (datos.length === 0) { lista.innerHTML = '<p style="text-align:center; opacity:0.5">No hay historias</p>'; return; }
-            lista.innerHTML = datos.map(h => `
+            document.getElementById("contenedorHistorias").innerHTML = datos.map(h => `
                 <div class="detalle-dia-card" style="border-top-color: var(--azul)">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <b style="font-size: 16px; color: var(--verde-oscuro)">${h.nombre || 'Sin nombre'}</b>
-                        <small style="background:#f0f0f0; padding:2px 6px; border-radius:5px;">DNI: ${h.dni || '-'}</small>
-                    </div>
-                    <div style="font-size: 12px; margin-top: 10px; line-height: 1.6;">
-                        <strong>Medicación:</strong> ${h.medicacion || 'No toma'}<br>
-                        <strong>Enfermedad:</strong> ${h.enfermedad || 'Ninguna'}<br>
+                    <b>${h.nombre || 'Sin nombre'}</b> (DNI: ${h.dni || '-'})<br>
+                    <div style="font-size: 12px; margin-top: 5px; color: #555;">
+                        <strong>Medicación:</strong> ${h.medicacion || 'No'}<br>
+                        <strong>Enfermedad:</strong> ${h.enfermedad || 'No'}<br>
                         <strong>Objetivo:</strong> ${h.objetivo || '-'}
                     </div>
                 </div>`).join('');
@@ -253,33 +209,20 @@
 
         window.filtrarHistorias = () => {
             const txt = document.getElementById("inpBusHistorias").value.toLowerCase();
-            const f = todasLasHistorias.filter(h => h.nombre?.toLowerCase().includes(txt) || h.dni?.toString().includes(txt));
-            renderHistorias(f);
+            renderHistorias(todasLasHistorias.filter(h => h.nombre?.toLowerCase().includes(txt) || h.dni?.toString().includes(txt)));
         };
 
-        // --- FUNCIONES AGENDA (ORIGINAL) ---
-        window.verTurnos = (f, el) => {
-            fechaSeleccionadaGlobal = f;
-            document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
-            if(el) el.classList.add('selected');
-            const filtrados = todasLasReservas.filter(r => r.fecha === f).sort((a,b) => a.hora.localeCompare(b.hora));
-            document.getElementById("panelDetalleDia").innerHTML = filtrados.length ? filtrados.map(r => `
-                <div class="detalle-dia-card">
-                    <b>${r.clienteNombre || 'Sin nombre'}</b> - ${r.hora} hs<br>
-                    <small>${r.servicio || 'Estética'}</small>
-                    <textarea id="n-${r.id}" placeholder="Notas...">${r.detalleSesion || ''}</textarea>
-                    <button class="btn-save" onclick="guardarN('${r.id}')">Guardar Nota</button>
-                    <div class="grid-acciones">
-                        <button class="btn-ws btn-confirmar" onclick="enviarW('${r.phone || r.telefono}','${r.clienteNombre}','${r.fecha}','${r.hora}','${r.servicio}','confirmar')">✅ Conf.</button>
-                        <button class="btn-ws btn-recordar" onclick="enviarW('${r.phone || r.telefono}','${r.clienteNombre}','${r.fecha}','${r.hora}','${r.servicio}','recordar')">🔔 Rec.</button>
-                        <button class="btn-ws btn-cancelar" onclick="alertarBorrado('${r.clienteNombre}')">❌ Canc.</button>
-                    </div>
-                </div>`).join('') : '<p style="text-align:center; opacity:0.5">Sin turnos agendados para hoy.</p>';
+        window.exportarCSV = () => {
+            let csv = "Fecha,Hora,Nombre,Servicio,Telefono,Nota\n";
+            todasLasReservas.sort((a,b) => new Date(a.fecha) - new Date(b.fecha)).forEach(r => {
+                csv += `${r.fecha},${r.hora},${r.clienteNombre || r.nombre},${r.servicio},${r.phone || r.telefono || ''},"${r.detalleSesion || ''}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `reservas_mimar_t_${new Date().toLocaleDateString()}.csv`);
+            link.click();
         };
-
-        window.alertarBorrado = (nombre) => {
-            mostrarAviso(`⚠️ Para cancelar el turno de ${nombre}, por favor hacelo desde la App móvil.`);
-        }
 
         window.renderCalendario = () => {
             const grid = document.getElementById("calendarGrid");
@@ -292,56 +235,16 @@
             for (let d = 1; d <= diasMes; d++) {
                 const fStr = `${año}-${String(mes + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 const tiene = todasLasReservas.some(r => r.fecha === fStr);
-                const div = document.createElement("div"); 
-                div.className = `day ${tiene ? 'has-reserva' : ''} ${fechaSeleccionadaGlobal === fStr ? 'selected' : ''}`;
+                const div = document.createElement("div"); div.className = `day ${tiene ? 'has-reserva' : ''}`;
                 div.innerText = d; div.onclick = () => verTurnos(fStr, div); grid.appendChild(div);
             }
         };
 
-        window.enviarW = async (telOriginal, nombre, fecha, hora, servicio, accion) => {
-            let numFinal = telOriginal;
-            if (!numFinal || numFinal === "undefined") {
-                const clienteEncontrado = todosLosClientes.find(c => c.fullName === nombre);
-                if (clienteEncontrado && clienteEncontrado.phone) numFinal = clienteEncontrado.phone;
-                else return mostrarAviso(`⚠️ Error: ${nombre} no tiene teléfono cargado.`);
-            }
-            mostrarAviso(`⏳ Preparando mensaje para ${nombre}...`);
-            let numLimpio = numFinal.toString().replace(/\D/g, ""); 
-            if (numLimpio.length === 10) numLimpio = "549" + numLimpio;
-            const payload = {
-                messaging_product: "whatsapp", to: numLimpio, type: "template",
-                template: {
-                    name: (accion === 'confirmar') ? "turno_confirmado" : (accion === 'recordar') ? "recordatorio_turno" : "turno_cancelado",
-                    language: { code: (accion === 'confirmar') ? "en" : "es_AR" },
-                    components: [{ type: "body", parameters: [{type:"text",text:nombre},{type:"text",text:servicio},{type:"text",text:fecha.split('-').reverse().join('/')},{type:"text",text:hora}] }]
-                }
-            };
-            try { 
-                const response = await fetch(`https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`, { method: "POST", headers: { "Authorization": `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" }, body: JSON.stringify(payload) }); 
-                if(response.ok) {
-                    mostrarAviso(`✅ Mensaje enviado a ${nombre}`);
-                } else {
-                    mostrarAviso("❌ Error en la API de WhatsApp");
-                }
-            } catch (e) { mostrarAviso("❌ Error de conexión"); }
-        };
-
+        window.guardarN = async (id) => { await updateDoc(doc(db, "reservas", id), { detalleSesion: document.getElementById(`n-${id}`).value }); mostrarAviso("✅ Nota guardada"); cargarTodo(); };
+        window.mostrarAviso = (m) => { const c = document.getElementById("toast-container"); const t = document.createElement("div"); t.className = "toast show"; t.innerText = m; c.appendChild(t); setTimeout(() => { t.classList.remove("show"); setTimeout(() => c.removeChild(t), 400); }, 3000); };
         window.cambiarMes = (n) => { fechaActual.setMonth(fechaActual.getMonth() + n); renderCalendario(); };
-        
-        window.navegar = (s) => { 
-            document.querySelectorAll('.section, .btn-nav').forEach(x => x.classList.remove('active')); 
-            document.getElementById(`sec-${s}`).classList.add('active'); 
-            document.getElementById(`btn-${s}`).classList.add('active'); 
-            if(s === 'export') renderExportar();
-        };
-
-        window.guardarN = async (id) => { 
-            await updateDoc(doc(db, "reservas", id), { detalleSesion: document.getElementById(`n-${id}`).value }); 
-            mostrarAviso("✅ Nota guardada correctamente"); 
-            cargarTodo();
-        };
-
-        cargarTodo();
+        window.navegar = (s) => { document.querySelectorAll('.section, .btn-nav').forEach(x => x.classList.remove('active')); document.getElementById(`sec-${s}`).classList.add('active'); document.getElementById(`btn-${s}`).classList.add('active'); };
+        validarAcceso();
     </script>
 </body>
 </html>
