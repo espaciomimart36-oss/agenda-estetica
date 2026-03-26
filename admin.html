@@ -251,9 +251,19 @@
 
             <div id="sec-clientes" class="section">
                 <div style="position:relative; margin-bottom:10px">
-                    <input type="text" class="busc-input" id="inpBusPaciente" placeholder="🔍 Buscar paciente por nombre..." oninput="buscarPacienteNombreInput()" autocomplete="off" style="margin-bottom:0">
+                    <input type="text" class="busc-input" id="inpBusPaciente" placeholder="🔍 Buscar paciente por nombre..." oninput="buscarPacienteNombreInput(); filtrarListadoClientesInput()" autocomplete="off" style="margin-bottom:0">
                     <div id="sugerenciasPaciente" style="display:none; position:absolute; top:calc(100% + 2px); left:0; right:0; background:white; border:1px solid #cde5d8; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.1); z-index:200; max-height:220px; overflow-y:auto;"></div>
                 </div>
+                <div class="filtros-advanced" style="grid-template-columns: minmax(180px, 1fr) auto; margin-bottom:12px;">
+                    <select id="filtroTipoCliente" class="select-input" onchange="filtrarListadoClientes()">
+                        <option value="todos">Todos los clientes</option>
+                        <option value="membresia">Solo membresía</option>
+                        <option value="ocasional">Solo ocasionales</option>
+                    </select>
+                    <button class="btn-mini" onclick="limpiarFiltrosClientes()">Limpiar filtros</button>
+                </div>
+                <div id="resumenClientes" class="result-summary"></div>
+                <div id="contenedorClientes" style="display:grid; gap:8px; margin-bottom:12px;"></div>
                 <div class="detalle-dia-card">
                     <h3 style="margin-top:0">Alta / Actualización de Paciente</h3>
                     <p style="font-size:13px; color:#557b6b; margin:0 0 8px 0;">Completá al menos DNI, nombre y teléfono. Si el DNI ya existe, se actualiza el paciente.</p>
@@ -271,12 +281,15 @@
                     </div>
                     <div class="cliente-checks">
                         <label><input id="cliActivo" type="checkbox" checked> Activo</label>
+                        <label><input id="cliMembership" type="checkbox"> Membresía activa</label>
                         <label><input id="cliConsent" type="checkbox" checked> Consentimiento aceptado</label>
                         <label><input id="cliPolitica" type="checkbox" checked> Política aceptada</label>
                     </div>
                     <div class="quick-actions" style="margin-top:10px;">
                         <button class="btn-mini" onclick="buscarClientePorDni(true)">Cargar por DNI</button>
                         <button class="btn-mini" onclick="guardarCliente()">Guardar paciente</button>
+                        <button class="btn-mini" onclick="normalizarMembresiaClientes()">Normalizar membresías</button>
+                        <button class="btn-mini" onclick="marcarTodasMembresiaTrue()">Todo membresía = true</button>
                         <button class="btn-mini" onclick="cambiarIdCliente()">Cambiar ID</button>
                         <button class="btn-mini" onclick="limpiarFormularioCliente()">Limpiar</button>
                     </div>
@@ -289,6 +302,11 @@
                     <h3 style="margin-top:0">Reportes de Reservas</h3>
                     <p style="font-size:14px; color:#666">Descarga todas las reservas registradas en formato CSV para abrir en Excel.</p>
                     <button class="btn-export-main" onclick="exportarCSV()">📥 Descargar Todo (.csv)</button>
+                </div>
+                <div class="detalle-dia-card">
+                    <h3 style="margin-top:0">Reporte de Clientes</h3>
+                    <p style="font-size:14px; color:#666">Exporta todos los clientes con estado de membresía y datos de contacto.</p>
+                    <button class="btn-export-main" onclick="exportarClientesCSV()">📥 Descargar Clientes (.csv)</button>
                 </div>
             </div>
         </div>
@@ -564,8 +582,33 @@
         let horariosDisponibles = [];
         let bloqueosHorarios = new Map();
         let bloqueoPendienteConReserva = null;
+        let membresiaNormalizadaSesion = false;
 
         const esReservaActiva = (r) => (r?.estado || '').toString().toLowerCase() !== 'cancelado';
+        const resolverMembresiaActiva = (c = {}) => c.membershipActive === true || c.membresia === true;
+
+        const asegurarCampoMembresiaEnFirestore = async (docsClientes = []) => {
+            const pendientes = [];
+            docsClientes.forEach((d) => {
+                const c = d.data() || {};
+                const faltaMembershipActive = typeof c.membershipActive !== "boolean";
+                const faltaMembresia = typeof c.membresia !== "boolean";
+                if (!faltaMembershipActive && !faltaMembresia) return;
+
+                const membershipActive = resolverMembresiaActiva(c);
+                pendientes.push(
+                    setDoc(doc(db, "clients", d.id), {
+                        membershipActive,
+                        membresia: membershipActive,
+                        updatedAt: serverTimestamp()
+                    }, { merge: true })
+                );
+            });
+
+            if (!pendientes.length) return 0;
+            await Promise.all(pendientes);
+            return pendientes.length;
+        };
 
         const formatearTelefonoWhatsApp = (tel) => {
             let limpio = (tel || "").toString().replace(/\D/g, "");
@@ -713,9 +756,26 @@
                         });
                 });
 
+                if (!membresiaNormalizadaSesion) {
+                    const totalNormalizados = await asegurarCampoMembresiaEnFirestore(snapC.docs || []);
+                    if (totalNormalizados > 0) {
+                        membresiaNormalizadaSesion = true;
+                        mostrarAviso(`✅ Membresía normalizada automáticamente en ${totalNormalizados} cliente(s)`);
+                    }
+                }
+
                 todasLosPacientes = (snapC.docs || []).map(docCli => {
                     const c = docCli.data() || {};
-                    return { dni: docCli.id, fullName: c.fullName || c.nombre || "", phone: c.phone || "" };
+                    return {
+                        dni: docCli.id,
+                        fullName: c.fullName || c.nombre || "",
+                        phone: c.phone || "",
+                        email: c.email || "",
+                        username: c.username || "",
+                        active: c.active !== false,
+                        hoursBalance: c.hoursBalance ?? 0,
+                        membershipActive: resolverMembresiaActiva(c)
+                    };
                 }).filter(p => p.fullName).sort((a, b) => a.fullName.localeCompare(b.fullName));
 
                 todasLasReservas = snapR.docs.map(d => {
@@ -753,6 +813,7 @@
                 renderHistorias(todasLasHistorias);
                 actualizarKPIs();
                 poblarServiciosFiltro();
+                filtrarListadoClientes();
             } catch (error) {
                 console.error(error);
                 mostrarAviso("❌ Error al cargar datos");
@@ -985,6 +1046,30 @@
             link.click();
         };
 
+        window.exportarClientesCSV = () => {
+            let csv = "DNI,Nombre,Telefono,Email,Usuario,Activo,TipoCliente,MembresiaActiva,HoursBalance\n";
+            const clientesOrdenados = [...todasLosPacientes].sort((a, b) => (a.fullName || "").localeCompare(b.fullName || "", 'es'));
+            clientesOrdenados.forEach((c) => {
+                const row = [
+                    c.dni || "",
+                    c.fullName || "",
+                    c.phone || "",
+                    c.email || "",
+                    c.username || "",
+                    c.active === false ? "No" : "Si",
+                    c.membershipActive ? "Membresia" : "Ocasional",
+                    c.membershipActive ? "true" : "false",
+                    c.hoursBalance ?? 0
+                ].map(csvEscape).join(',');
+                csv += `${row}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `clientes_mimar_t_${new Date().toLocaleDateString()}.csv`);
+            link.click();
+        };
+
         window.renderCalendario = () => {
             const grid = document.getElementById("calendarGrid");
             grid.innerHTML = "";
@@ -1198,6 +1283,7 @@
             document.getElementById("cliEmail").value = "";
             document.getElementById("cliUsername").value = "";
             document.getElementById("cliActivo").checked = true;
+            document.getElementById("cliMembership").checked = false;
             document.getElementById("cliConsent").checked = true;
             document.getElementById("cliPolitica").checked = true;
             dniClienteCargado = "";
@@ -1223,6 +1309,7 @@
                 document.getElementById("cliEmail").value = c.email || "";
                 document.getElementById("cliUsername").value = c.username || "";
                 document.getElementById("cliActivo").checked = c.active !== false;
+                document.getElementById("cliMembership").checked = c.membershipActive === true || c.membresia === true;
                 document.getElementById("cliConsent").checked = c.consentimientoAceptado !== false;
                 document.getElementById("cliPolitica").checked = c.politicaAceptada !== false;
                 dniClienteCargado = dni;
@@ -1242,7 +1329,7 @@
             if (!coincidencias.length) { cont.style.display = "none"; return; }
             cont.innerHTML = coincidencias.map(p =>
                 `<div onclick="cargarPacienteDesdeBusqueda('${escapeHtml(p.dni)}')" style="padding:10px 14px; cursor:pointer; border-bottom:1px solid #f0f7f3; font-size:13px">
-                    <strong>${escapeHtml(p.fullName)}</strong> &nbsp;·&nbsp; DNI ${escapeHtml(p.dni)} &nbsp;·&nbsp; 📱 ${escapeHtml(p.phone || 'Sin tel')}
+                    <strong>${escapeHtml(p.fullName)}</strong> &nbsp;·&nbsp; DNI ${escapeHtml(p.dni)} &nbsp;·&nbsp; 📱 ${escapeHtml(p.phone || 'Sin tel')} &nbsp;·&nbsp; ${p.membershipActive ? 'Membresía' : 'Ocasional'}
                 </div>`
             ).join("");
             cont.style.display = "block";
@@ -1254,7 +1341,55 @@
             document.getElementById("sugerenciasPaciente").style.display = "none";
             const contForm = document.getElementById("sugerenciasNombreForm");
             if (contForm) contForm.style.display = "none";
+            filtrarListadoClientes();
             buscarClientePorDni(true);
+        };
+
+        window.filtrarListadoClientes = () => {
+            const txt = (document.getElementById("inpBusPaciente").value || "").toLowerCase().trim();
+            const tipo = document.getElementById("filtroTipoCliente")?.value || "todos";
+            const resumen = document.getElementById("resumenClientes");
+            const cont = document.getElementById("contenedorClientes");
+
+            const filtrados = todasLosPacientes.filter((p) => {
+                const okNombre = !txt || (p.fullName || "").toLowerCase().includes(txt);
+                const esMembresia = p.membershipActive === true;
+                const okTipo = tipo === "todos"
+                    || (tipo === "membresia" && esMembresia)
+                    || (tipo === "ocasional" && !esMembresia);
+                return okNombre && okTipo;
+            }).sort((a, b) => (a.fullName || "").localeCompare(b.fullName || "", 'es'));
+
+            if (resumen) {
+                resumen.textContent = `${filtrados.length} cliente(s) · ${filtrados.filter(c => c.membershipActive).length} con membresía activa`;
+            }
+
+            if (!cont) return;
+            if (!filtrados.length) {
+                cont.innerHTML = '<div class="empty-state">No hay clientes para ese filtro.</div>';
+                return;
+            }
+
+            cont.innerHTML = filtrados.map((p) => `
+                <div class="detalle-dia-card" style="margin-top:0; border-left-width:4px; border-left-color:${p.membershipActive ? '#3f8f6f' : '#8fa99d'}">
+                    <b>${escapeHtml(p.fullName || 'Sin nombre')}</b>
+                    <div style="margin-top:4px; font-size:13px; color:#4b6d5f;">
+                        DNI ${escapeHtml(p.dni || '-')} · 📱 ${escapeHtml(p.phone || 'Sin tel')}
+                    </div>
+                    <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
+                        <span class="pill ${p.membershipActive ? 'disponible' : 'bloqueado'}">${p.membershipActive ? 'Membresía activa' : 'Ocasional'}</span>
+                        <span class="pill reservado">Horas: ${escapeHtml((p.hoursBalance ?? 0).toString())}</span>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.filtrarListadoClientesInput = debounce(() => window.filtrarListadoClientes(), 180);
+        window.limpiarFiltrosClientes = () => {
+            document.getElementById("inpBusPaciente").value = "";
+            document.getElementById("filtroTipoCliente").value = "todos";
+            document.getElementById("sugerenciasPaciente").style.display = "none";
+            filtrarListadoClientes();
         };
 
         window.buscarPorNombreFormInput = debounce(() => {
@@ -1265,7 +1400,7 @@
             if (!coincidencias.length) { cont.style.display = "none"; return; }
             cont.innerHTML = coincidencias.map(p =>
                 `<div onclick="cargarPacienteDesdeBusqueda('${escapeHtml(p.dni)}')" style="padding:10px 14px; cursor:pointer; border-bottom:1px solid #f0f7f3; font-size:13px; hover:background:#f5fdf8">
-                    <strong>${escapeHtml(p.fullName)}</strong>&nbsp;·&nbsp;DNI ${escapeHtml(p.dni)}&nbsp;·&nbsp;📱 ${escapeHtml(p.phone || 'Sin tel')}
+                    <strong>${escapeHtml(p.fullName)}</strong>&nbsp;·&nbsp;DNI ${escapeHtml(p.dni)}&nbsp;·&nbsp;📱 ${escapeHtml(p.phone || 'Sin tel')}&nbsp;·&nbsp;${p.membershipActive ? 'Membresía' : 'Ocasional'}
                 </div>`
             ).join("");
             cont.style.display = "block";
@@ -1312,6 +1447,7 @@
             const usernameInput = (document.getElementById("cliUsername").value || "").trim();
             const username = usernameInput || generarUsername(fullName);
             const hoursBalance = hoursBalanceRaw === "" ? 0 : Number(hoursBalanceRaw);
+            const membershipActive = document.getElementById("cliMembership").checked;
 
             if (!dni || !fullName || !phone) {
                 mostrarAviso("⚠️ Completá DNI, nombre y teléfono");
@@ -1333,6 +1469,8 @@
                 username,
                 role: "client",
                 historiaCompleta: false,
+                membershipActive,
+                membresia: membershipActive,
                 hoursBalance,
                 updatedAt: serverTimestamp(),
                 createdAt: serverTimestamp()
@@ -1347,6 +1485,52 @@
             } catch (error) {
                 console.error(error);
                 mostrarAviso("❌ No se pudo guardar cliente");
+            } finally {
+                mostrarLoader(false);
+            }
+        };
+
+        window.normalizarMembresiaClientes = async () => {
+            try {
+                mostrarLoader(true);
+                const snap = await getDocs(collection(db, "clients"));
+                const actualizados = await asegurarCampoMembresiaEnFirestore(snap.docs || []);
+
+                await cargarTodo();
+                mostrarAviso(actualizados ? `✅ Membresía normalizada en ${actualizados} cliente(s)` : "✅ Todos los clientes ya tenían membresía definida");
+            } catch (error) {
+                console.error(error);
+                mostrarAviso("❌ No se pudo normalizar membresía");
+            } finally {
+                mostrarLoader(false);
+            }
+        };
+
+        window.marcarTodasMembresiaTrue = async () => {
+            try {
+                mostrarLoader(true);
+                const snap = await getDocs(collection(db, "clients"));
+                const total = (snap.docs || []).length;
+
+                if (!total) {
+                    mostrarAviso("ℹ️ No hay clientes para actualizar");
+                    return;
+                }
+
+                const tareas = (snap.docs || []).map((d) =>
+                    setDoc(doc(db, "clients", d.id), {
+                        membershipActive: true,
+                        membresia: true,
+                        updatedAt: serverTimestamp()
+                    }, { merge: true })
+                );
+
+                await Promise.all(tareas);
+                await cargarTodo();
+                mostrarAviso(`✅ ${total} cliente(s) marcados con membresía activa`);
+            } catch (error) {
+                console.error(error);
+                mostrarAviso("❌ No se pudo aplicar membresía masiva");
             } finally {
                 mostrarLoader(false);
             }
