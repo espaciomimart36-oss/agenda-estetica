@@ -22,11 +22,11 @@
         /* NAVEGACIÓN */
         .header { background: #fff; padding: 14px 16px; text-align: center; border-bottom: 1px solid #dceee5; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 18px rgba(0,0,0,0.06); }
         .header h2 { color: var(--accento); font-size: clamp(1.2rem, 2.2vw, 1.7rem); }
-        .menu-nav { margin-top: 12px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .menu-nav { margin-top: 10px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
         .btn-nav { padding: 10px 18px; min-height: 40px; border: 1px solid #cfe9dd; background: #fff; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.3s; color: var(--texto); }
         .btn-nav:hover { background: var(--suave); border-color: var(--suave-oscuro); }
         .btn-nav.active { background: #e9f7f0; color: var(--accento-oscuro); border-color: #a9d9c3; }
-        .install-widget-admin { display: none; margin: 10px auto 2px; width: min(100%, 560px); background: linear-gradient(135deg, rgba(245, 251, 247, 0.98) 0%, rgba(238, 248, 242, 0.98) 100%); border: 1px solid rgba(132, 168, 140, 0.32); border-radius: 14px; box-shadow: 0 8px 20px rgba(30, 54, 37, 0.12); overflow: hidden; }
+        .install-widget-admin { display: none; margin: 10px auto 6px; width: min(100%, 460px); background: linear-gradient(135deg, rgba(245, 251, 247, 0.98) 0%, rgba(238, 248, 242, 0.98) 100%); border: 1px solid rgba(132, 168, 140, 0.32); border-radius: 14px; box-shadow: 0 8px 20px rgba(30, 54, 37, 0.12); overflow: hidden; }
         .install-widget-admin.show { display: block; animation: popInSoft 0.18s ease-out; }
         .install-widget-admin .install-inner { padding: 12px; display: grid; gap: 8px; }
         .install-widget-admin .install-title { margin: 0; color: #2f5a47; font-size: 14px; font-weight: 700; }
@@ -151,6 +151,10 @@
             .header { padding: 12px 10px; }
             .menu-nav { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
             .btn-nav { flex: 0 0 auto; min-height: 36px; padding: 8px 14px; font-size: 12px; }
+            .install-widget-admin { width: 100%; margin: 8px auto 4px; }
+            .install-widget-admin .install-actions { flex-direction: column; }
+            .install-widget-admin .btn-install,
+            .install-widget-admin .btn-dismiss { width: 100%; min-width: 0; }
             .container { margin: 12px auto; padding: 0 10px; }
             .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .kpi-card { padding: 10px; }
@@ -223,14 +227,6 @@
         </div>
         <div class="header">
             <h2 style="font-family:'Playfair Display'; margin:0; color:var(--verde-oscuro)">Gimena Knack | Panel</h2>
-            <div class="menu-nav">
-                <button class="btn-nav active" id="btn-agenda" onclick="navegar('agenda')">📅 Agenda</button>
-                <button class="btn-nav" id="btn-historias" onclick="navegar('historias')">📁 Historias</button>
-                <button class="btn-nav" id="btn-buscar" onclick="navegar('buscar')">🔍 Buscar</button>
-                <button class="btn-nav" id="btn-clientes" onclick="navegar('clientes')">🧾 Pacientes</button>
-                <button class="btn-nav" id="btn-export" onclick="navegar('export')">📄 Exportar</button>
-                <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
-            </div>
             <div id="installWidgetAdmin" class="install-widget-admin" aria-live="polite">
                 <div class="install-inner">
                     <p class="install-title">Instalar Panel Admin</p>
@@ -240,6 +236,14 @@
                         <button id="btnDismissAdminInstall" class="btn-dismiss" type="button">Ahora no</button>
                     </div>
                 </div>
+            </div>
+            <div class="menu-nav">
+                <button class="btn-nav active" id="btn-agenda" onclick="navegar('agenda')">📅 Agenda</button>
+                <button class="btn-nav" id="btn-historias" onclick="navegar('historias')">📁 Historias</button>
+                <button class="btn-nav" id="btn-buscar" onclick="navegar('buscar')">🔍 Buscar</button>
+                <button class="btn-nav" id="btn-clientes" onclick="navegar('clientes')">🧾 Pacientes</button>
+                <button class="btn-nav" id="btn-export" onclick="navegar('export')">📄 Exportar</button>
+                <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
             </div>
         </div>
 
