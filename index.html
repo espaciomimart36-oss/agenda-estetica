@@ -1,9 +1,22 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingreso | Espacio Mimar</title>
+    
+    <link rel="stylesheet" href="mobile-fixes.css">
+<title>Ingreso | Espacio Mimar</title>
+    <script>
+        // El dominio abre directo en jornada, salvo que se pida modo normal explicitamente.
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("modo") === "normal") return;
+            window.location.replace("jornada.html" + window.location.search + window.location.hash);
+        })();
+    </script>
+    <noscript>
+        <meta http-equiv="refresh" content="0; url=jornada.html">
+    </noscript>
     <meta name="theme-color" content="#6f8a6d">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="img/icon-192.png">
@@ -372,7 +385,7 @@
         <div id="installWidget" class="install-widget" aria-live="polite">
             <div class="install-widget-inner">
                 <p class="install-title">Descargar app</p>
-                <p id="installText" class="install-text">Instala Espacio Mimar T para abrirla rápido desde tu inicio.</p>
+                <p id="installText" class="install-text">Instala Espacio Mimar T para abrirla rÃ¡pido desde tu inicio.</p>
                 <div class="install-actions">
                     <button id="btnInstallApp" class="btn-install" type="button">Instalar</button>
                     <button id="btnDismissInstall" class="btn-dismiss" type="button">Ahora no</button>
@@ -380,23 +393,23 @@
             </div>
         </div>
 
-        <div class="subtitulo">Estética Avanzada</div>
+        <div class="subtitulo">EstÃ©tica Avanzada</div>
         
         <div class="profesional-card">
             <div class="profesional">Gimena Knack</div>
-            <div class="titulo-profesional">Farmacéutica · Dermatocosmiatra</div>
-            <div class="credenciales">MP 1212 · R.C. 2319</div>
-            <div class="descripcion">Tratamientos dermoestéticos personalizados con respaldo farmacéutico y tecnología avanzada para el cuidado integral de la piel</div>
+            <div class="titulo-profesional">FarmacÃ©utica Â· Dermatocosmiatra</div>
+            <div class="credenciales">MP 1212 Â· R.C. 2319</div>
+            <div class="descripcion">Tratamientos dermoestÃ©ticos personalizados con respaldo farmacÃ©utico y tecnologÃ­a avanzada para el cuidado integral de la piel</div>
         </div>
 
         <h2>Ingreso de Pacientes</h2>
         <input id="nombre" placeholder="Nombre + inicial apellido (ej: juan p)">
         <input id="dni" placeholder="DNI (sin puntos)">
-        <button id="btnIngresar">Iniciar Sesión</button>
+        <button id="btnIngresar">Iniciar SesiÃ³n</button>
         <div id="error" class="error"></div>
     </div>
 
-    <div class="footer">© 2026 Espacio Mimar T — Todos los derechos reservados</div>
+    <div class="footer">Â© 2026 Espacio Mimar T â€” Todos los derechos reservados</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -420,11 +433,11 @@
                 case "permission-denied":
                     return "Acceso bloqueado por reglas de Firestore (clients).";
                 case "unavailable":
-                    return "Servicio no disponible. Intentá nuevamente en unos segundos.";
+                    return "Servicio no disponible. IntentÃ¡ nuevamente en unos segundos.";
                 case "failed-precondition":
                     return "Falta habilitar Firestore para este proyecto.";
                 default:
-                    return "Error de conexión con la base de datos.";
+                    return "Error de conexiÃ³n con la base de datos.";
             }
         };
 
@@ -443,19 +456,20 @@
             const params = new URLSearchParams(window.location.search);
             if (params.get("modo") === "normal") return;
 
+            const forzarJornada = params.get("modo") === "jornada"
+                || params.get("jornada") === "1"
+                || localStorage.getItem("jornadaSource") === "jornada_especial_login";
+            if (forzarJornada) {
+                jornadaLoginRedirect = "serviciosjornada.html";
+                return;
+            }
+
             try {
                 const snap = await getDoc(doc(db, "configuracion", JORNADA_CONFIG_DOC));
                 if (!snap.exists()) return;
 
                 const cfg = snap.data() || {};
                 if (cfg.active !== true) return;
-
-                const ahora = new Date();
-                const startAt = parseCampaignDate(cfg.startAt);
-                const endAt = parseCampaignDate(cfg.endAt);
-
-                if (startAt && ahora < startAt) return;
-                if (endAt && ahora > endAt) return;
 
                 jornadaLoginRedirect = "serviciosjornada.html";
             } catch (error) {
@@ -495,7 +509,7 @@
                             return;
                         }
 
-                        // --- LÓGICA DE REDIRECCIÓN ACTUALIZADA (Sin consentimiento.html) ---
+                        // --- LÃ“GICA DE REDIRECCIÃ“N ACTUALIZADA (Sin consentimiento.html) ---
                         if (!cliente.politicaAceptada) {
                             window.location.href = "politica.html";
                         } else if (cliente.consultaNutricionalRespondida !== true) {
@@ -612,3 +626,4 @@
     </script>
 </body>
 </html>
+

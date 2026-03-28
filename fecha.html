@@ -1,9 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Elegir fecha | Espacio Mimar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="mobile-fixes.css">
+<title>Elegir fecha | Espacio Mimar</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
         :root{
@@ -342,7 +344,7 @@
         .modal-mimar{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,22,19,0.56); display:none; justify-content:center; align-items:center; z-index:9999; backdrop-filter:blur(4px); padding:20px }
         .modal-box{ background:white; padding:25px; border-radius:20px; text-align:center; max-width:400px; width:100%; box-shadow:0 24px 50px rgba(15,22,19,0.24) }
 
-        /* Badge dinámico */
+        /* Badge dinÃ¡mico */
         .badge-balance {
             display: inline-block;
             background: linear-gradient(135deg, #edf8f3 0%, #e1f2e9 100%);
@@ -463,6 +465,121 @@
 
         .floating-warning-close:hover {
             color: #f59e0b;
+        }
+
+        /* Apariencia premium exclusiva para jornada */
+        body.jornada-calendar-mode {
+            background:
+                radial-gradient(920px 360px at 6% -10%, rgba(255, 73, 97, 0.18) 0%, rgba(255, 73, 97, 0) 58%),
+                radial-gradient(860px 340px at 94% 112%, rgba(225, 29, 46, 0.15) 0%, rgba(225, 29, 46, 0) 56%),
+                linear-gradient(180deg, #fffdf9 0%, #fff7ee 100%);
+        }
+
+        body.jornada-calendar-mode .hero {
+            display: none;
+        }
+
+        body.jornada-calendar-mode .container {
+            margin-top: 18px;
+            max-width: 920px;
+            text-align: left;
+        }
+
+        body.jornada-calendar-mode .logo {
+            width: 120px;
+            margin: 0 auto 14px;
+            display: block;
+            filter: drop-shadow(0 10px 22px rgba(107, 20, 33, 0.24));
+        }
+
+        body.jornada-calendar-mode .card-recommendations,
+        body.jornada-calendar-mode .floating-warning {
+            display: none !important;
+        }
+
+        body.jornada-calendar-mode .badge-balance {
+            background: linear-gradient(135deg, #fff2d7 0%, #ffe6bd 100%);
+            border-color: #efc57f;
+            color: #5b3413;
+            box-shadow: 0 10px 20px rgba(117, 66, 17, 0.14);
+        }
+
+        body.jornada-calendar-mode .aviso-mio,
+        body.jornada-calendar-mode .calendario {
+            border: 1px solid #f0d9bb;
+            border-radius: 22px;
+            background: linear-gradient(160deg, #fffefb 0%, #fff8ee 100%);
+            box-shadow: 0 20px 42px rgba(84, 48, 18, 0.14);
+        }
+
+        body.jornada-calendar-mode .aviso-mio {
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        body.jornada-calendar-mode .aviso-mio p {
+            color: #6b4b36 !important;
+            font-size: 13px !important;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        body.jornada-calendar-mode .mes button {
+            background: linear-gradient(135deg, #ff3a4c 0%, #e11d2e 56%, #98101f 100%);
+            box-shadow: 0 10px 22px rgba(137, 15, 29, 0.28);
+        }
+
+        body.jornada-calendar-mode .semana {
+            color: #8d5a3b;
+            letter-spacing: 0.06em;
+        }
+
+        body.jornada-calendar-mode .dia {
+            background: #fff;
+            border-color: #ecd7bf;
+            color: #4b3328;
+            font-weight: 700;
+        }
+
+        body.jornada-calendar-mode .dia:hover {
+            border-color: #e9b788;
+            background: #fff9f0;
+            box-shadow: 0 10px 22px rgba(154, 96, 41, 0.16);
+        }
+
+        body.jornada-calendar-mode .seleccionado {
+            border: 2px solid #d11b2d !important;
+            background: linear-gradient(180deg, #fff4f5 0%, #ffeef0 100%) !important;
+            color: #6f1d27;
+            box-shadow: 0 10px 20px rgba(175, 34, 55, 0.24);
+        }
+
+        body.jornada-calendar-mode .horarios {
+            grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+        }
+
+        body.jornada-calendar-mode .hora {
+            border-color: #e9d0b4;
+            background: #fff;
+            color: #5a3e31;
+            font-weight: 800;
+        }
+
+        body.jornada-calendar-mode .hora:hover {
+            border-color: #dfab79;
+            box-shadow: 0 10px 18px rgba(142, 87, 38, 0.16);
+        }
+
+        body.jornada-calendar-mode .hora.selected {
+            background: linear-gradient(135deg, #ff3a4c 0%, #e11d2e 56%, #991020 100%);
+            border-color: #b71527;
+            color: #fff;
+            box-shadow: 0 12px 22px rgba(142, 18, 33, 0.32);
+        }
+
+        body.jornada-calendar-mode .boton {
+            background: linear-gradient(135deg, #ff3a4c 0%, #e11d2e 56%, #95101f 100%);
+            box-shadow: 0 14px 24px rgba(139, 16, 30, 0.33);
         }
 
         @keyframes floatWarning {
@@ -596,30 +713,30 @@
     <div class="card-recommendations">
         <h2>Recomendaciones para reservar tus sesiones</h2>
         <div class="recommendations-grid">
-            <div class="recommendation-block">Si reservaste 2 horas, se recomienda sacar un turno aproximadamente cada 15 días.</div>
-            <div class="recommendation-block">Si reservaste 4 horas, reservá una sesión por semana durante cuatro semanas.</div>
-            <div class="recommendation-block">Si reservaste 8 horas, podés realizar dos sesiones seguidas en el mismo día.</div>
+            <div class="recommendation-block">Si reservaste 2 horas, se recomienda sacar un turno aproximadamente cada 15 dÃ­as.</div>
+            <div class="recommendation-block">Si reservaste 4 horas, reservÃ¡ una sesiÃ³n por semana durante cuatro semanas.</div>
+            <div class="recommendation-block">Si reservaste 8 horas, podÃ©s realizar dos sesiones seguidas en el mismo dÃ­a.</div>
             <div class="recommendation-block">Los horarios de 12:00 a 13:00 y de 20:00 a 21:00 dejalos para personas que trabajan.</div>
-            <div class="recommendation-block">Si querés realizar una sola sesión de Mio-Up, podés reservar un bloque de 30 minutos.</div>
+            <div class="recommendation-block">Si querÃ©s realizar una sola sesiÃ³n de Mio-Up, podÃ©s reservar un bloque de 30 minutos.</div>
         </div>
     </div>
 
     <div class="floating-warning" id="floatingWarning">
         <div class="floating-warning-track" id="floatingWarningTrack">
-            <span>⚠️ Importante: Los horarios de 12:00 a 13:00 y de 20:00 a 21:00 son exclusivos para personas que trabajan o sesiones de Mio-Up (30 min).</span>
+            <span>âš ï¸ Importante: Los horarios de 12:00 a 13:00 y de 20:00 a 21:00 son exclusivos para personas que trabajan o sesiones de Mio-Up (30 min).</span>
         </div>
-        <button class="floating-warning-close" id="floatingWarningClose">✕</button>
+        <button class="floating-warning-close" id="floatingWarningClose">âœ•</button>
     </div>
     
     <div id="saldoStatus">Verificando balance...</div>
     
     <div class="aviso-mio">
-        <p style="font-size: 0.85rem; color: #666; margin:0;">Seleccioná un día del calendario para ver horarios.</p>
+        <p style="font-size: 0.85rem; color: #666; margin:0;">SeleccionÃ¡ un dÃ­a del calendario para ver horarios.</p>
     </div>
 
     <div class="calendario">
-        <div class="mes"><button id="btnMesAnterior">◀</button><div id="mes"></div><button id="btnMesSiguiente">▶</button></div>
-        <div class="semana"><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div></div>
+        <div class="mes"><button id="btnMesAnterior">â—€</button><div id="mes"></div><button id="btnMesSiguiente">â–¶</button></div>
+        <div class="semana"><div>Lun</div><div>Mar</div><div>MiÃ©</div><div>Jue</div><div>Vie</div><div>SÃ¡b</div><div>Dom</div></div>
         <div class="grid" id="dias"></div>
     </div>
 
@@ -663,8 +780,11 @@ const EXCEPCIONES_HORARIOS = {
 
 const DESBLOQUEOS_MANUALES = {
     "2026-03-26": ["16:00"],
-    "2026-03-28": ["11:00"]
+    "2026-03-28": ["11:00"],
+    "2026-04-28": ["11:00"]
 };
+
+const HORARIOS_JORNADA_DEFAULT = ["07:30", "08:30", "09:30", "10:30", "11:30", "12:30", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
 const SABADOS_BLOQUEADOS = ["2026-03-01", "2026-03-08", "2026-03-15", "2026-03-22", "2026-03-29", "2026-04-04", "2026-04-11", "2026-04-18", "2026-04-25"];
 
@@ -675,6 +795,17 @@ const dniUsuario=localStorage.getItem("clienteDNI");
 const servicioGuardado=localStorage.getItem("servicioSeleccionado")||"";
 const esMioUp=servicioGuardado.toLowerCase().includes("mio");
 const jornadaModo = localStorage.getItem("jornadaModo") === "1";
+const jornadaAllowedMonth = (localStorage.getItem("jornadaAllowedMonth") || "2026-04").trim();
+
+let jornadaSlots = [];
+try {
+    jornadaSlots = JSON.parse(localStorage.getItem("jornadaSlots") || "[]");
+} catch (e) {
+    jornadaSlots = [];
+}
+if (!Array.isArray(jornadaSlots) || !jornadaSlots.length) {
+    jornadaSlots = [...HORARIOS_JORNADA_DEFAULT];
+}
 
 let jornadaAllowedDates = [];
 try {
@@ -682,6 +813,22 @@ try {
 } catch (e) {
     jornadaAllowedDates = [];
 }
+if (jornadaModo && (!Array.isArray(jornadaAllowedDates) || !jornadaAllowedDates.length)) {
+    jornadaAllowedDates = ["2026-04-02"];
+}
+
+const esMesPermitidoJornada = (year, month) => {
+    if (!jornadaModo) return true;
+    const clave = `${year}-${String(month).padStart(2, "0")}`;
+    return clave === jornadaAllowedMonth;
+};
+
+const fijarMesJornada = () => {
+    if (!jornadaModo) return;
+    const [yy, mm] = jornadaAllowedMonth.split("-").map((v) => Number(v));
+    if (!yy || !mm) return;
+    fechaActual = new Date(yy, mm - 1, 1);
+};
 
 const esFechaHabilitadaJornada = (fStr) => {
     if (!jornadaModo) return true;
@@ -692,6 +839,26 @@ const esFechaHabilitadaJornada = (fStr) => {
 const esExcepcionBloqueante = (fStr) => {
     if (jornadaModo && esFechaHabilitadaJornada(fStr)) return false;
     return !!excepciones[fStr];
+};
+
+const aplicarModoVisualJornada = () => {
+    if (!jornadaModo) return;
+
+    document.body.classList.add("jornada-calendar-mode");
+
+    const logo = document.querySelector(".logo");
+    if (logo) logo.src = "img/logo2.jpg";
+
+    const recomendaciones = document.querySelector(".card-recommendations");
+    if (recomendaciones) recomendaciones.style.display = "none";
+
+    const warning = document.getElementById("floatingWarning");
+    if (warning) warning.style.display = "none";
+
+    const aviso = document.querySelector(".aviso-mio p");
+    if (aviso) {
+        aviso.textContent = "Agenda especial de jornada: elegi el horario que mejor te quede para el jueves 02 de abril.";
+    }
 };
 
 async function cargarDatos(){
@@ -707,11 +874,13 @@ async function cargarDatos(){
     excepciones = {};
     exSnap.forEach(doc => { if(doc.data().active) excepciones[doc.id] = doc.data().reason; });
 
+    if (jornadaModo) fijarMesJornada();
     renderCalendario();
 }
 
 
 function renderCalendario(){
+    if (jornadaModo) fijarMesJornada();
     const y=fechaActual.getFullYear(); const m=fechaActual.getMonth();
     document.getElementById("mes").innerText=`${["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][m]} ${y}`;
     const contenedor=document.getElementById("dias"); contenedor.innerHTML="";
@@ -724,11 +893,15 @@ function renderCalendario(){
         let f=new Date(y,m,d); f.setHours(0,0,0,0);
         let div=document.createElement("div"); div.className="dia"; div.innerText=d;
 
-        if(f.getDay()===0) div.classList.add("domingo");
+        if(f.getDay()===0 && !jornadaModo) div.classList.add("domingo");
         else if(f<hoy) div.classList.add("pasado");
+        else if(jornadaModo && !esMesPermitidoJornada(y, m+1)) {
+            div.classList.add("bloqueado");
+            div.onclick=()=>mostrarAviso("Jornada especial", "Esta experiencia se agenda en un mes especial, pensado para vos.");
+        }
         else if(!esFechaHabilitadaJornada(fStr)) {
             div.classList.add("bloqueado");
-            div.onclick=()=>mostrarAviso("Jornada especial", "Este servicio solo se agenda en fechas especificas de la jornada.");
+            div.onclick=()=>mostrarAviso("Jornada especial", "Esta jornada tiene fechas seleccionadas con mucho mimo. Elegi una de las disponibles.");
         }
         else if(esExcepcionBloqueante(fStr)){
             div.classList.add("bloqueado");
@@ -748,13 +921,49 @@ async function cargarHorarios(fecha, fStr){
     container.innerHTML="<p>Buscando turnos...</p>";
 
     if(!esFechaHabilitadaJornada(fStr)) {
-        container.innerHTML = "<p style='color:#555;'>Este servicio de jornada solo esta habilitado para fechas puntuales.</p>";
+        container.innerHTML = "<p style='color:#555;'>Esta jornada se realiza en fechas seleccionadas. Te mostramos las disponibles.</p>";
         return;
     }
 
-    if(esExcepcionBloqueante(fStr)) { container.innerHTML=`<p style="color:red;">Día cerrado: ${excepciones[fStr]}</p>`; return; }
+    if (jornadaModo) {
+        const snapRes = await getDocs(query(collection(db,"reservas"),where("fecha","==",fStr)));
+        const ocupados = snapRes.docs
+            .map(doc=> (doc.data().hora||"").replace(" hs","").trim());
 
-    // Excepción de horarios puntuales
+        const horariosJornada = jornadaSlots
+            .map(h => (h || "").toString().trim())
+            .filter(Boolean)
+            .sort((a,b) => a.localeCompare(b));
+
+        container.innerHTML = "";
+        horariosJornada.forEach((hora) => {
+            let div = document.createElement("div");
+            div.className = "hora";
+            div.innerText = hora;
+
+            if (ocupados.includes(hora)) {
+                div.classList.add("ocupado");
+            } else {
+                div.onclick = () => {
+                    horaSeleccionada = hora;
+                    duracionTurno = 60;
+                    document.querySelectorAll(".hora").forEach(e=>e.classList.remove("selected"));
+                    div.classList.add("selected");
+                    document.getElementById("reservarBtn").disabled = false;
+                };
+            }
+            container.appendChild(div);
+        });
+
+        if (!horariosJornada.length) {
+            container.innerHTML = "<p style='color:#555;'>No hay horarios de jornada configurados.</p>";
+        }
+        return;
+    }
+
+    if(esExcepcionBloqueante(fStr)) { container.innerHTML=`<p style="color:red;">DÃ­a cerrado: ${excepciones[fStr]}</p>`; return; }
+
+    // ExcepciÃ³n de horarios puntuales
     if(EXCEPCIONES_HORARIOS[fStr]){
         const config = EXCEPCIONES_HORARIOS[fStr];
         return renderHorariosPorConfig(config, container, fStr);
@@ -762,12 +971,12 @@ async function cargarHorarios(fecha, fStr){
 
     const nombreDia=["domingo","lunes","martes","miercoles","jueves","viernes","sabado"][fecha.getDay()];
 
-    // Bloquear sábados de marzo/abril excepto el 2026-04-25
+    // Bloquear sÃ¡bados de marzo/abril excepto el 2026-04-25
     if(nombreDia === 'sabado' && !EXCEPCIONES_HORARIOS[fStr]){
         const mes = fecha.getMonth() + 1;
         const year = fecha.getFullYear();
         if(year === 2026 && (mes === 3 || mes === 4)){
-            container.innerHTML = "<p style='color:#555;'>No hay horarios disponibles para este sábado.</p>";
+            container.innerHTML = "<p style='color:#555;'>Este sÃ¡bado lo dejamos sin turnos para cuidarte mejor. Elegi otra fecha y te acompaÃ±amos.</p>";
             return;
         }
     }
@@ -790,10 +999,10 @@ async function cargarHorarios(fecha, fStr){
     todos.forEach(item => {
         let div=document.createElement("div"); div.className="hora"; div.innerText=item.h;
         
-        // --- LÓGICA DE BLOQUEO EN CADENA ---
+        // --- LÃ“GICA DE BLOQUEO EN CADENA ---
         let estaOcupado = ocupados.includes(item.h);
         
-        // Si el de las 12:00 está libre pero el de las 12:30 está ocupado (o viceversa), marcamos AMBOS en rojo.
+        // Si el de las 12:00 estÃ¡ libre pero el de las 12:30 estÃ¡ ocupado (o viceversa), marcamos AMBOS en rojo.
         if (!estaOcupado) {
             if (item.h === "12:00" && ocupados.includes("12:30")) estaOcupado = true;
             if (item.h === "12:30" && ocupados.includes("12:00")) estaOcupado = true;
@@ -808,7 +1017,7 @@ async function cargarHorarios(fecha, fStr){
                 if(!esMioUp && item.tipo==='fraccionado') {
                     const esInicio = (item.h==="12:00" || item.h==="20:00");
                     if(!esInicio) {
-                        mostrarAviso("Bloque de 30 min", "Para una sesión normal de 1 hora, selecciona el horario de inicio (12:00 o 20:00).");
+                        mostrarAviso("Bloque de 30 min", "Para una sesiÃ³n normal de 1 hora, selecciona el horario de inicio (12:00 o 20:00).");
                         return;
                     }
                 }
@@ -835,11 +1044,23 @@ document.getElementById("reservarBtn").onclick=()=>{
     localStorage.setItem("fechaSeleccionada", fStr);
     localStorage.setItem("horaSeleccionada", horaSeleccionada);
     localStorage.setItem("duracionSeleccionada", duracionTurno);
-    window.location.href="confirmar.html";
+    const destinoConfirmacion = jornadaModo ? "confirmarjornada.html" : "confirmar.html";
+    window.location.href = destinoConfirmacion;
 };
 
 document.getElementById("btnMesSiguiente").onclick=()=>{ fechaActual.setMonth(fechaActual.getMonth()+1); renderCalendario(); };
 document.getElementById("btnMesAnterior").onclick=()=>{ fechaActual.setMonth(fechaActual.getMonth()-1); renderCalendario(); };
+
+if (jornadaModo) {
+    const btnMesSig = document.getElementById("btnMesSiguiente");
+    const btnMesAnt = document.getElementById("btnMesAnterior");
+    btnMesSig.disabled = true;
+    btnMesAnt.disabled = true;
+    btnMesSig.style.opacity = "0.45";
+    btnMesAnt.style.opacity = "0.45";
+    btnMesSig.style.cursor = "not-allowed";
+    btnMesAnt.style.cursor = "not-allowed";
+}
 
 const closeFloatingWarning = document.getElementById("floatingWarningClose");
 if (closeFloatingWarning) {
@@ -861,6 +1082,7 @@ if (localStorage.getItem("floatingWarningHidden") === "true") {
     if (fl) fl.style.display = "none";
 }
 
+aplicarModoVisualJornada();
 cargarDatos();
 function renderHorariosPorConfig(config, container, fStr) {
     return getDocs(query(collection(db, "reservas"), where("fecha", "==", fStr)))
@@ -896,7 +1118,7 @@ function renderHorariosPorConfig(config, container, fStr) {
                         if(!esMioUp && item.tipo === 'fraccionado') {
                             const esInicio = (item.h === "12:00" || item.h === "20:00");
                             if(!esInicio) {
-                                mostrarAviso("Bloque de 30 min", "Para una sesión normal de 1 hora, selecciona el horario de inicio (12:00 o 20:00). ");
+                                mostrarAviso("Bloque de 30 min", "Para una sesiÃ³n normal de 1 hora, selecciona el horario de inicio (12:00 o 20:00). ");
                                 return;
                             }
                         }
@@ -918,3 +1140,5 @@ function renderHorariosPorConfig(config, container, fStr) {
 }</script>
 </body>
 </html>
+
+

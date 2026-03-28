@@ -1,0 +1,173 @@
+/* Mobile hardening layer: shared fixes for all screens on small devices */
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100dvh;
+}
+
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    height: auto;
+}
+
+input,
+select,
+textarea,
+button {
+    font: inherit;
+}
+
+@media (max-width: 900px) {
+    :root {
+        --mobile-gap: 14px;
+    }
+
+    body {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    .container,
+    .card,
+    .box,
+    .panel,
+    .layout,
+    .content,
+    .main,
+    .login-box,
+    .modal-card,
+    .calendario,
+    .form-card,
+    .wrapper {
+        width: min(100%, 100% - 24px);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .actions,
+    .cta-row,
+    .button-row,
+    .modal-actions,
+    .grid,
+    .form-grid {
+        gap: var(--mobile-gap);
+    }
+
+    .actions,
+    .cta-row,
+    .button-row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .actions > *,
+    .cta-row > *,
+    .button-row > * {
+        flex: 1 1 100%;
+    }
+
+    .btn,
+    .button,
+    button,
+    input[type="submit"],
+    input[type="button"],
+    a.btn {
+        min-height: 44px;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .hero img,
+    .banner img {
+        max-height: clamp(180px, 30vh, 320px);
+        object-fit: cover;
+    }
+
+    .modal-overlay,
+    .modal-mimar,
+    #modalConfirmado,
+    #modalOk {
+        padding: 14px;
+    }
+}
+
+@media (max-width: 560px) {
+    body {
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+    h1 {
+        font-size: clamp(1.45rem, 6vw, 1.95rem);
+    }
+
+    h2 {
+        font-size: clamp(1.2rem, 5.2vw, 1.6rem);
+    }
+
+    h3 {
+        font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+    }
+
+    .container,
+    .card,
+    .calendario,
+    .box,
+    .login-box,
+    .modal-card {
+        border-radius: 16px;
+    }
+
+    .logo,
+    .brand,
+    .brand-logo {
+        width: min(72vw, 280px);
+        max-width: 100%;
+        height: auto;
+    }
+
+    .hero,
+    .hero img {
+        border-radius: 0;
+    }
+
+    .mes button,
+    .floating-warning-close {
+        min-height: 40px;
+        min-width: 40px;
+    }
+
+    .slots,
+    .hours-grid,
+    .services-grid,
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card,
+    .modal-card,
+    .box,
+    .login-box,
+    .calendario,
+    .form-card {
+        padding: 16px;
+    }
+}

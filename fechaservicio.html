@@ -1,9 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fecha Especial Jornada | Espacio Mimar T</title>
+    
+    <link rel="stylesheet" href="mobile-fixes.css">
+<title>Fecha Especial Jornada | Espacio Mimar T</title>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -33,6 +35,11 @@
             padding: 16px;
         }
 
+        @keyframes softEntry {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .card {
             width: min(760px, 100%);
             background: linear-gradient(150deg, #fffefb 0%, #fff9f0 100%);
@@ -40,6 +47,7 @@
             border-radius: 18px;
             box-shadow: 0 22px 46px rgba(58, 36, 14, 0.12);
             padding: clamp(18px, 3.2vw, 32px);
+            animation: softEntry 0.55s ease-out both;
         }
 
         .top {
@@ -122,6 +130,7 @@
             font-size: 13px;
             line-height: 1.45;
             font-weight: 600;
+            animation: softEntry 0.55s ease-out 0.08s both;
         }
 
         .actions {
@@ -170,6 +179,9 @@
             .desc, .highlight { font-size: 12px; }
             .btn { width: 100%; text-align: center; }
             .logo { width: 56px; height: 56px; }
+            .top { flex-direction: column-reverse; align-items: flex-start; }
+            .card { padding: 16px 14px; }
+            .date-chip { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -182,12 +194,12 @@
 
         <p class="kicker">Jornada Especial</p>
         <h1 class="title">Fecha Habilitada</h1>
-        <p class="desc">Para esta experiencia especial, habilitamos un dia exclusivo en agenda aunque en el sistema general se encuentre bloqueado por calendario habitual.</p>
+        <p class="desc">Para esta experiencia reservamos un dÃ­a exclusivo en agenda, pensado para que puedas elegir tu turno con tranquilidad.</p>
 
         <div class="date-chip">Jueves 02 de abril de 2026</div>
 
         <div class="highlight">
-            Esta fecha queda habilitada solo para esta jornada de criolipolisis. Al continuar, vas a elegir horario disponible dentro de ese dia.
+            Esta fecha fue seleccionada especialmente para la jornada. Al continuar, elegÃ­s el horario que mejor te quede.
         </div>
 
         <div class="actions">
@@ -219,13 +231,15 @@
         btn.addEventListener("click", () => {
             try {
                 prepararModoJornada();
-                statusEl.textContent = "Perfecto. Cargando agenda de la fecha especial...";
+                statusEl.textContent = "Perfecto. Estamos abriendo la agenda de esta fecha especial...";
                 window.location.href = "fecha.html?modo=jornada";
             } catch (error) {
                 console.error(error);
-                statusEl.textContent = "No pudimos preparar la fecha especial. Reintenta en unos segundos.";
+                statusEl.textContent = "No pudimos abrir esta fecha por ahora. ReintentÃ¡ en unos segundos.";
             }
         });
     </script>
 </body>
 </html>
+
+

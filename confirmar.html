@@ -1,9 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmar Turno - Espacio Mimar T</title>
+    
+    <link rel="stylesheet" href="mobile-fixes.css">
+<title>Confirmar Turno - Espacio Mimar T</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f4f4f4; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
@@ -26,10 +28,10 @@
     <div class="card">
         <h2>Confirmar Turno</h2>
         <div class="info-box">
-            <p>¡Hola <span id="txtNombre">Cargando...</span>! 😊</p>
+            <p>Â¡Hola <span id="txtNombre">Cargando...</span>! ðŸ˜Š</p>
             <p><span id="txtServicio">Cargando...</span> - <span id="txtFecha">Cargando...</span> a las <span id="txtHora">Cargando...</span></p>
             <p>Te contactaremos al: <span id="txtTelefono">Buscando en base de datos...</span></p>
-            <small>Revisá tu turno y confirma para finalizar.</small>
+            <small>RevisÃ¡ tu turno y confirma para finalizar.</small>
         </div>
         <button id="btnConfirmar" class="btn-confirmar" disabled>Cargando datos...</button>
     </div>
@@ -70,8 +72,8 @@
             const boton = document.getElementById("btnConfirmar");
 
             if (!dniLs) {
-                document.getElementById("txtTelefono").innerText = "Error: DNI no encontrado en sesión";
-                boton.innerText = "Error de sesión";
+                document.getElementById("txtTelefono").innerText = "Error: DNI no encontrado en sesiÃ³n";
+                boton.innerText = "Error de sesiÃ³n";
                 return;
             }
 
@@ -88,7 +90,7 @@
                         boton.disabled = false;
                         boton.innerText = "Confirmar y Enviar WhatsApp";
                     } else {
-                        document.getElementById("txtTelefono").innerText = "Sin teléfono en ficha (se guardará igual)";
+                        document.getElementById("txtTelefono").innerText = "Sin telÃ©fono en ficha (se guardarÃ¡ igual)";
                         boton.disabled = false;
                         boton.innerText = "Confirmar turno";
                     }
@@ -98,7 +100,7 @@
                 }
             } catch (error) {
                 console.error("Error obteniendo documento:", error);
-                document.getElementById("txtTelefono").innerText = "Error de conexión";
+                document.getElementById("txtTelefono").innerText = "Error de conexiÃ³n";
             }
         }
 
@@ -146,7 +148,7 @@
                     console.error("No se pudo descontar hoursBalance: ", e); 
                 }
 
-                // 3. Enviar confirmación por Cloud Function (backend)
+                // 3. Enviar confirmaciÃ³n por Cloud Function (backend)
                 if (telefonoExtraido) {
                     try {
                         const response = await fetch(CF_CONFIRM_URL, {
@@ -167,10 +169,10 @@
                         const resJson = await response.json();
                         if (!response.ok) {
                             console.error("Error API Cloud Function:", resJson);
-                            alert("Turno guardado, pero falló el WhatsApp.");
+                            alert("Turno guardado, pero fallÃ³ el WhatsApp.");
                         }
                     } catch (waError) {
-                        console.error("Error enviando WhatsApp vía backend:", waError);
+                        console.error("Error enviando WhatsApp vÃ­a backend:", waError);
                         alert("Turno guardado, pero no se pudo enviar WhatsApp.");
                     }
                 }
@@ -189,3 +191,4 @@
     </script>
 </body>
 </html>
+

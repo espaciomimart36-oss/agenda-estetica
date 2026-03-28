@@ -1,19 +1,21 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servicio Jornada | CRIO LIPOCELL 360</title>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="mobile-fixes.css">
+<title>Servicio Jornada | CRIO LIPOCELL 360</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --rojo: #e11d2e;
-            --rojo-oscuro: #9f1120;
-            --arena: #fff7ec;
-            --texto: #2c1f18;
-            --subtexto: #5b4639;
-            --borde: #f1dcc1;
-            --font-display: 'Barlow Condensed', sans-serif;
+            --rojo: #d95b8f;
+            --rojo-oscuro: #9f3f71;
+            --arena: #fff7fc;
+            --texto: #3a2230;
+            --subtexto: #6e4d5d;
+            --borde: #f1d6e3;
+            --font-display: 'Cormorant Garamond', serif;
             --font-body: 'Plus Jakarta Sans', sans-serif;
         }
 
@@ -24,10 +26,15 @@
             font-family: var(--font-body);
             color: var(--texto);
             background:
-                radial-gradient(1000px 420px at 8% -20%, rgba(255, 102, 84, 0.16), transparent 60%),
-                radial-gradient(900px 380px at 94% 110%, rgba(225, 29, 46, 0.13), transparent 56%),
-                #fffaf4;
+                radial-gradient(1000px 420px at 8% -20%, rgba(239, 139, 183, 0.2), transparent 60%),
+                radial-gradient(900px 380px at 94% 110%, rgba(217, 91, 143, 0.16), transparent 56%),
+                #fff8fc;
         }
+
+            @keyframes softRise {
+                from { opacity: 0; transform: translateY(14px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
 
         .page-wrap {
             width: min(980px, 100%);
@@ -45,7 +52,7 @@
 
         .back-link {
             text-decoration: none;
-            color: #7a2a33;
+            color: #8c3d66;
             font-weight: 800;
             font-size: 12px;
             letter-spacing: 0.04em;
@@ -65,16 +72,17 @@
         }
 
         .hero-card {
-            background: linear-gradient(150deg, #fffefb 0%, #fff8ee 100%);
+            background: linear-gradient(150deg, #fffdfd 0%, #fff4fa 100%);
             border: 1px solid var(--borde);
-            border-radius: 18px;
-            box-shadow: 0 20px 44px rgba(58, 36, 14, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 20px 44px rgba(132, 58, 100, 0.14);
             padding: clamp(18px, 3vw, 30px);
+            animation: softRise 0.55s ease-out both;
         }
 
         .kicker {
             margin: 0;
-            color: #8f1c28;
+            color: #a24a79;
             font-size: 11px;
             font-weight: 900;
             letter-spacing: 0.2em;
@@ -85,9 +93,9 @@
             margin: 8px 0 10px;
             font-family: var(--font-display);
             font-size: clamp(34px, 8vw, 56px);
-            line-height: 0.94;
-            letter-spacing: 0.03em;
-            color: #241713;
+            line-height: 1;
+            letter-spacing: 0.02em;
+            color: #351f2b;
         }
 
         .desc {
@@ -98,24 +106,6 @@
             font-weight: 500;
         }
 
-        .price-chip {
-            margin-top: 14px;
-            display: inline-flex;
-            gap: 8px;
-            align-items: baseline;
-            background: linear-gradient(135deg, #ffedd0 0%, #ffd487 100%);
-            border: 1px solid #f2c977;
-            color: #3f2508;
-            border-radius: 999px;
-            padding: 10px 16px;
-            font-weight: 900;
-            font-size: 13px;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-        }
-
-        .price-chip strong { font-size: 18px; }
-
         .info-grid {
             margin-top: 16px;
             display: grid;
@@ -124,10 +114,12 @@
         }
 
         .card {
-            background: #fff;
+            background: linear-gradient(145deg, #fffefe 0%, #fff8fc 100%);
             border: 1px solid var(--borde);
             border-radius: 12px;
             padding: 14px;
+            box-shadow: 0 10px 22px rgba(136, 61, 106, 0.08);
+            animation: softRise 0.5s ease-out both;
         }
 
         .card h3 {
@@ -159,6 +151,8 @@
             border: 1px solid var(--borde);
             border-radius: 14px;
             padding: 12px;
+            box-shadow: 0 10px 22px rgba(136, 61, 106, 0.08);
+            animation: softRise 0.55s ease-out 0.08s both;
         }
 
         .faq-title {
@@ -217,84 +211,127 @@
             font-weight: 500;
         }
 
-        .services-teaser {
+        .services-showcase {
             margin-top: 16px;
-            background: linear-gradient(160deg, #fffdf8 0%, #fff8ef 100%);
             border: 1px solid var(--borde);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 14px;
+            background:
+                radial-gradient(420px 160px at 10% -10%, rgba(239, 139, 183, 0.16), transparent 58%),
+                radial-gradient(380px 150px at 96% 118%, rgba(217, 91, 143, 0.13), transparent 58%),
+                linear-gradient(160deg, #fffdfd 0%, #fff5fb 100%);
+            box-shadow: 0 14px 30px rgba(126, 45, 94, 0.12);
+            animation: softRise 0.55s ease-out 0.14s both;
         }
 
-        .services-teaser-title {
-            margin: 0 0 6px;
-            color: #301b1f;
-            font-size: 14px;
-            letter-spacing: 0.05em;
+        .services-showcase-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .services-showcase-kicker {
+            margin: 0;
+            color: #9c4f78;
+            font-size: 10px;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             font-weight: 900;
         }
 
-        .services-teaser-sub {
+        .services-showcase-title {
+            margin: 6px 0 4px;
+            font-family: var(--font-display);
+            color: #3c2330;
+            font-size: clamp(24px, 5vw, 34px);
+            line-height: 1;
+            letter-spacing: 0.02em;
+        }
+
+        .services-showcase-sub {
             margin: 0;
-            color: #6c5548;
+            color: #735061;
             font-size: 12px;
-            line-height: 1.45;
+            line-height: 1.5;
             font-weight: 600;
         }
 
-        .services-teaser-grid {
+        .services-toggle-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-weight: 900;
+            cursor: pointer;
+            color: #fff;
+            background: linear-gradient(135deg, #ef7eb0 0%, #d95b8f 54%, #9f3f71 100%);
+            box-shadow: 0 10px 22px rgba(126, 45, 94, 0.24);
+        }
+
+        .services-toggle-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .services-showcase-content {
+            display: none;
+        }
+
+        .services-showcase-content.is-open {
+            display: block;
+            animation: showServices 0.25s ease;
+        }
+
+        .services-showcase-loading {
             margin-top: 10px;
+            color: #7f5f6f;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .services-showcase-grid {
+            margin-top: 12px;
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
         }
 
-        .services-teaser-card {
-            border: 1px solid #ecdac3;
-            background: #fff;
-            border-radius: 10px;
-            padding: 10px;
-            min-height: 122px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        @keyframes showServices {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .services-teaser-card h3 {
-            margin: 0;
-            color: #30211b;
+        .services-showcase-card {
+            border: 1px solid #f0d5e4;
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 8px 16px rgba(129, 57, 97, 0.08);
+        }
+
+        .services-showcase-card h3 {
+            margin: 0 0 6px;
+            color: #3a2530;
             font-size: 14px;
             line-height: 1.24;
             font-weight: 800;
         }
 
-        .services-teaser-card p {
+        .services-showcase-card p {
             margin: 0;
-            color: #705a4b;
+            color: #715765;
             font-size: 12px;
-            line-height: 1.4;
+            line-height: 1.42;
             font-weight: 500;
-        }
-
-        .locked-chip {
-            align-self: flex-start;
-            margin-top: auto;
-            font-size: 10px;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            font-weight: 900;
-            color: #8b6b4f;
-            background: #fff3df;
-            border: 1px solid #f0d4ae;
-            border-radius: 999px;
-            padding: 5px 8px;
-        }
-
-        .services-teaser-loading {
-            margin-top: 8px;
-            color: #7a6558;
-            font-size: 12px;
-            font-weight: 700;
         }
 
         .cta-row {
@@ -317,13 +354,13 @@
 
         .btn-primary {
             color: #fff;
-            background: linear-gradient(135deg, #ff3a4c 0%, #e11d2e 54%, #9f1120 100%);
-            box-shadow: 0 12px 26px rgba(159, 17, 32, 0.24);
+            background: linear-gradient(135deg, #ef7eb0 0%, #d95b8f 54%, #9f3f71 100%);
+            box-shadow: 0 12px 26px rgba(126, 45, 94, 0.26);
         }
 
         .btn-secondary {
-            color: #7a2a33;
-            border: 1px solid #efc8b9;
+            color: #8c3d66;
+            border: 1px solid #f0cadf;
             background: #fff;
         }
 
@@ -333,17 +370,20 @@
 
         @media (max-width: 768px) {
             .info-grid { grid-template-columns: 1fr; }
-            .services-teaser-grid { grid-template-columns: 1fr; }
-            .topbar { align-items: flex-start; }
+            .services-showcase-grid { grid-template-columns: 1fr; }
+            .topbar { align-items: flex-start; flex-direction: column-reverse; }
             .logo { width: 58px; height: 58px; }
+            .services-showcase-top { align-items: stretch; }
+            .services-toggle-btn { width: 100%; }
         }
 
         @media (max-width: 480px) {
             .desc, .card ul { font-size: 12px; }
             .faq-answer { font-size: 12px; }
-            .services-teaser-card h3 { font-size: 13px; }
-            .services-teaser-card p { font-size: 11px; }
             .btn { width: 100%; text-align: center; }
+            .page-wrap { padding-left: 10px; padding-right: 10px; }
+            .hero-card { padding: 16px 14px; }
+            .back-link { width: 100%; }
         }
     </style>
 </head>
@@ -355,14 +395,9 @@
         </div>
 
         <section class="hero-card" aria-label="Informacion completa del tratamiento CRIO LIPOCELL 360">
-            <p class="kicker">Experiencia de Lanzamiento</p>
+            <p class="kicker">Jornada Especial</p>
             <h1 class="title">CRIO LIPOCELL 360</h1>
-            <p class="desc">Incorporamos criolipolisis de succion con cabezales 360, una tecnologia no invasiva indicada para tratar adiposidad localizada de manera segura y progresiva. El tratamiento actua mediante frio controlado, generando destruccion selectiva de adipocitos. El proceso de eliminacion es natural y progresivo, y continua hasta 60 dias posteriores a la sesion.</p>
-
-            <div class="price-chip">
-                <span>Valor de la inversion:</span>
-                <strong>$59.000</strong>
-            </div>
+            <p class="desc">Esta jornada fue pensada para que te regales un momento de cuidado real. CRIO LIPOCELL 360 trabaja de forma no invasiva sobre adiposidad localizada, con un proceso progresivo y acompaniado, para que te sientas comoda, linda y segura en cada etapa.</p>
 
             <div class="info-grid">
                 <article class="card">
@@ -407,36 +442,44 @@
                 </details>
 
                 <details class="faq-item">
-                    <summary>La sesion duele o requiere reposo?</summary>
-                    <div class="faq-answer">Es un tratamiento no invasivo. Puede sentirse frio intenso y succion al inicio, luego la zona se adapta. En la mayoria de los casos no requiere reposo.</div>
+                    <summary>Â¿La sesiÃ³n duele o requiere reposo?</summary>
+                    <div class="faq-answer">Es un tratamiento no invasivo. Puede sentirse frÃ­o intenso y succiÃ³n al inicio, luego la zona se adapta. En la mayorÃ­a de los casos no requiere reposo.</div>
                 </details>
 
                 <details class="faq-item">
-                    <summary>Sirve para bajar de peso general?</summary>
+                    <summary>Â¿Sirve para bajar de peso general?</summary>
                     <div class="faq-answer">No. Esta indicado para adiposidad localizada y modelado de zonas. No reemplaza un plan medico de descenso de peso.</div>
                 </details>
 
                 <details class="faq-item">
-                    <summary>Que pasa si uso inyectables para descenso de peso?</summary>
-                    <div class="faq-answer">Se necesita certificado medico que avale el tratamiento antes de avanzar. La evaluacion profesional define si es apta para la sesion.</div>
+                    <summary>Â¿QuÃ© pasa si uso inyectables para descenso de peso?</summary>
+                    <div class="faq-answer">Se necesita certificado mÃ©dico que avale el tratamiento antes de avanzar. La evaluaciÃ³n profesional define si es apta para la sesiÃ³n.</div>
                 </details>
 
                 <details class="faq-item">
-                    <summary>Como confirmo si soy apta?</summary>
-                    <div class="faq-answer">Primero se realiza evaluacion personalizada. Ahi se revisan indicaciones, antecedentes clinicos y contraindicaciones para definir aptitud.</div>
+                    <summary>Â¿CÃ³mo confirmo si soy apta?</summary>
+                    <div class="faq-answer">Primero se realiza evaluaciÃ³n personalizada. AhÃ­ se revisan indicaciones, antecedentes clÃ­nicos y contraindicaciones para definir aptitud.</div>
                 </details>
             </section>
 
-            <section class="services-teaser" aria-label="Listado de servicios informativo">
-                <h2 class="services-teaser-title">Estos son todos nuestros servicios</h2>
-                <p class="services-teaser-sub">En esta jornada especial no se pueden elegir servicios generales desde aqui. Es un panel solo informativo para que conozcas toda la propuesta de Espacio Mimar T.</p>
-                <div id="servicesTeaserLoading" class="services-teaser-loading">Cargando servicios...</div>
-                <div id="servicesTeaserGrid" class="services-teaser-grid"></div>
+            <section class="services-showcase" aria-label="Servicios disponibles">
+                <div class="services-showcase-top">
+                    <div>
+                        <p class="services-showcase-kicker">Espacio Mimar</p>
+                        <h2 class="services-showcase-title">Otros servicios para que conozcas</h2>
+                        <p class="services-showcase-sub">Si querÃ©s, podÃ©s desplegar esta secciÃ³n para ver mÃ¡s opciones de cuidado.</p>
+                    </div>
+                    <button id="servicesToggleBtn" class="services-toggle-btn" type="button" aria-expanded="false">Ver servicios</button>
+                </div>
+                <div id="servicesShowcaseContent" class="services-showcase-content">
+                    <div id="servicesShowcaseLoading" class="services-showcase-loading">Cargando servicios...</div>
+                    <div id="servicesShowcaseGrid" class="services-showcase-grid"></div>
+                </div>
             </section>
 
             <div class="cta-row">
-                <a class="btn btn-primary" href="fechaservicio.html">Continuar a fecha especial</a>
-                <a class="btn btn-secondary" href="politica.html">Ver politica de privacidad</a>
+                <a class="btn btn-primary" href="fechajornada.html">Continuar a fecha especial</a>
+                <a class="btn btn-secondary" href="politica.html">Ver polÃ­tica de privacidad</a>
             </div>
         </section>
     </div>
@@ -458,8 +501,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const loadingEl = document.getElementById("servicesTeaserLoading");
-        const gridEl = document.getElementById("servicesTeaserGrid");
+        const loadingEl = document.getElementById("servicesShowcaseLoading");
+        const gridEl = document.getElementById("servicesShowcaseGrid");
+        const contentEl = document.getElementById("servicesShowcaseContent");
+        const toggleBtn = document.getElementById("servicesToggleBtn");
+        let serviciosCargados = false;
 
         const escapeHtml = (value) => String(value || "")
             .replace(/&/g, "&amp;")
@@ -468,16 +514,18 @@
             .replace(/\"/g, "&quot;")
             .replace(/'/g, "&#39;");
 
-        const trunc = (txt, max = 170) => {
+        const trunc = (txt, max = 150) => {
             const value = String(txt || "").replace(/\s+/g, " ").trim();
-            if (!value) return "Consulta de forma personalizada para definir plan, frecuencia y tecnologia recomendada.";
+            if (!value) return "Consulta personalizada para recomendarte el mejor cuidado para vos.";
             return value.length > max ? `${value.slice(0, max - 1)}...` : value;
         };
 
-        async function cargarServiciosSoloVista() {
+        async function cargarServiciosVista() {
+            if (serviciosCargados) return;
             try {
                 const snap = await getDocs(collection(db, "services"));
                 const servicios = [];
+
                 snap.forEach((d) => {
                     const data = d.data() || {};
                     if (data.activo !== false) {
@@ -490,27 +538,35 @@
                 });
 
                 servicios.sort((a, b) => a.orden - b.orden || a.nombre.localeCompare(b.nombre));
+                const vista = servicios.slice(0, 6);
 
                 loadingEl.style.display = "none";
-                if (!servicios.length) {
-                    gridEl.innerHTML = "<p class=\"services-teaser-sub\">No hay servicios cargados en este momento.</p>";
+                serviciosCargados = true;
+                if (!vista.length) {
+                    gridEl.innerHTML = "<p class=\"services-showcase-sub\">No hay servicios cargados en este momento.</p>";
                     return;
                 }
 
-                gridEl.innerHTML = servicios.map((s) => `
-                    <article class="services-teaser-card">
+                gridEl.innerHTML = vista.map((s) => `
+                    <article class="services-showcase-card">
                         <h3>${escapeHtml(s.nombre)}</h3>
                         <p>${escapeHtml(trunc(s.descripcion))}</p>
-                        <span class="locked-chip">Solo informativo</span>
                     </article>
                 `).join("");
             } catch (error) {
                 console.error("No se pudieron cargar los servicios:", error);
-                loadingEl.textContent = "No pudimos cargar el listado de servicios por ahora.";
+                loadingEl.textContent = "No pudimos cargar el listado por ahora.";
             }
         }
 
-        cargarServiciosSoloVista();
+        toggleBtn.addEventListener("click", async () => {
+            const abierto = contentEl.classList.toggle("is-open");
+            toggleBtn.setAttribute("aria-expanded", abierto ? "true" : "false");
+            toggleBtn.textContent = abierto ? "Ocultar servicios" : "Ver servicios";
+            if (abierto) await cargarServiciosVista();
+        });
     </script>
 </body>
 </html>
+
+
