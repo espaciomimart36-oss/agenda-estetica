@@ -1,9 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jornada Especial | Espacio Mimar T</title>
+    
+    <link rel="stylesheet" href="mobile-fixes.css">
+<title>Jornada Especial | Espacio Mimar T</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -571,7 +573,7 @@
         <div class="hero-content">
             <img src="img/logo2.jpg" alt="Espacio Mimar T" class="logo-hero">
             <p class="eyebrow">Tu Momento Mimar</p>
-            <h1 class="hero-title">Jornada Única</h1>
+            <h1 class="hero-title">Jornada Ãšnica</h1>
             <p class="hero-subtitle" id="jornadaService">Criolipolisis por Zona</p>
             <div class="hero-zones" id="jornadaZonas">
                 <span class="zone-badge">Abdomen</span>
@@ -590,7 +592,7 @@
 
     <section class="service-brief-section" aria-label="Acceso a informacion completa del servicio">
         <div class="service-brief-wrap">
-            <p class="service-brief-text">Antes de reservar, podés leer con calma todos los cuidados y detalles de la jornada para sentirte acompañada desde el primer paso.</p>
+            <p class="service-brief-text">Antes de reservar, podÃ©s leer con calma todos los cuidados y detalles de la jornada para sentirte acompaÃ±ada desde el primer paso.</p>
             <a class="service-brief-link" href="serviciosjornada.html">Ver cuidados y detalles</a>
         </div>
     </section>
@@ -598,8 +600,8 @@
     <section class="form-section" id="reserva-jornada">
         <div class="form-container">
             <div class="form-header">
-                <h2>Elegí Tu Momento</h2>
-                <p>Completá tus datos en 1 minuto y elegí el horario que más te guste para vos.</p>
+                <h2>ElegÃ­ Tu Momento</h2>
+                <p>CompletÃ¡ tus datos en 1 minuto y elegÃ­ el horario que mÃ¡s te guste para vos.</p>
             </div>
 
             <form id="formJornada" novalidate>
@@ -630,7 +632,7 @@
                 <div class="form-checks">
                     <label>
                         <input type="checkbox" id="checkPolitica" required>
-                        Acepto la <a href="politica.html" target="_blank" rel="noopener">Política de Privacidad</a>.
+                        Acepto la <a href="politica.html" target="_blank" rel="noopener">PolÃ­tica de Privacidad</a>.
                     </label>
                     <label>
                         <input type="checkbox" id="checkConsent" required>
@@ -640,7 +642,7 @@
 
                 <button id="btnSubmit" class="submit-btn" type="submit">Continuar y Elegir Mi Horario</button>
                 <div id="status" class="form-status"></div>
-                <div class="form-hint">Si ya estás registrada, actualizamos tus datos automáticamente para que sea más simple.</div>
+                <div class="form-hint">Si ya estÃ¡s registrada, actualizamos tus datos automÃ¡ticamente para que sea mÃ¡s simple.</div>
             </form>
         </div>
     </section>
@@ -696,7 +698,7 @@
                     return `${day}/${m}/${y}`;
                 })
                 .filter(Boolean);
-            return formatted.length ? `Fechas habilitadas: ${formatted.join(" · ")}` : "Cupos con fecha especial";
+            return formatted.length ? `Fechas habilitadas: ${formatted.join(" Â· ")}` : "Cupos con fecha especial";
         }
 
         function parseArraySafe(value) {
@@ -833,7 +835,7 @@
             try {
                 const clientSnap = await getDoc(doc(db, "clients", dniClean));
                 if (!clientSnap.exists()) {
-                    setDniHint("No encontramos registros previos para este DNI. Completá tus datos y seguimos.");
+                    setDniHint("No encontramos registros previos para este DNI. CompletÃ¡ tus datos y seguimos.");
                     if (lockedByExistingClient) setClientFieldsLocked(false);
                     return;
                 }
@@ -850,10 +852,10 @@
 
                 lastAutofilledDni = dniClean;
                 setDniHint("Ya te encontramos. Tus datos quedaron protegidos para evitar errores.", true);
-                setStatus("Perfecto, tus datos ya estaban guardados. Revisá y continuá cuando quieras.", true);
+                setStatus("Perfecto, tus datos ya estaban guardados. RevisÃ¡ y continuÃ¡ cuando quieras.", true);
             } catch (error) {
                 console.error("No se pudo autocompletar por DNI:", error);
-                setDniHint("No pudimos validar el DNI ahora. Podés completar todo manualmente.");
+                setDniHint("No pudimos validar el DNI ahora. PodÃ©s completar todo manualmente.");
                 if (lockedByExistingClient) setClientFieldsLocked(false);
             }
         }
@@ -881,12 +883,12 @@
             const consent = document.getElementById("checkConsent").checked;
 
             if (!fullName || !dni || !phone || !email) {
-                setStatus("Completá todos los campos para continuar.");
+                setStatus("CompletÃ¡ todos los campos para continuar.");
                 return;
             }
 
             if (!politica || !consent) {
-                setStatus("Necesitamos tu aceptación de política y consentimiento para avanzar.");
+                setStatus("Necesitamos tu aceptaciÃ³n de polÃ­tica y consentimiento para avanzar.");
                 return;
             }
 
@@ -936,13 +938,13 @@
                 localStorage.setItem("jornadaAllowedDates", JSON.stringify(campaignConfig.allowedDates || []));
                 localStorage.setItem("jornadaSource", campaignConfig.sourceTag || "jornada_especial");
 
-                setStatus("Listo, ya está todo preparado. Te mostramos los detalles de la jornada.", true);
+                setStatus("Listo, ya estÃ¡ todo preparado. Te mostramos los detalles de la jornada.", true);
                 setTimeout(() => {
                     window.location.href = "serviciosjornada.html";
                 }, 450);
             } catch (error) {
                 console.error(error);
-                setStatus(error.message || "No pudimos completar tu registro ahora. Intentá de nuevo en unos segundos.");
+                setStatus(error.message || "No pudimos completar tu registro ahora. IntentÃ¡ de nuevo en unos segundos.");
                 btn.disabled = false;
                 btn.textContent = "Continuar y Elegir Mi Horario";
             }
@@ -952,3 +954,5 @@
     </script>
 </body>
 </html>
+
+

@@ -1,9 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Elegir fecha | Espacio Mimar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="mobile-fixes.css">
+<title>Elegir fecha | Espacio Mimar</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
         :root{
@@ -342,7 +344,7 @@
         .modal-mimar{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,22,19,0.56); display:none; justify-content:center; align-items:center; z-index:9999; backdrop-filter:blur(4px); padding:20px }
         .modal-box{ background:white; padding:25px; border-radius:20px; text-align:center; max-width:400px; width:100%; box-shadow:0 24px 50px rgba(15,22,19,0.24) }
 
-        /* Badge dinámico */
+        /* Badge dinÃ¡mico */
         .badge-balance {
             display: inline-block;
             background: linear-gradient(135deg, #edf8f3 0%, #e1f2e9 100%);
@@ -711,30 +713,30 @@
     <div class="card-recommendations">
         <h2>Recomendaciones para reservar tus sesiones</h2>
         <div class="recommendations-grid">
-            <div class="recommendation-block">Si reservaste 2 horas, se recomienda sacar un turno aproximadamente cada 15 días.</div>
-            <div class="recommendation-block">Si reservaste 4 horas, reservá una sesión por semana durante cuatro semanas.</div>
-            <div class="recommendation-block">Si reservaste 8 horas, podés realizar dos sesiones seguidas en el mismo día.</div>
+            <div class="recommendation-block">Si reservaste 2 horas, se recomienda sacar un turno aproximadamente cada 15 dÃ­as.</div>
+            <div class="recommendation-block">Si reservaste 4 horas, reservÃ¡ una sesiÃ³n por semana durante cuatro semanas.</div>
+            <div class="recommendation-block">Si reservaste 8 horas, podÃ©s realizar dos sesiones seguidas en el mismo dÃ­a.</div>
             <div class="recommendation-block">Los horarios de 12:00 a 13:00 y de 20:00 a 21:00 dejalos para personas que trabajan.</div>
-            <div class="recommendation-block">Si querés realizar una sola sesión de Mio-Up, podés reservar un bloque de 30 minutos.</div>
+            <div class="recommendation-block">Si querÃ©s realizar una sola sesiÃ³n de Mio-Up, podÃ©s reservar un bloque de 30 minutos.</div>
         </div>
     </div>
 
     <div class="floating-warning" id="floatingWarning">
         <div class="floating-warning-track" id="floatingWarningTrack">
-            <span>⚠️ Importante: Los horarios de 12:00 a 13:00 y de 20:00 a 21:00 son exclusivos para personas que trabajan o sesiones de Mio-Up (30 min).</span>
+            <span>âš ï¸ Importante: Los horarios de 12:00 a 13:00 y de 20:00 a 21:00 son exclusivos para personas que trabajan o sesiones de Mio-Up (30 min).</span>
         </div>
-        <button class="floating-warning-close" id="floatingWarningClose">✕</button>
+        <button class="floating-warning-close" id="floatingWarningClose">âœ•</button>
     </div>
     
     <div id="saldoStatus">Verificando balance...</div>
     
     <div class="aviso-mio">
-        <p style="font-size: 0.85rem; color: #666; margin:0;">Seleccioná un día del calendario para ver horarios.</p>
+        <p style="font-size: 0.85rem; color: #666; margin:0;">SeleccionÃ¡ un dÃ­a del calendario para ver horarios.</p>
     </div>
 
     <div class="calendario">
-        <div class="mes"><button id="btnMesAnterior">◀</button><div id="mes"></div><button id="btnMesSiguiente">▶</button></div>
-        <div class="semana"><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div></div>
+        <div class="mes"><button id="btnMesAnterior">â—€</button><div id="mes"></div><button id="btnMesSiguiente">â–¶</button></div>
+        <div class="semana"><div>Lun</div><div>Mar</div><div>MiÃ©</div><div>Jue</div><div>Vie</div><div>SÃ¡b</div><div>Dom</div></div>
         <div class="grid" id="dias"></div>
     </div>
 
@@ -959,9 +961,9 @@ async function cargarHorarios(fecha, fStr){
         return;
     }
 
-    if(esExcepcionBloqueante(fStr)) { container.innerHTML=`<p style="color:red;">Día cerrado: ${excepciones[fStr]}</p>`; return; }
+    if(esExcepcionBloqueante(fStr)) { container.innerHTML=`<p style="color:red;">DÃ­a cerrado: ${excepciones[fStr]}</p>`; return; }
 
-    // Excepción de horarios puntuales
+    // ExcepciÃ³n de horarios puntuales
     if(EXCEPCIONES_HORARIOS[fStr]){
         const config = EXCEPCIONES_HORARIOS[fStr];
         return renderHorariosPorConfig(config, container, fStr);
@@ -969,12 +971,12 @@ async function cargarHorarios(fecha, fStr){
 
     const nombreDia=["domingo","lunes","martes","miercoles","jueves","viernes","sabado"][fecha.getDay()];
 
-    // Bloquear sábados de marzo/abril excepto el 2026-04-25
+    // Bloquear sÃ¡bados de marzo/abril excepto el 2026-04-25
     if(nombreDia === 'sabado' && !EXCEPCIONES_HORARIOS[fStr]){
         const mes = fecha.getMonth() + 1;
         const year = fecha.getFullYear();
         if(year === 2026 && (mes === 3 || mes === 4)){
-            container.innerHTML = "<p style='color:#555;'>Este sábado lo dejamos sin turnos para cuidarte mejor. Elegi otra fecha y te acompañamos.</p>";
+            container.innerHTML = "<p style='color:#555;'>Este sÃ¡bado lo dejamos sin turnos para cuidarte mejor. Elegi otra fecha y te acompaÃ±amos.</p>";
             return;
         }
     }
@@ -997,10 +999,10 @@ async function cargarHorarios(fecha, fStr){
     todos.forEach(item => {
         let div=document.createElement("div"); div.className="hora"; div.innerText=item.h;
         
-        // --- LÓGICA DE BLOQUEO EN CADENA ---
+        // --- LÃ“GICA DE BLOQUEO EN CADENA ---
         let estaOcupado = ocupados.includes(item.h);
         
-        // Si el de las 12:00 está libre pero el de las 12:30 está ocupado (o viceversa), marcamos AMBOS en rojo.
+        // Si el de las 12:00 estÃ¡ libre pero el de las 12:30 estÃ¡ ocupado (o viceversa), marcamos AMBOS en rojo.
         if (!estaOcupado) {
             if (item.h === "12:00" && ocupados.includes("12:30")) estaOcupado = true;
             if (item.h === "12:30" && ocupados.includes("12:00")) estaOcupado = true;
@@ -1015,7 +1017,7 @@ async function cargarHorarios(fecha, fStr){
                 if(!esMioUp && item.tipo==='fraccionado') {
                     const esInicio = (item.h==="12:00" || item.h==="20:00");
                     if(!esInicio) {
-                        mostrarAviso("Bloque de 30 min", "Para una sesión normal de 1 hora, selecciona el horario de inicio (12:00 o 20:00).");
+                        mostrarAviso("Bloque de 30 min", "Para una sesiÃ³n normal de 1 hora, selecciona el horario de inicio (12:00 o 20:00).");
                         return;
                     }
                 }
@@ -1116,7 +1118,7 @@ function renderHorariosPorConfig(config, container, fStr) {
                         if(!esMioUp && item.tipo === 'fraccionado') {
                             const esInicio = (item.h === "12:00" || item.h === "20:00");
                             if(!esInicio) {
-                                mostrarAviso("Bloque de 30 min", "Para una sesión normal de 1 hora, selecciona el horario de inicio (12:00 o 20:00). ");
+                                mostrarAviso("Bloque de 30 min", "Para una sesiÃ³n normal de 1 hora, selecciona el horario de inicio (12:00 o 20:00). ");
                                 return;
                             }
                         }
@@ -1138,3 +1140,5 @@ function renderHorariosPorConfig(config, container, fStr) {
 }</script>
 </body>
 </html>
+
+
