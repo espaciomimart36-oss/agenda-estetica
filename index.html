@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingreso | Espacio Mimar</title>
+    <script>
+        // El dominio abre directo en jornada, salvo que se pida modo normal explicitamente.
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("modo") === "normal") return;
+            window.location.replace("jornada.html" + window.location.search + window.location.hash);
+        })();
+    </script>
+    <noscript>
+        <meta http-equiv="refresh" content="0; url=jornada.html">
+    </noscript>
     <meta name="theme-color" content="#6f8a6d">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="img/icon-192.png">

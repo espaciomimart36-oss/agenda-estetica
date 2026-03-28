@@ -1042,7 +1042,8 @@ document.getElementById("reservarBtn").onclick=()=>{
     localStorage.setItem("fechaSeleccionada", fStr);
     localStorage.setItem("horaSeleccionada", horaSeleccionada);
     localStorage.setItem("duracionSeleccionada", duracionTurno);
-    window.location.href="confirmar.html";
+    const destinoConfirmacion = jornadaModo ? "confirmarjornada.html" : "confirmar.html";
+    window.location.href = destinoConfirmacion;
 };
 
 document.getElementById("btnMesSiguiente").onclick=()=>{ fechaActual.setMonth(fechaActual.getMonth()+1); renderCalendario(); };
