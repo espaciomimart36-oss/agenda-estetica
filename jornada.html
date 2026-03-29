@@ -263,9 +263,30 @@
             background: linear-gradient(180deg, var(--hueso) 0%, #fff2fa 100%);
             padding: clamp(24px, 5vw, 48px);
             display: flex;
+            flex-direction: column;
+            gap: 14px;
             align-items: center;
             justify-content: center;
             animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .form-autofill-banner {
+            width: 100%;
+            max-width: 460px;
+            padding: 10px 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid rgba(217, 91, 143, 0.14);
+            color: #80636d;
+            font-size: 12px;
+            line-height: 1.45;
+            text-align: center;
+            box-shadow: 0 10px 24px rgba(126, 39, 81, 0.08);
+        }
+
+        .form-autofill-banner strong {
+            color: #6b3a56;
+            font-weight: 700;
         }
 
         .form-container {
@@ -455,6 +476,58 @@
             text-align: center;
         }
 
+        .login-shortcut {
+            width: 100%;
+            max-width: 460px;
+            background: linear-gradient(135deg, rgba(255, 253, 253, 0.92) 0%, rgba(255, 245, 251, 0.92) 100%);
+            border: 1px solid #f1cede;
+            border-radius: 18px;
+            box-shadow: 0 16px 34px rgba(111, 42, 79, 0.1);
+            padding: 16px 18px;
+            text-align: center;
+        }
+
+        .login-shortcut-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #7d5658;
+        }
+
+        .login-shortcut-text {
+            margin: 8px 0 0;
+            font-size: 13px;
+            line-height: 1.55;
+            color: #6d5154;
+        }
+
+        .login-shortcut-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            margin-top: 14px;
+            width: 100%;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #a64074;
+            border: 1px solid rgba(166, 64, 116, 0.22);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 240, 248, 0.98) 100%);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .login-shortcut-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(126, 39, 81, 0.14);
+            border-color: rgba(166, 64, 116, 0.34);
+        }
+
         @media (max-width: 768px) {
             .hero-section {
                 display: block;
@@ -486,6 +559,11 @@
 
             .form-section {
                 padding: 20px 16px;
+            }
+
+            .form-autofill-banner,
+            .login-shortcut {
+                max-width: 100%;
             }
 
             .form-header h2 {
@@ -641,6 +719,7 @@
     </section>
 
     <section class="form-section" id="reserva-jornada">
+        <div class="form-autofill-banner">Si ya estas <strong>cargada en el sistema</strong>, escribi tu DNI y completamos el resto de tus datos automaticamente.</div>
         <div class="form-container">
             <div class="form-header">
                 <h2>Elegi tu momento</h2>
@@ -687,6 +766,11 @@
                 <div id="status" class="form-status"></div>
                 <div class="form-hint">Si ya estas registrada, actualizamos tus datos automaticamente para que sea mas simple.</div>
             </form>
+        </div>
+        <div class="login-shortcut" aria-label="Ingreso para pacientes ya registradas">
+            <p class="login-shortcut-title">Ya tenes cuenta</p>
+            <p class="login-shortcut-text">Si ya ingresaste antes y queres entrar directo con tu cuenta, podes iniciar sesion desde aca.</p>
+            <a class="login-shortcut-link" href="index.html?modo=jornada">Iniciar sesion</a>
         </div>
     </section>
 
