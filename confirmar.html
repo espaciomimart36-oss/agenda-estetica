@@ -28,17 +28,17 @@
     <div class="card">
         <h2>Confirmar Turno</h2>
         <div class="info-box">
-            <p>Â¡Hola <span id="txtNombre">Cargando...</span>! ðŸ˜Š</p>
+            <p>¡Hola <span id="txtNombre">Cargando...</span>!</p>
             <p><span id="txtServicio">Cargando...</span> - <span id="txtFecha">Cargando...</span> a las <span id="txtHora">Cargando...</span></p>
             <p>Te contactaremos al: <span id="txtTelefono">Buscando en base de datos...</span></p>
-            <small>RevisÃ¡ tu turno y confirma para finalizar.</small>
+            <small>Revisá tu turno y confirmá para finalizar.</small>
         </div>
         <button id="btnConfirmar" class="btn-confirmar" disabled>Cargando datos...</button>
     </div>
 
     <div id="modalConfirmado">
-        <h1>Operacion Exitosa</h1>
-        <p>Turno confirmado y notificacion enviada.</p>
+        <h1>Operación exitosa</h1>
+        <p>Turno confirmado y notificación enviada.</p>
         <button onclick="window.location.href='index.html'" style="margin-top:20px; padding:10px 20px; cursor:pointer; border-radius: 10px; border: none; font-family: 'Poppins', sans-serif;">Volver al inicio</button>
     </div>
 
@@ -67,13 +67,13 @@
         document.getElementById("txtFecha").innerText = fechaLs;
         document.getElementById("txtHora").innerText = `${horaLs} hs`;
 
-        // Buscar el telefono en Firestore al cargar la pagina
+        // Buscar el teléfono en Firestore al cargar la página
         async function obtenerDatosCliente() {
             const boton = document.getElementById("btnConfirmar");
 
             if (!dniLs) {
-                document.getElementById("txtTelefono").innerText = "Error: DNI no encontrado en sesiÃ³n";
-                boton.innerText = "Error de sesiÃ³n";
+                document.getElementById("txtTelefono").innerText = "Error: DNI no encontrado en sesión";
+                boton.innerText = "Error de sesión";
                 return;
             }
 
@@ -90,7 +90,7 @@
                         boton.disabled = false;
                         boton.innerText = "Confirmar y Enviar WhatsApp";
                     } else {
-                        document.getElementById("txtTelefono").innerText = "Sin telÃ©fono en ficha (se guardarÃ¡ igual)";
+                        document.getElementById("txtTelefono").innerText = "Sin teléfono en ficha (se guardará igual)";
                         boton.disabled = false;
                         boton.innerText = "Confirmar turno";
                     }
@@ -100,14 +100,14 @@
                 }
             } catch (error) {
                 console.error("Error obteniendo documento:", error);
-                document.getElementById("txtTelefono").innerText = "Error de conexiÃ³n";
+                document.getElementById("txtTelefono").innerText = "Error de conexión";
             }
         }
 
-        // Ejecutar la busqueda apenas arranca
+        // Ejecutar la búsqueda apenas arranca
         obtenerDatosCliente();
 
-        // Procesar la confirmacion final
+        // Procesar la confirmación final
         async function procesarConfirmacion() {
             const boton = document.getElementById("btnConfirmar");
             boton.disabled = true;
@@ -138,7 +138,7 @@
                     timestamp: new Date()
                 });
 
-                // 2. Descontar sesion del balance del cliente (hoursBalance)
+                // 2. Descontar sesión del balance del cliente (hoursBalance)
                 try {
                     const clientRef = doc(db, "clients", dniLs);
                     await updateDoc(clientRef, { 
@@ -148,7 +148,7 @@
                     console.error("No se pudo descontar hoursBalance: ", e); 
                 }
 
-                // 3. Enviar confirmaciÃ³n por Cloud Function (backend)
+                // 3. Enviar confirmación por Cloud Function (backend)
                 if (telefonoExtraido) {
                     try {
                         const response = await fetch(CF_CONFIRM_URL, {
@@ -169,10 +169,10 @@
                         const resJson = await response.json();
                         if (!response.ok) {
                             console.error("Error API Cloud Function:", resJson);
-                            alert("Turno guardado, pero fallÃ³ el WhatsApp.");
+                            alert("Turno guardado, pero falló el WhatsApp.");
                         }
                     } catch (waError) {
-                        console.error("Error enviando WhatsApp vÃ­a backend:", waError);
+                        console.error("Error enviando WhatsApp vía backend:", waError);
                         alert("Turno guardado, pero no se pudo enviar WhatsApp.");
                     }
                 }

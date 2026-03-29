@@ -53,13 +53,13 @@
     <div class="container">
         <img src="img/logo.png" class="logo">
         <button class="btn-mis-citas" id="btnAbrirBusqueda">
-            <span>ðŸ“…</span> Mis Proximos Turnos
+            <span>Agenda</span> Mis próximos turnos
         </button>
         <div id="loading">Cargando experiencias...</div>
         <div class="servicios" id="listaServicios"></div>
     </div>
 
-    <!-- Modal 1: Pedir DNI (Solo si no hay sesiÃ³n) -->
+    <!-- Modal 1: Pedir DNI (Solo si no hay sesión) -->
     <div id="modalBusquedaDNI" class="modal-overlay">
         <div class="modal-card">
             <h2>Consultar Turnos</h2>
@@ -78,10 +78,6 @@
             <div id="listaResultadosCitas" style="margin-top: 10px; max-height: 450px; overflow-y: auto; padding-right: 5px;"></div>
             <button id="btnCerrarMisCitas" style="background:#f4f4f4; border:none; color:#555; padding: 16px; width: 100%; border-radius: 18px; margin-top:20px; cursor:pointer; font-weight: 600;">Cerrar</button>
         </div>
-    </div>
-
-    <div class="footer">
-        Â© 2026 Espacio Mimar T â€” Todos los derechos reservados
     </div>
 
     <script type="module">
@@ -106,7 +102,7 @@
                 case "permission-denied":
                     return "Acceso bloqueado por reglas de Firestore en reservas.";
                 case "unavailable":
-                    return "Servicio no disponible. IntentÃ¡ de nuevo en unos segundos.";
+                    return "Servicio no disponible. Intentá de nuevo en unos segundos.";
                 default:
                     return "Error al conectar con la base de datos.";
             }
@@ -119,13 +115,13 @@
         const listaResultados = document.getElementById("listaResultadosCitas");
 
         const SERVICIO_LED_NOMBRE = "Facial LED Regenerativo";
-        const SERVICIO_LED_RESUMEN = "Tratamiento no invasivo con cabina LED profesional que estimula colageno y elastina para mejorar firmeza, luminosidad y textura, ayudando tambien en acne, inflamacion, rojeces y manchas. Sesion relajante de 30 minutos, sin dolor ni recuperacion; ideal para piel sensible y resultados progresivos desde la primera aplicacion.";
+        const SERVICIO_LED_RESUMEN = "Tratamiento no invasivo con cabina LED profesional que estimula colágeno y elastina para mejorar firmeza, luminosidad y textura, ayudando también en acné, inflamación, rojeces y manchas. Sesión relajante de 30 minutos, sin dolor ni recuperación; ideal para piel sensible y resultados progresivos desde la primera aplicación.";
 
-        const SERVICIO_CORPORAL_NOMBRE = "SesiÃ³n Corporal Combinada por Zona";
-        const SERVICIO_CORPORAL_RESUMEN = `Tratamiento integral que combina distintas tecnologÃ­as para mejorar la flacidez, celulitis, estrÃ­as, retenciÃ³n de lÃ­quidos y tono muscular.\nSe trabaja de forma personalizada segÃºn la necesidad de la zona, estimulando el colÃ¡geno, mejorando la textura de la piel y favoreciendo el drenaje y la activaciÃ³n muscular.\n\n<strong>Importante</strong>\nCada sesiÃ³n corresponde a una sola zona (abdomen, flancos, glÃºteos o zona subglÃºtea).\nSi se desean trabajar dos zonas, se deben reservar sesiones adicionales.\n\n<strong>Plan de tratamiento</strong>\nSe recomienda un mÃ­nimo de 6 sesiones por zona para lograr resultados visibles y duraderos.`;
+        const SERVICIO_CORPORAL_NOMBRE = "Sesión Corporal Combinada por Zona";
+        const SERVICIO_CORPORAL_RESUMEN = `Tratamiento integral que combina distintas tecnologías para mejorar la flacidez, celulitis, estrías, retención de líquidos y tono muscular.\nSe trabaja de forma personalizada según la necesidad de la zona, estimulando el colágeno, mejorando la textura de la piel y favoreciendo el drenaje y la activación muscular.\n\n<strong>Importante</strong>\nCada sesión corresponde a una sola zona (abdomen, flancos, glúteos o zona subglútea).\nSi se desean trabajar dos zonas, se deben reservar sesiones adicionales.\n\n<strong>Plan de tratamiento</strong>\nSe recomienda un mínimo de 6 sesiones por zona para lograr resultados visibles y duraderos.`;
 
 
-        // LÃ“GICA DE BÃšSQUEDA Y ORDENAMIENTO
+        // LÓGICA DE BÚSQUEDA Y ORDENAMIENTO
         async function ejecutarConsulta(dni) {
             modalBusqueda.style.display = "none";
             listaResultados.innerHTML = "<p>Buscando tus turnos...</p>";
@@ -149,16 +145,16 @@
                         }
                     });
 
-                    // ORDENAMIENTO CRONOLÃ“GICO: MÃ¡s prÃ³ximo primero
+                    // ORDENAMIENTO CRONOLÓGICO: Más próximo primero
                     turnos.sort((a, b) => {
                         if (a.fecha !== b.fecha) {
                             return a.fecha.localeCompare(b.fecha); // Compara AAAA-MM-DD
                         }
-                        return a.hora.localeCompare(b.hora); // Si es el mismo dÃ­a, ordena por hora
+                        return a.hora.localeCompare(b.hora); // Si es el mismo día, ordena por hora
                     });
 
                     if (turnos.length === 0) {
-                        listaResultados.innerHTML = "<p style='color:#999; padding: 30px;'>No tenÃ©s turnos prÃ³ximos agendados.</p>";
+                        listaResultados.innerHTML = "<p style='color:#999; padding: 30px;'>No tenés turnos próximos agendados.</p>";
                         return;
                     }
 
@@ -168,7 +164,7 @@
                             <div class="turno-item">
                                 <b>${r.servicio}</b>
                                 ${formatearFechaPro(r.fecha)}
-                                <span class="hora-tag">ðŸ•’ ${r.hora}</span>
+                                <span class="hora-tag">Hora: ${r.hora}</span>
                             </div>
                         `;
                     });
@@ -180,7 +176,7 @@
             }
         }
 
-        // FunciÃ³n para formatear fecha visualmente
+        // Función para formatear fecha visualmente
         function formatearFechaPro(fechaStr) {
             const dias = ["dom.", "lun.", "mar.", "mie.", "jue.", "vie.", "sab."];
             const [year, month, day] = fechaStr.split('-');
@@ -189,7 +185,7 @@
             return `<span class="fecha-tag">${nombreDia} ${day}/${month}</span>`;
         }
 
-        // CONTROL DE BOTÃ“N PRINCIPAL (CON AUTO-DETECCIÃ“N DE SESIÃ“N)
+        // CONTROL DE BOTÓN PRINCIPAL (CON AUTO-DETECCIÓN DE SESIÓN)
         document.getElementById("btnAbrirBusqueda").onclick = () => {
             const dniGuardado = localStorage.getItem("clienteDNI");
             
@@ -197,13 +193,13 @@
                 // Si ya tenemos el DNI del login, buscamos directo
                 ejecutarConsulta(dniGuardado);
             } else {
-                // Si no hay sesiÃ³n, pedimos DNI
+                // Si no hay sesión, pedimos DNI
                 modalBusqueda.style.display = "flex";
                 document.getElementById("inputDNI").focus();
             }
         };
 
-        // BÃºsqueda manual desde el modal
+        // Búsqueda manual desde el modal
         document.getElementById("btnRealizarBusqueda").onclick = () => {
             const dni = document.getElementById("inputDNI").value.trim();
             if (dni) ejecutarConsulta(dni);

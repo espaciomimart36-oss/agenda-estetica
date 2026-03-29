@@ -663,12 +663,12 @@
         <div class="hero-content">
             <img src="img/logo2.jpg" alt="Espacio Mimar T" class="logo-hero">
             <p class="eyebrow">Tu Momento Mimar</p>
-            <h1 class="hero-title">Jornada Unica</h1>
-            <p class="hero-subtitle" id="jornadaService">Criolipolisis por zona</p>
+            <h1 class="hero-title">Jornada Única</h1>
+            <p class="hero-subtitle" id="jornadaService">Criolipólisis por zona</p>
             <div class="hero-zones" id="jornadaZonas">
                 <span class="zone-badge">Abdomen</span>
                 <span class="zone-badge">Rollito espalda</span>
-                <span class="zone-badge">Banana subglutea</span>
+                <span class="zone-badge">Banana subglútea</span>
                 <span class="zone-badge">Caderas</span>
             </div>
             <div class="date-showcase" id="jornadaFechas">Cupos con fecha especial</div>
@@ -680,19 +680,19 @@
         </div>
     </section>
 
-    <section class="service-brief-section" aria-label="Acceso a informacion completa del servicio">
+    <section class="service-brief-section" aria-label="Acceso a información completa del servicio">
         <div class="service-brief-wrap">
-            <p class="service-brief-text">Antes de reservar, podes leer con calma todos los cuidados y detalles de la jornada para sentirte acompanada desde el primer paso.</p>
+            <p class="service-brief-text">Antes de reservar, podés leer con calma todos los cuidados y detalles de la jornada para sentirte acompañada desde el primer paso.</p>
             <a class="service-brief-link" href="serviciosjornada.html">Ver cuidados y detalles</a>
         </div>
     </section>
 
     <section class="form-section" id="reserva-jornada">
-        <div class="form-autofill-banner">Si ya estas <strong>registrada</strong>, al ingresar tu DNI el sistema te reconoce y completa tus datos automaticamente.</div>
+        <div class="form-autofill-banner">Si ya estás <strong>registrada</strong>, al ingresar tu DNI el sistema te reconoce y completa tus datos automáticamente.</div>
         <div class="form-container">
             <div class="form-header">
-                <h2>Elegi tu momento</h2>
-                <p>Completa tus datos en 1 minuto y elegi el horario que mas te guste para vos.</p>
+                <h2>Elegí tu momento</h2>
+                <p>Completá tus datos en 1 minuto y elegí el horario que más te guste para vos.</p>
             </div>
 
             <form id="formJornada" novalidate>
@@ -706,7 +706,7 @@
                     <div class="form-group">
                         <label for="dni">DNI *</label>
                         <input id="dni" type="text" inputmode="numeric" required>
-                        <div id="dniHint" class="autofill-note">Al ingresar tu DNI, completamos tus datos si ya estas registrada.</div>
+                        <div id="dniHint" class="autofill-note">Al ingresar tu DNI, completamos tus datos si ya estás registrada.</div>
                     </div>
 
                     <div class="form-group">
@@ -723,7 +723,7 @@
                 <div class="form-checks">
                     <label>
                         <input type="checkbox" id="checkPolitica" required>
-                        Acepto la <a href="politica.html" target="_blank" rel="noopener">Politica de Privacidad</a>.
+                        Acepto la <a href="politica.html" target="_blank" rel="noopener">Política de Privacidad</a>.
                     </label>
                     <label>
                         <input type="checkbox" id="checkConsent" required>
@@ -731,9 +731,9 @@
                     </label>
                 </div>
 
-                <button id="btnSubmit" class="submit-btn" type="submit">Continuar y Elegir Mi Horario</button>
+                <button id="btnSubmit" class="submit-btn" type="submit">Continuar y elegir mi horario</button>
                 <div id="status" class="form-status"></div>
-                <div class="form-hint">Si ya estas registrada, actualizamos tus datos automaticamente para que sea mas simple.</div>
+                <div class="form-hint">Si ya estás registrada, actualizamos tus datos automáticamente para que sea más simple.</div>
             </form>
         </div>
     </section>
@@ -755,7 +755,7 @@
         const db = getFirestore(app);
 
         const CF_REGISTRAR = "https://us-central1-estetica-8d067.cloudfunctions.net/registrarPacienteJornada";
-        const DEFAULT_SERVICE = "Jornada Unica de Criolipolisis";
+        const DEFAULT_SERVICE = "Jornada Única de Criolipólisis";
         const ES_LOCAL = ["127.0.0.1", "localhost"].includes(window.location.hostname);
 
         const statusEl = document.getElementById("status");
@@ -799,7 +799,7 @@
 
         function getServiceSubtitle(rawServiceName) {
             const text = String(rawServiceName || "").trim();
-            if (!text) return "De criolipolisis";
+            if (!text) return "De criolipólisis";
             const normalized = text
                 .toLowerCase()
                 .normalize("NFD")
@@ -809,8 +809,8 @@
                 const cleaned = text
                     .replace(/jornada\s+(u|\u00fa)nica\s+(de|del)?\s*/i, "")
                     .trim();
-                if (!cleaned) return "De criolipolisis";
-                if (/^criolip(o|\u00f3)lisis$/i.test(cleaned)) return "De criolipolisis";
+                if (!cleaned) return "De criolipólisis";
+                if (/^criolip(o|\u00f3)lisis$/i.test(cleaned)) return "De criolipólisis";
                 return cleaned;
             }
             return text;
@@ -947,10 +947,10 @@
 
                 lastAutofilledDni = dniClean;
                 setDniHint("Ya te encontramos. Tus datos quedaron protegidos para evitar errores.", true);
-                setStatus("Perfecto, tus datos ya estaban guardados. Revisa y continua cuando quieras.", true);
+                setStatus("Perfecto, tus datos ya estaban guardados. Revisá y continuá cuando quieras.", true);
             } catch (error) {
                 console.error("No se pudo autocompletar por DNI:", error);
-                setDniHint("No pudimos validar el DNI ahora. Podes completar todo manualmente.");
+                setDniHint("No pudimos validar el DNI ahora. Podés completar todo manualmente.");
                 if (lockedByExistingClient) setClientFieldsLocked(false);
             }
         }
@@ -983,7 +983,7 @@
             }
 
             if (!politica || !consent) {
-                setStatus("Necesitamos tu aceptacion de politica y consentimiento para avanzar.");
+                setStatus("Necesitamos tu aceptación de política y consentimiento para avanzar.");
                 return;
             }
 
@@ -1039,9 +1039,9 @@
                 }, 450);
             } catch (error) {
                 console.error(error);
-                setStatus(error.message || "No pudimos completar tu registro ahora. Intenta de nuevo en unos segundos.");
+                setStatus(error.message || "No pudimos completar tu registro ahora. Intentá de nuevo en unos segundos.");
                 btn.disabled = false;
-                btn.textContent = "Continuar y Elegir Mi Horario";
+                btn.textContent = "Continuar y elegir mi horario";
             }
         });
 
