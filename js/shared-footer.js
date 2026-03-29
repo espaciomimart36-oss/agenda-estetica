@@ -2,23 +2,19 @@
     const FOOTER_TEXT = "Todos los derechos reservados";
     const BRAND_TEXT = "Espacio Mimar T";
     const STYLE_ID = "shared-site-footer-style";
-    const HOME_PAGES = new Set(["", "index.html"]);
     const ADMIN_PAGES = new Set(["admin.html"]);
+    const MAINTENANCE_PAGE = "jornada.html";
 
     function getCurrentPage() {
         return (window.location.pathname.split("/").pop() || "").toLowerCase();
-    }
-
-    function isHomePage() {
-        return HOME_PAGES.has(getCurrentPage());
     }
 
     function isAdminPage() {
         return ADMIN_PAGES.has(getCurrentPage());
     }
 
-    function isPublicPatientPage() {
-        return !isHomePage() && !isAdminPage();
+    function isMaintenancePage() {
+        return getCurrentPage() === MAINTENANCE_PAGE;
     }
 
     function injectStyles() {
@@ -137,13 +133,11 @@
         ) || document.body;
     }
 
-    function applyMaintenanceHome() {
-        const container = document.querySelector("body > .container") || document.querySelector("body > .page-wrap") || document.body;
-        if (!container || container.dataset.maintenanceApplied === "true") return;
-
+    function applyMaintenancePage() {
+        if (document.body.dataset.maintenanceApplied === "true") return;
         document.title = "Página en mantenimiento | Espacio Mimar T";
-        container.dataset.maintenanceApplied = "true";
-        container.innerHTML = `
+        document.body.dataset.maintenanceApplied = "true";
+        document.body.innerHTML = `
             <section class="maintenance-shell" aria-label="Página en mantenimiento">
                 <div class="maintenance-logo-wrap">
                     <img class="maintenance-logo" src="img/logo2.jpg" alt="Espacio Mimar T">
@@ -173,14 +167,13 @@
         mount.appendChild(footer);
     }
 
-    if (isPublicPatientPage()) {
-        window.location.replace("/index.html");
+    injectStyles();
+    if (!isAdminPage() && !isMaintenancePage()) {
+        window.location.replace(`/${MAINTENANCE_PAGE}`);
         return;
     }
-
-    injectStyles();
-    if (isHomePage()) {
-        applyMaintenanceHome();
+    if (isMaintenancePage()) {
+        applyMaintenancePage();
     }
     removeLegacyFooters();
     appendFooter();

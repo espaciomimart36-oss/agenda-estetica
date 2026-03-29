@@ -7,10 +7,7 @@
     <link rel="stylesheet" href="mobile-fixes.css">
 <title>Ingreso | Espacio Mimar</title>
     <script>
-        // El dominio abre directo en jornada, salvo que se pida modo normal explicitamente.
         (function () {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get("modo") === "normal") return;
             window.location.replace("jornada.html" + window.location.search + window.location.hash);
         })();
     </script>
