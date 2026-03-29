@@ -321,7 +321,7 @@
                         <input id="cliDni" class="select-input" type="text" inputmode="numeric" placeholder="DNI (solo números)" oninput="buscarClientePorDniInput()">
                         <input id="cliPhone" class="select-input" type="text" inputmode="tel" placeholder="Teléfono (ej: 375613943)">
                         <input id="cliNuevoDni" class="select-input full" type="text" inputmode="numeric" placeholder="Nuevo DNI para cambiar ID (opcional)">
-                        <input id="cliHoursBalance" class="select-input" type="number" step="0.5" min="0" placeholder="Hours Balance (ej: 0, 1.5, 2)" oninput="actualizarHoursBalanceAutoInput()">
+                        <input id="cliHoursBalance" class="select-input" type="number" step="0.5" min="0" value="1" placeholder="Hours Balance (ej: 1, 1.5, 2)" oninput="actualizarHoursBalanceAutoInput()">
                         <input id="cliEmail" class="select-input" type="email" placeholder="Email (opcional)">
                         <input id="cliUsername" class="select-input" type="text" placeholder="Usuario (opcional)">
                     </div>
@@ -1736,7 +1736,7 @@
             document.getElementById("cliNuevoDni").value = "";
             document.getElementById("cliPhone").value = "";
             document.getElementById("cliFullName").value = "";
-            document.getElementById("cliHoursBalance").value = "";
+            document.getElementById("cliHoursBalance").value = "1";
             document.getElementById("cliEmail").value = "";
             document.getElementById("cliUsername").value = "";
             document.getElementById("cliActivo").checked = true;
@@ -1903,7 +1903,7 @@
             const email = (document.getElementById("cliEmail").value || "").trim().toLowerCase();
             const usernameInput = (document.getElementById("cliUsername").value || "").trim();
             const username = usernameInput || generarUsername(fullName);
-            const hoursBalance = hoursBalanceRaw === "" ? 0 : Number(hoursBalanceRaw);
+            const hoursBalance = hoursBalanceRaw === "" ? 1 : Number(hoursBalanceRaw);
             const membershipActive = document.getElementById("cliMembership").checked;
 
             if (!dni || !fullName || !phone) {

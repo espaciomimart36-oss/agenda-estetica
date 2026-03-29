@@ -13,6 +13,7 @@
                 margin-top: 26px;
                 padding: 16px 0 8px;
                 text-align: center;
+                opacity: 0.5;
             }
 
             .shared-site-footer__text {
