@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jornada Especial | Espacio Mimar T</title>
+    
+    <link rel="stylesheet" href="mobile-fixes.css?v=20260329b">
+<title>Jornada Especial | Espacio Mimar T</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --rojo: #e11d2e;
-            --rojo-oscuro: #9f1120;
-            --rojo-neon: #ff3a4c;
-            --champagne: #ffd68a;
-            --hueso: #fff8ef;
-            --texto: #26181a;
+            --rojo: #d95b8f;
+            --rojo-oscuro: #a64074;
+            --rojo-neon: #ef7eac;
+            --champagne: #ffd7e8;
+            --hueso: #fff7fb;
+            --texto: #3b2331;
             --ok: #188354;
-            --font-display: 'Barlow Condensed', sans-serif;
+            --font-display: 'Cormorant Garamond', serif;
             --font-body: 'Plus Jakarta Sans', sans-serif;
         }
 
@@ -35,10 +37,15 @@
             display: flex;
             flex-direction: column;
             background:
-                radial-gradient(1200px 500px at 10% -20%, rgba(255, 58, 76, 0.16), transparent 60%),
-                radial-gradient(900px 420px at 90% 110%, rgba(225, 29, 46, 0.12), transparent 55%),
-                #fffaf4;
+                radial-gradient(1200px 520px at 8% -18%, rgba(239, 126, 172, 0.18), transparent 62%),
+                radial-gradient(900px 460px at 92% 112%, rgba(217, 91, 143, 0.16), transparent 58%),
+                linear-gradient(180deg, #fff9fd 0%, #fff3f9 50%, #fdeff6 100%);
         }
+
+            @keyframes softFloatIn {
+                from { opacity: 0; transform: translateY(16px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
 
         .hero-section {
             position: relative;
@@ -46,7 +53,7 @@
             height: auto;
             min-height: 410px;
             padding: 22px 12px 28px;
-            background: #2a2123;
+            background: #422e39;
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -55,28 +62,37 @@
             text-align: center;
         }
 
-        .hero-section::before {
-            content: "";
+        .hero-bg {
             position: absolute;
-            inset: -16px;
-            background-image:
-                linear-gradient(135deg, rgba(23, 18, 20, 0.44) 0%, rgba(23, 18, 20, 0.35) 100%),
-                url('img/recepcion.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            filter: blur(2.5px) saturate(0.9);
-            transform: scale(1.04);
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 44%;
+            transform: scale(1.03);
+            filter: saturate(1.02);
             z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(53, 33, 43, 0.54) 0%, rgba(53, 33, 43, 0.34) 100%);
+            z-index: 1;
         }
 
         .hero-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
             top: -12px;
             padding: 14px 20px 10px;
             max-width: 760px;
             animation: fadeInDown 0.8s ease-out;
+            background: linear-gradient(135deg, rgba(255, 248, 252, 0.18) 0%, rgba(255, 230, 241, 0.1) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(33, 15, 25, 0.32);
+            backdrop-filter: blur(3px);
         }
 
         @keyframes fadeInDown {
@@ -96,8 +112,8 @@
             object-fit: contain;
             object-position: center;
             border-radius: 999px;
-            border: 1.5px solid rgba(255, 255, 255, 0.78);
-            background: rgba(255, 255, 255, 0.1);
+            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            background: rgba(255, 240, 248, 0.22);
             box-shadow: 0 10px 24px rgba(0,0,0,0.3);
             filter: brightness(1.08) contrast(1.16) saturate(1.08);
             margin-top: 2px;
@@ -110,7 +126,8 @@
             font-weight: 800;
             letter-spacing: 0.25em;
             text-transform: uppercase;
-            opacity: 0.9;
+            opacity: 0.96;
+            color: #ffe7f2;
             margin: 0;
             animation: fadeInDown 1s ease-out 0.2s both;
         }
@@ -119,17 +136,17 @@
             font-family: var(--font-display);
             font-size: clamp(48px, 12vw, 88px);
             margin: 6px 0;
-            line-height: 0.95;
-            letter-spacing: 0.06em;
-            font-weight: 900;
+            line-height: 1;
+            letter-spacing: 0.03em;
+            font-weight: 700;
             text-shadow: 0 6px 24px rgba(0,0,0,0.4);
             animation: fadeInDown 1s ease-out 0.3s both;
         }
 
         .hero-subtitle {
             font-size: clamp(14px, 3vw, 24px);
-            font-weight: 800;
-            color: #ffe7ad;
+            font-weight: 700;
+            color: #ffe4f2;
             margin: 8px 0 0;
             letter-spacing: 0.02em;
             animation: fadeInDown 1s ease-out 0.4s both;
@@ -145,8 +162,8 @@
         }
 
         .zone-badge {
-            background: rgba(255, 255, 255, 0.16);
-            border: 1px solid rgba(255, 255, 255, 0.36);
+            background: rgba(255, 233, 244, 0.2);
+            border: 1px solid rgba(255, 236, 246, 0.44);
             color: #fff;
             padding: 7px 14px;
             border-radius: 20px;
@@ -158,8 +175,8 @@
 
         .date-showcase {
             display: inline-block;
-            background: linear-gradient(135deg, #ffe6ae 0%, #ffc85f 100%);
-            color: #3b1b03;
+            background: linear-gradient(135deg, #ffe4f2 0%, #ffbfdc 100%);
+            color: #5a2841;
             padding: 11px 22px;
             border-radius: 16px;
             font-weight: 900;
@@ -171,38 +188,60 @@
             animation: fadeInUp 1s ease-out 0.6s both;
         }
 
+        .hero-floats {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 11px;
+            animation: fadeInUp 1s ease-out 0.62s both;
+        }
+
+        .float-card {
+            background: rgba(255, 247, 252, 0.2);
+            border: 1px solid rgba(255, 240, 246, 0.45);
+            border-radius: 999px;
+            color: #ffeaf4;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 7px 12px;
+            box-shadow: 0 10px 24px rgba(28, 8, 18, 0.24);
+            backdrop-filter: blur(3px);
+        }
+
         .service-brief-section {
-            background: linear-gradient(180deg, #fffaf2 0%, #fff7ee 100%);
-            border-top: 1px solid rgba(163, 105, 39, 0.12);
-            border-bottom: 1px solid rgba(163, 105, 39, 0.12);
+            background: linear-gradient(180deg, #fff5fb 0%, #fff0f8 100%);
+            border-top: 1px solid rgba(166, 77, 124, 0.14);
+            border-bottom: 1px solid rgba(166, 77, 124, 0.14);
             padding: 16px;
         }
 
         .service-brief-wrap {
             width: min(880px, 100%);
             margin: 0 auto;
-            background: #fffdf8;
-            border: 1px solid #f0dcc0;
-            border-radius: 14px;
-            box-shadow: 0 12px 28px rgba(58, 36, 14, 0.08);
+            background: linear-gradient(135deg, #fffdfd 0%, #fff6fb 100%);
+            border: 1px solid #f2c6dc;
+            border-radius: 16px;
+            box-shadow: 0 16px 34px rgba(123, 53, 91, 0.14);
             padding: 14px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 14px;
+            animation: softFloatIn 0.55s ease-out 0.12s both;
         }
 
         .service-brief-text {
             margin: 0;
-            color: #4f3b2f;
+            color: #6b3a56;
             font-size: 13px;
             line-height: 1.45;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         .service-brief-link {
             text-decoration: none;
-            background: linear-gradient(135deg, #ff3a4c 0%, #e11d2e 60%, #9f1120 100%);
+            background: linear-gradient(135deg, #f08cb6 0%, #d95b8f 60%, #a64074 100%);
             color: #fff;
             padding: 10px 14px;
             border-radius: 10px;
@@ -211,17 +250,17 @@
             text-transform: uppercase;
             font-weight: 900;
             white-space: nowrap;
-            box-shadow: 0 10px 22px rgba(159, 17, 32, 0.24);
+            box-shadow: 0 10px 22px rgba(126, 39, 81, 0.26);
         }
 
         .service-brief-link:hover {
             transform: translateY(-1px);
-            box-shadow: 0 12px 26px rgba(159, 17, 32, 0.3);
+            box-shadow: 0 12px 26px rgba(126, 39, 81, 0.34);
         }
 
         .form-section {
             flex: 1;
-            background: linear-gradient(180deg, var(--hueso) 0%, #fef9f1 100%);
+            background: linear-gradient(180deg, var(--hueso) 0%, #fff2fa 100%);
             padding: clamp(24px, 5vw, 48px);
             display: flex;
             align-items: center;
@@ -232,6 +271,12 @@
         .form-container {
             width: 100%;
             max-width: 460px;
+            background: linear-gradient(135deg, #fffdfd 0%, #fff5fb 100%);
+            border: 1px solid #f2cde0;
+            border-radius: 22px;
+            box-shadow: 0 20px 44px rgba(111, 42, 79, 0.16);
+            padding: 24px 20px;
+            animation: softFloatIn 0.55s ease-out 0.2s both;
         }
 
         .form-header {
@@ -242,9 +287,9 @@
             margin: 0 0 6px;
             font-size: 28px;
             color: var(--rojo);
-            font-weight: 800;
+            font-weight: 700;
             font-family: var(--font-display);
-            letter-spacing: 0.02em;
+            letter-spacing: 0.01em;
         }
 
         .form-header p {
@@ -360,14 +405,14 @@
             cursor: pointer;
             color: #fff;
             background: linear-gradient(135deg, var(--rojo-neon) 0%, var(--rojo) 46%, var(--rojo-oscuro) 100%);
-            box-shadow: 0 12px 26px rgba(159, 17, 32, 0.32);
+            box-shadow: 0 12px 26px rgba(126, 39, 81, 0.34);
             transition: all 0.3s;
             margin-top: 6px;
         }
 
         .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 16px 36px rgba(159, 17, 32, 0.42);
+            box-shadow: 0 16px 36px rgba(126, 39, 81, 0.4);
         }
 
         .autofill-note {
@@ -413,8 +458,20 @@
         @media (max-width: 768px) {
             .hero-section {
                 height: auto;
-                min-height: 360px;
+                min-height: 390px;
                 padding: 18px 10px 22px;
+            }
+
+            .hero-bg {
+                object-fit: contain;
+                object-position: center top;
+                transform: none;
+                filter: saturate(1.05);
+            }
+
+            .hero-content {
+                width: 100%;
+                padding: 16px 14px 12px;
             }
 
             .form-section {
@@ -427,6 +484,10 @@
 
             .hero-zones {
                 margin-top: 8px;
+            }
+
+            .hero-floats {
+                gap: 8px;
             }
 
             .zone-badge {
@@ -443,8 +504,12 @@
         @media (max-width: 480px) {
             .hero-section {
                 height: auto;
-                min-height: 332px;
+                min-height: 370px;
                 padding: 16px 8px 20px;
+            }
+
+            .hero-bg {
+                object-position: center 10%;
             }
 
             .hero-content {
@@ -466,6 +531,7 @@
 
             .form-container {
                 max-width: 100%;
+                padding: 20px 14px;
             }
 
             .form-header h2 {
@@ -483,8 +549,19 @@
             }
 
             .date-showcase {
+                display: block;
+                width: 100%;
                 font-size: 11px;
                 padding: 9px 16px;
+            }
+
+            .hero-floats {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .float-card {
+                text-align: center;
             }
 
             .service-brief-text {
@@ -493,30 +570,46 @@
 
             .service-brief-link {
                 text-align: center;
+                width: 100%;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-full {
+                grid-column: span 1;
             }
         }
     </style>
 </head>
 <body>
     <section class="hero-section">
+        <img src="img/recepcion.jpeg" alt="Cabina de Espacio Mimar T" class="hero-bg">
+        <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
             <img src="img/logo2.jpg" alt="Espacio Mimar T" class="logo-hero">
             <p class="eyebrow">Tu Momento Mimar</p>
-            <h1 class="hero-title">Jornada Única</h1>
-            <p class="hero-subtitle" id="jornadaService">Criolipolisis por Zona</p>
+            <h1 class="hero-title">Jornada Unica</h1>
+            <p class="hero-subtitle" id="jornadaService">Criolipolisis por zona</p>
             <div class="hero-zones" id="jornadaZonas">
                 <span class="zone-badge">Abdomen</span>
                 <span class="zone-badge">Rollito espalda</span>
                 <span class="zone-badge">Banana subglutea</span>
                 <span class="zone-badge">Caderas</span>
             </div>
-            <div class="date-showcase" id="jornadaFechas">Cupos  con fecha especial</div>
+            <div class="date-showcase" id="jornadaFechas">Cupos con fecha especial</div>
+            <div class="hero-floats" aria-hidden="true">
+                <span class="float-card">Cuidarte te queda hermoso</span>
+                <span class="float-card">Tu cuerpo, tu tiempo</span>
+                <span class="float-card">Sentite linda, por vos</span>
+            </div>
         </div>
     </section>
 
     <section class="service-brief-section" aria-label="Acceso a informacion completa del servicio">
         <div class="service-brief-wrap">
-            <p class="service-brief-text">Antes de reservar, podés leer con calma todos los cuidados y detalles de la jornada para sentirte acompañada desde el primer paso.</p>
+            <p class="service-brief-text">Antes de reservar, podes leer con calma todos los cuidados y detalles de la jornada para sentirte acompanada desde el primer paso.</p>
             <a class="service-brief-link" href="serviciosjornada.html">Ver cuidados y detalles</a>
         </div>
     </section>
@@ -524,8 +617,8 @@
     <section class="form-section" id="reserva-jornada">
         <div class="form-container">
             <div class="form-header">
-                <h2>Elegí Tu Momento</h2>
-                <p>Completá tus datos en 1 minuto y elegí el horario que más te guste para vos.</p>
+                <h2>Elegi tu momento</h2>
+                <p>Completa tus datos en 1 minuto y elegi el horario que mas te guste para vos.</p>
             </div>
 
             <form id="formJornada" novalidate>
@@ -533,7 +626,7 @@
                     <div class="form-full form-group">
                         <label for="fullName">Nombre y apellido *</label>
                         <input id="fullName" type="text" required>
-                        <div class="field-note">Escribelo tal como luego vas a ingresar: Nombre y apellido + DNI. Verifica bien los datos para evitar errores de acceso.</div>
+                        <div class="field-note">Escribilo tal como aparece en tu documento para que podamos cuidar cada detalle de tu reserva.</div>
                     </div>
 
                     <div class="form-group">
@@ -556,7 +649,7 @@
                 <div class="form-checks">
                     <label>
                         <input type="checkbox" id="checkPolitica" required>
-                        Acepto la <a href="politica.html" target="_blank" rel="noopener">PolÃ­tica de Privacidad</a>.
+                        Acepto la <a href="politica.html" target="_blank" rel="noopener">Politica de Privacidad</a>.
                     </label>
                     <label>
                         <input type="checkbox" id="checkConsent" required>
@@ -564,16 +657,16 @@
                     </label>
                 </div>
 
-                <button id="btnSubmit" class="submit-btn" type="submit">Continuar y Elegir Horario</button>
+                <button id="btnSubmit" class="submit-btn" type="submit">Continuar y Elegir Mi Horario</button>
                 <div id="status" class="form-status"></div>
-                <div class="form-hint">Si ya estás registrada, actualizamos tus datos automáticamente para que sea más simple.</div>
+                <div class="form-hint">Si ya estas registrada, actualizamos tus datos automaticamente para que sea mas simple.</div>
             </form>
         </div>
     </section>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBc5435tsDnJ_yJqO1ppwSjxSpCIhpjgew",
@@ -589,6 +682,7 @@
 
         const CF_REGISTRAR = "https://us-central1-estetica-8d067.cloudfunctions.net/registrarPacienteJornada";
         const DEFAULT_SERVICE = "Jornada Unica de Criolipolisis";
+        const ES_LOCAL = ["127.0.0.1", "localhost"].includes(window.location.hostname);
 
         const statusEl = document.getElementById("status");
         const form = document.getElementById("formJornada");
@@ -621,7 +715,7 @@
                     return `${day}/${m}/${y}`;
                 })
                 .filter(Boolean);
-            return formatted.length ? `Fechas habilitadas: ${formatted.join(" Â· ")}` : "Cupos con fecha especial";
+            return formatted.length ? `Fechas habilitadas: ${formatted.join(" - ")}` : "Cupos con fecha especial";
         }
 
         function parseArraySafe(value) {
@@ -632,13 +726,17 @@
         function getServiceSubtitle(rawServiceName) {
             const text = String(rawServiceName || "").trim();
             if (!text) return "De criolipolisis";
-            const normalized = text.toLowerCase().replace(/\s+/g, " ");
+            const normalized = text
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/\s+/g, " ");
             if (normalized.includes("jornada unica")) {
                 const cleaned = text
-                    .replace(/jornada\s+unica\s+(de|del)?\s*/i, "")
+                    .replace(/jornada\s+(u|\u00fa)nica\s+(de|del)?\s*/i, "")
                     .trim();
                 if (!cleaned) return "De criolipolisis";
-                if (cleaned.toLowerCase() === "criolipolisis") return "De criolipolisis";
+                if (/^criolip(o|\u00f3)lisis$/i.test(cleaned)) return "De criolipolisis";
                 return cleaned;
             }
             return text;
@@ -647,6 +745,42 @@
         function setStatus(msg, ok = false) {
             statusEl.textContent = msg || "";
             statusEl.classList.toggle("ok", !!ok);
+        }
+
+        async function registrarPacienteFallback(payload) {
+            const ref = doc(db, "clients", payload.dni);
+            const snap = await getDoc(ref);
+            if (!snap.exists()) {
+                throw new Error("No pudimos registrar este DNI ahora. Intenta nuevamente en unos minutos.");
+            }
+
+            const username = String(payload.fullName || "")
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9\s]/g, "")
+                .trim()
+                .replace(/\s+/g, ".");
+
+            await updateDoc(ref, {
+                fullName: payload.fullName,
+                nombre: payload.fullName,
+                phone: payload.phone,
+                telefono: payload.phone,
+                email: payload.email,
+                username,
+                active: true,
+                politicaAceptada: true,
+                consentimientoAceptado: true,
+                fechaAceptacion: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                campaign: {
+                    source: String(payload.sourceTag || "jornada_especial"),
+                    serviceName: String(payload.serviceName || DEFAULT_SERVICE),
+                    allowedDates: Array.isArray(payload.allowedDates) ? payload.allowedDates : [],
+                    lastSignupAt: new Date().toISOString()
+                }
+            });
         }
 
         async function loadCampaignConfig() {
@@ -677,7 +811,7 @@
                 }
 
                 if (!campaignConfig.active) {
-                    setStatus("La jornada no esta activa en este momento.");
+                    setStatus("La jornada no esta disponible por el momento. Muy pronto vas a verla activa otra vez.");
                     btn.disabled = true;
                 }
             } catch (error) {
@@ -722,7 +856,7 @@
             try {
                 const clientSnap = await getDoc(doc(db, "clients", dniClean));
                 if (!clientSnap.exists()) {
-                    setDniHint("No encontramos registros previos para este DNI. Completá tus datos y seguimos.");
+                    setDniHint("No encontramos registros previos para este DNI. Completa tus datos y seguimos.");
                     if (lockedByExistingClient) setClientFieldsLocked(false);
                     return;
                 }
@@ -739,10 +873,10 @@
 
                 lastAutofilledDni = dniClean;
                 setDniHint("Ya te encontramos. Tus datos quedaron protegidos para evitar errores.", true);
-                setStatus("Perfecto, tus datos ya estaban guardados. Revisá y continuá cuando quieras.", true);
+                setStatus("Perfecto, tus datos ya estaban guardados. Revisa y continua cuando quieras.", true);
             } catch (error) {
                 console.error("No se pudo autocompletar por DNI:", error);
-                setDniHint("No pudimos validar el DNI ahora. Podés completar todo manualmente.");
+                setDniHint("No pudimos validar el DNI ahora. Podes completar todo manualmente.");
                 if (lockedByExistingClient) setClientFieldsLocked(false);
             }
         }
@@ -770,58 +904,82 @@
             const consent = document.getElementById("checkConsent").checked;
 
             if (!fullName || !dni || !phone || !email) {
-                setStatus("Completá todos los campos para continuar.");
+                setStatus("Completa todos los campos para continuar.");
                 return;
             }
 
             if (!politica || !consent) {
-                setStatus("Necesitamos tu aceptación de política y consentimiento para avanzar.");
+                setStatus("Necesitamos tu aceptacion de politica y consentimiento para avanzar.");
                 return;
             }
 
             btn.disabled = true;
-            btn.textContent = "Procesando...";
+            btn.textContent = "Preparando tu acceso...";
 
             try {
-                const response = await fetch(CF_REGISTRAR, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        fullName,
-                        dni,
-                        phone,
-                        email,
-                        serviceName: campaignConfig.serviceName || DEFAULT_SERVICE,
-                        sourceTag: campaignConfig.sourceTag || "jornada_especial",
-                        allowedDates: campaignConfig.allowedDates || [],
-                        politicaAceptada: true,
-                        consentimientoAceptado: true
-                    })
-                });
+                const registroPayload = {
+                    fullName,
+                    dni,
+                    phone,
+                    email,
+                    serviceName: campaignConfig.serviceName || DEFAULT_SERVICE,
+                    sourceTag: campaignConfig.sourceTag || "jornada_especial",
+                    allowedDates: campaignConfig.allowedDates || [],
+                    politicaAceptada: true,
+                    consentimientoAceptado: true
+                };
 
-                const result = await response.json().catch(() => ({}));
-                if (!response.ok) {
-                    throw new Error(result.error || "No se pudo completar el registro");
+                if (!ES_LOCAL) {
+                    try {
+                        const response = await fetch(CF_REGISTRAR, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(registroPayload)
+                        });
+
+                        const result = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            throw new Error(result.error || "No se pudo completar el registro");
+                        }
+                    } catch (cfError) {
+                        const msg = String(cfError?.message || "").toLowerCase();
+                        const esErrorRed = msg.includes("failed to fetch") || msg.includes("cors") || msg.includes("network");
+                        if (!esErrorRed) throw cfError;
+                        await registrarPacienteFallback(registroPayload);
+                    }
+                } else {
+                    await registrarPacienteFallback(registroPayload);
                 }
 
                 localStorage.setItem("clienteDNI", dni);
                 localStorage.setItem("clienteNombre", fullName);
+                localStorage.setItem("clientePhoneIngresado", phone);
                 localStorage.setItem("servicioSeleccionado", campaignConfig.serviceName || DEFAULT_SERVICE);
                 localStorage.setItem("jornadaModo", "1");
                 localStorage.setItem("jornadaAllowedDates", JSON.stringify(campaignConfig.allowedDates || []));
                 localStorage.setItem("jornadaSource", campaignConfig.sourceTag || "jornada_especial");
 
-                setStatus("Listo, ya está todo preparado. Te mostramos los detalles de la jornada.", true);
+                setStatus("Listo, ya esta todo preparado. Te mostramos los detalles de la jornada.", true);
                 setTimeout(() => {
-                    window.location.href = "fecha.html?modo=jornada";
+                    window.location.href = "serviciosjornada.html";
                 }, 450);
             } catch (error) {
                 console.error(error);
-                setStatus(error.message || "No pudimos completar tu registro ahora. Intentá de nuevo en unos segundos.");
+                setStatus(error.message || "No pudimos completar tu registro ahora. Intenta de nuevo en unos segundos.");
                 btn.disabled = false;
-                btn.textContent = "Continuar y Elegir Horario";
+                btn.textContent = "Continuar y Elegir Mi Horario";
             }
         });
+
+        if (ES_LOCAL && "serviceWorker" in navigator) {
+            navigator.serviceWorker.getRegistrations().then((regs) => {
+                regs.forEach((reg) => reg.unregister());
+            }).catch(() => {});
+
+            if ("caches" in window) {
+                caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))).catch(() => {});
+            }
+        }
 
         loadCampaignConfig();
     </script>
