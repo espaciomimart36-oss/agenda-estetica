@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <link rel="stylesheet" href="mobile-fixes.css">
+    <link rel="stylesheet" href="mobile-fixes.css?v=20260329b">
 <title>Jornada Especial | Espacio Mimar T</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -62,24 +62,28 @@
             text-align: center;
         }
 
-        .hero-section::before {
-            content: "";
+        .hero-bg {
             position: absolute;
-            inset: -16px;
-            background-image:
-                linear-gradient(135deg, rgba(53, 33, 43, 0.52) 0%, rgba(53, 33, 43, 0.34) 100%),
-                url('img/recepcion.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            filter: blur(2.2px) saturate(1.03);
-            transform: scale(1.04);
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 44%;
+            transform: scale(1.03);
+            filter: saturate(1.02);
             z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(53, 33, 43, 0.54) 0%, rgba(53, 33, 43, 0.34) 100%);
+            z-index: 1;
         }
 
         .hero-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
             top: -12px;
             padding: 14px 20px 10px;
             max-width: 760px;
@@ -454,8 +458,15 @@
         @media (max-width: 768px) {
             .hero-section {
                 height: auto;
-                min-height: 360px;
+                min-height: 390px;
                 padding: 18px 10px 22px;
+            }
+
+            .hero-bg {
+                object-fit: contain;
+                object-position: center top;
+                transform: none;
+                filter: saturate(1.05);
             }
 
             .hero-content {
@@ -493,8 +504,12 @@
         @media (max-width: 480px) {
             .hero-section {
                 height: auto;
-                min-height: 332px;
+                min-height: 370px;
                 padding: 16px 8px 20px;
+            }
+
+            .hero-bg {
+                object-position: center 10%;
             }
 
             .hero-content {
@@ -570,11 +585,13 @@
 </head>
 <body>
     <section class="hero-section">
+        <img src="img/recepcion.jpeg" alt="Cabina de Espacio Mimar T" class="hero-bg">
+        <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
             <img src="img/logo2.jpg" alt="Espacio Mimar T" class="logo-hero">
             <p class="eyebrow">Tu Momento Mimar</p>
-            <h1 class="hero-title">Jornada Ãšnica</h1>
-            <p class="hero-subtitle" id="jornadaService">Criolipolisis por Zona</p>
+            <h1 class="hero-title">Jornada Unica</h1>
+            <p class="hero-subtitle" id="jornadaService">Criolipolisis por zona</p>
             <div class="hero-zones" id="jornadaZonas">
                 <span class="zone-badge">Abdomen</span>
                 <span class="zone-badge">Rollito espalda</span>
@@ -592,7 +609,7 @@
 
     <section class="service-brief-section" aria-label="Acceso a informacion completa del servicio">
         <div class="service-brief-wrap">
-            <p class="service-brief-text">Antes de reservar, podÃ©s leer con calma todos los cuidados y detalles de la jornada para sentirte acompaÃ±ada desde el primer paso.</p>
+            <p class="service-brief-text">Antes de reservar, podes leer con calma todos los cuidados y detalles de la jornada para sentirte acompanada desde el primer paso.</p>
             <a class="service-brief-link" href="serviciosjornada.html">Ver cuidados y detalles</a>
         </div>
     </section>
@@ -600,8 +617,8 @@
     <section class="form-section" id="reserva-jornada">
         <div class="form-container">
             <div class="form-header">
-                <h2>ElegÃ­ Tu Momento</h2>
-                <p>CompletÃ¡ tus datos en 1 minuto y elegÃ­ el horario que mÃ¡s te guste para vos.</p>
+                <h2>Elegi tu momento</h2>
+                <p>Completa tus datos en 1 minuto y elegi el horario que mas te guste para vos.</p>
             </div>
 
             <form id="formJornada" novalidate>
@@ -632,7 +649,7 @@
                 <div class="form-checks">
                     <label>
                         <input type="checkbox" id="checkPolitica" required>
-                        Acepto la <a href="politica.html" target="_blank" rel="noopener">PolÃ­tica de Privacidad</a>.
+                        Acepto la <a href="politica.html" target="_blank" rel="noopener">Politica de Privacidad</a>.
                     </label>
                     <label>
                         <input type="checkbox" id="checkConsent" required>
@@ -642,7 +659,7 @@
 
                 <button id="btnSubmit" class="submit-btn" type="submit">Continuar y Elegir Mi Horario</button>
                 <div id="status" class="form-status"></div>
-                <div class="form-hint">Si ya estÃ¡s registrada, actualizamos tus datos automÃ¡ticamente para que sea mÃ¡s simple.</div>
+                <div class="form-hint">Si ya estas registrada, actualizamos tus datos automaticamente para que sea mas simple.</div>
             </form>
         </div>
     </section>
@@ -698,7 +715,7 @@
                     return `${day}/${m}/${y}`;
                 })
                 .filter(Boolean);
-            return formatted.length ? `Fechas habilitadas: ${formatted.join(" Â· ")}` : "Cupos con fecha especial";
+            return formatted.length ? `Fechas habilitadas: ${formatted.join(" - ")}` : "Cupos con fecha especial";
         }
 
         function parseArraySafe(value) {
@@ -709,13 +726,17 @@
         function getServiceSubtitle(rawServiceName) {
             const text = String(rawServiceName || "").trim();
             if (!text) return "De criolipolisis";
-            const normalized = text.toLowerCase().replace(/\s+/g, " ");
+            const normalized = text
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/\s+/g, " ");
             if (normalized.includes("jornada unica")) {
                 const cleaned = text
-                    .replace(/jornada\s+unica\s+(de|del)?\s*/i, "")
+                    .replace(/jornada\s+(u|\u00fa)nica\s+(de|del)?\s*/i, "")
                     .trim();
                 if (!cleaned) return "De criolipolisis";
-                if (cleaned.toLowerCase() === "criolipolisis") return "De criolipolisis";
+                if (/^criolip(o|\u00f3)lisis$/i.test(cleaned)) return "De criolipolisis";
                 return cleaned;
             }
             return text;
@@ -835,7 +856,7 @@
             try {
                 const clientSnap = await getDoc(doc(db, "clients", dniClean));
                 if (!clientSnap.exists()) {
-                    setDniHint("No encontramos registros previos para este DNI. CompletÃ¡ tus datos y seguimos.");
+                    setDniHint("No encontramos registros previos para este DNI. Completa tus datos y seguimos.");
                     if (lockedByExistingClient) setClientFieldsLocked(false);
                     return;
                 }
@@ -852,10 +873,10 @@
 
                 lastAutofilledDni = dniClean;
                 setDniHint("Ya te encontramos. Tus datos quedaron protegidos para evitar errores.", true);
-                setStatus("Perfecto, tus datos ya estaban guardados. RevisÃ¡ y continuÃ¡ cuando quieras.", true);
+                setStatus("Perfecto, tus datos ya estaban guardados. Revisa y continua cuando quieras.", true);
             } catch (error) {
                 console.error("No se pudo autocompletar por DNI:", error);
-                setDniHint("No pudimos validar el DNI ahora. PodÃ©s completar todo manualmente.");
+                setDniHint("No pudimos validar el DNI ahora. Podes completar todo manualmente.");
                 if (lockedByExistingClient) setClientFieldsLocked(false);
             }
         }
@@ -883,12 +904,12 @@
             const consent = document.getElementById("checkConsent").checked;
 
             if (!fullName || !dni || !phone || !email) {
-                setStatus("CompletÃ¡ todos los campos para continuar.");
+                setStatus("Completa todos los campos para continuar.");
                 return;
             }
 
             if (!politica || !consent) {
-                setStatus("Necesitamos tu aceptaciÃ³n de polÃ­tica y consentimiento para avanzar.");
+                setStatus("Necesitamos tu aceptacion de politica y consentimiento para avanzar.");
                 return;
             }
 
@@ -938,17 +959,27 @@
                 localStorage.setItem("jornadaAllowedDates", JSON.stringify(campaignConfig.allowedDates || []));
                 localStorage.setItem("jornadaSource", campaignConfig.sourceTag || "jornada_especial");
 
-                setStatus("Listo, ya estÃ¡ todo preparado. Te mostramos los detalles de la jornada.", true);
+                setStatus("Listo, ya esta todo preparado. Te mostramos los detalles de la jornada.", true);
                 setTimeout(() => {
                     window.location.href = "serviciosjornada.html";
                 }, 450);
             } catch (error) {
                 console.error(error);
-                setStatus(error.message || "No pudimos completar tu registro ahora. IntentÃ¡ de nuevo en unos segundos.");
+                setStatus(error.message || "No pudimos completar tu registro ahora. Intenta de nuevo en unos segundos.");
                 btn.disabled = false;
                 btn.textContent = "Continuar y Elegir Mi Horario";
             }
         });
+
+        if (ES_LOCAL && "serviceWorker" in navigator) {
+            navigator.serviceWorker.getRegistrations().then((regs) => {
+                regs.forEach((reg) => reg.unregister());
+            }).catch(() => {});
+
+            if ("caches" in window) {
+                caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))).catch(() => {});
+            }
+        }
 
         loadCampaignConfig();
     </script>
