@@ -532,8 +532,8 @@
             .hero-section {
                 display: block;
                 height: auto;
-                min-height: 100svh;
-                padding: calc(18px + env(safe-area-inset-top, 0px)) 10px 28px;
+                min-height: 84svh;
+                padding: calc(18px + env(safe-area-inset-top, 0px)) 10px 110px;
             }
 
             .hero-bg {
@@ -587,12 +587,20 @@
                 flex-direction: column;
                 align-items: stretch;
             }
+
+            .service-brief-section {
+                position: relative;
+                z-index: 4;
+                margin-top: -82px;
+                padding: 90px 16px 16px;
+                background: linear-gradient(180deg, transparent 0, rgba(255, 245, 251, 0.92) 70px, #fff0f8 100%);
+            }
         }
 
         @media (max-width: 480px) {
             .hero-section {
-                min-height: 100svh;
-                padding: calc(14px + env(safe-area-inset-top, 0px)) 8px 24px;
+                min-height: 78svh;
+                padding: calc(14px + env(safe-area-inset-top, 0px)) 8px 104px;
             }
 
             .hero-bg {
@@ -640,6 +648,12 @@
             .form-container {
                 max-width: 100%;
                 padding: 20px 14px;
+            }
+
+            .service-brief-section {
+                margin-top: -88px;
+                padding: 96px 12px 16px;
+                background: linear-gradient(180deg, transparent 0, rgba(255, 245, 251, 0.94) 74px, #fff0f8 100%);
             }
 
             .form-header h2 {
