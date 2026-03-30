@@ -292,6 +292,20 @@
         const statusEl = document.getElementById("status");
         const btn = document.getElementById("btnContinuar");
 
+        function tieneRegistroJornadaValido() {
+            const dni = (localStorage.getItem("clienteDNI") || "").trim();
+            const nombre = (localStorage.getItem("clienteNombre") || "").trim();
+            return Boolean(dni && nombre);
+        }
+
+        if (!tieneRegistroJornadaValido()) {
+            statusEl.textContent = "Primero completá tu registro en la jornada para acceder al calendario especial.";
+            btn.disabled = true;
+            setTimeout(() => {
+                window.location.href = "jornada.html#reserva-jornada";
+            }, 900);
+        }
+
         slotsEl.innerHTML = JORNADA_SLOTS.map((h) => `<span class="slot">${h}</span>`).join("");
 
         function prepararContextoJornada() {

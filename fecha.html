@@ -563,6 +563,25 @@
             font-weight: 700;
         }
 
+        body.jornada-calendar-mode .dia.bloqueado,
+        body.jornada-calendar-mode .dia.pasado,
+        body.jornada-calendar-mode .dia.domingo {
+            background: linear-gradient(180deg, #fff0f2 0%, #ffe5e9 100%);
+            border-color: #f2b7bf;
+            color: #b53345;
+            opacity: 1;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+        }
+
+        body.jornada-calendar-mode .dia.bloqueado:hover,
+        body.jornada-calendar-mode .dia.pasado:hover,
+        body.jornada-calendar-mode .dia.domingo:hover {
+            transform: none;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+            border-color: #f2b7bf;
+            background: linear-gradient(180deg, #fff0f2 0%, #ffe5e9 100%);
+        }
+
         body.jornada-calendar-mode .dia:hover {
             border-color: #ff9475;
             background: #fff3ef;
@@ -800,6 +819,7 @@ const EXCEPCIONES_HORARIOS = {
     "2026-03-26": { normal: ["08:00", "09:00", "10:00", "11:00", "16:00"], fraccionado: ["12:00", "12:30"] },
     "2026-03-28": { normal: ["11:00"], fraccionado: [] },
     "2026-04-01": { normal: ["21:00"], fraccionado: [] },
+    "2026-04-22": { normal: ["21:00"], fraccionado: [] },
     "2026-04-25": { normal: ["17:00"], fraccionado: [] }
 };
 
@@ -841,6 +861,8 @@ try {
 if (jornadaModo && (!Array.isArray(jornadaAllowedDates) || !jornadaAllowedDates.length)) {
     jornadaAllowedDates = ["2026-04-02"];
 }
+
+const MENSAJE_DIA_NO_DISPONIBLE_JORNADA = "Este dia no tiene horas disponibles para la jornada especial. Elegi la fecha disponible.";
 
 const esMesPermitidoJornada = (year, month) => {
     if (!jornadaModo) return true;
@@ -922,11 +944,11 @@ function renderCalendario(){
         else if(f<hoy) div.classList.add("pasado");
         else if(jornadaModo && !esMesPermitidoJornada(y, m+1)) {
             div.classList.add("bloqueado");
-            div.onclick=()=>mostrarAviso("Jornada especial", "Esta experiencia se agenda en un mes especial, pensado para vos.");
+            div.onclick=()=>mostrarAviso("Jornada especial", MENSAJE_DIA_NO_DISPONIBLE_JORNADA);
         }
         else if(!esFechaHabilitadaJornada(fStr)) {
             div.classList.add("bloqueado");
-            div.onclick=()=>mostrarAviso("Jornada especial", "Esta jornada tiene fechas seleccionadas con mucho mimo. Elegi una de las disponibles.");
+            div.onclick=()=>mostrarAviso("Jornada especial", MENSAJE_DIA_NO_DISPONIBLE_JORNADA);
         }
         else if(esExcepcionBloqueante(fStr)){
             div.classList.add("bloqueado");

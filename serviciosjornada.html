@@ -579,6 +579,126 @@
             flex-wrap: wrap;
         }
 
+        .gate-modal {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(20, 10, 14, 0.55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.22s ease, visibility 0.22s ease;
+            z-index: 9999;
+        }
+
+        .gate-modal.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .gate-modal-card {
+            width: min(460px, 100%);
+            background: linear-gradient(160deg, #fffefe 0%, #fff4ef 100%);
+            border: 1px solid #f0c8bf;
+            border-radius: 16px;
+            box-shadow: 0 18px 44px rgba(53, 14, 18, 0.28);
+            padding: 20px 18px 18px;
+            text-align: center;
+            transform: translateY(16px) scale(0.96);
+            opacity: 0;
+            transition: transform 0.28s cubic-bezier(.2,.74,.33,1), opacity 0.24s ease;
+        }
+
+        .gate-modal.show .gate-modal-card {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .gate-modal-icon {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 10px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff8f70 0%, #ef233c 58%, #a10f25 100%);
+            box-shadow: 0 12px 24px rgba(170, 31, 39, 0.28);
+        }
+
+        .gate-modal-title {
+            margin: 0 0 6px;
+            color: #8d1f2a;
+            font-size: 16px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        .gate-modal-text {
+            margin: 0;
+            color: #6a4441;
+            font-size: 14px;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .gate-modal-actions {
+            margin-top: 14px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .gate-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 12px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-weight: 900;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .gate-btn-primary {
+            color: #fff;
+            background: linear-gradient(135deg, #ff6b5d 0%, #ef233c 54%, #a10f25 100%);
+            box-shadow: 0 10px 22px rgba(170, 31, 39, 0.22);
+        }
+
+        .gate-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 24px rgba(170, 31, 39, 0.28);
+        }
+
+        .gate-btn-secondary {
+            color: #92212c;
+            border: 1px solid #f0cdc3;
+            background: #fff;
+        }
+
+        .gate-btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(138, 31, 42, 0.12);
+        }
+
+        .gate-btn:focus-visible {
+            outline: 2px solid #ef233c;
+            outline-offset: 2px;
+        }
+
         .btn {
             text-decoration: none;
             border-radius: 10px;
@@ -627,6 +747,9 @@
             .alert-contact { padding: 8px 10px; }
             .alert-contact-copy p { font-size: 10px; }
             .card-premium li { padding: 15px 10px 12px; }
+            .gate-modal-card { padding: 18px 14px 14px; }
+            .gate-modal-actions { flex-direction: column; }
+            .gate-btn { width: 100%; }
         }
     </style>
 </head>
@@ -666,11 +789,11 @@
                 <article class="card card-wide">
                     <h3>Qué tenés que saber antes de reservar</h3>
                     <ul>
-                        <li>Utiliza frío controlado para actuar sobre adiposidad localizada.</li>
-                        <li>El proceso biológico esperado es progresivo, no inmediato.</li>
-                        <li>Los cambios suelen empezar a notarse desde los 15 a 20 días y continúan evolucionando hasta alrededor de los 60 días.</li>
-                        <li>Para volver a tratar la misma zona, normalmente se recomienda esperar entre 30 y 45 días.</li>
-                        <li>Los hábitos diarios influyen en el resultado: hidratación, alimentación equilibrada, actividad física y evitar excesos acompañan el proceso.</li>
+                        <li>Actúa mediante frío controlado sobre adiposidad localizada.</li>
+                        <li>La respuesta esperada es progresiva: no se observan cambios inmediatos.</li>
+                        <li>En muchos casos, los primeros cambios pueden empezar a notarse entre los 15 y 20 días, con evolución aproximada hasta los 60 días.</li>
+                        <li>Para tratar nuevamente la misma zona, suele recomendarse un intervalo de 30 a 45 días, según evaluación profesional.</li>
+                        <li>Los hábitos cotidianos también acompañan el proceso: hidratación adecuada, alimentación equilibrada, actividad física y evitar excesos como alcohol frecuente, ultraprocesados y períodos prolongados de sedentarismo.</li>
                     </ul>
                 </article>
 
@@ -811,10 +934,22 @@
             </section>
 
             <div class="cta-row">
-                <a class="btn btn-primary" href="fechajornada.html">Continuar a fecha especial</a>
+                <a id="btnContinuarFechaEspecial" class="btn btn-primary" href="fechajornada.html">Continuar a fecha especial</a>
                 <a class="btn btn-secondary" href="politica.html">Ver política de privacidad</a>
             </div>
         </section>
+
+        <div id="gateModal" class="gate-modal" aria-hidden="true" role="dialog" aria-labelledby="gateModalTitle" aria-describedby="gateModalText">
+            <div class="gate-modal-card">
+                <div class="gate-modal-icon" aria-hidden="true">!</div>
+                <h3 id="gateModalTitle" class="gate-modal-title">Registro previo requerido</h3>
+                <p id="gateModalText" class="gate-modal-text">Primero completá tu registro en la jornada para poder continuar al calendario especial.</p>
+                <div class="gate-modal-actions">
+                    <button id="gateModalGo" class="gate-btn gate-btn-primary" type="button">Ir al registro</button>
+                    <button id="gateModalClose" class="gate-btn gate-btn-secondary" type="button">Cerrar</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="module">
@@ -838,7 +973,19 @@
         const gridEl = document.getElementById("servicesShowcaseGrid");
         const contentEl = document.getElementById("servicesShowcaseContent");
         const toggleBtn = document.getElementById("servicesToggleBtn");
+        const btnContinuarFechaEspecial = document.getElementById("btnContinuarFechaEspecial");
+        const gateModal = document.getElementById("gateModal");
+        const gateModalGoBtn = document.getElementById("gateModalGo");
+        const gateModalCloseBtn = document.getElementById("gateModalClose");
+        let lastFocusedElement = null;
         let serviciosCargados = false;
+
+        const tieneRegistroJornadaValido = () => {
+            const dni = (localStorage.getItem("clienteDNI") || "").trim();
+            const nombre = (localStorage.getItem("clienteNombre") || "").trim();
+            const jornadaModo = localStorage.getItem("jornadaModo") === "1";
+            return Boolean(dni && nombre && jornadaModo);
+        };
 
         const escapeHtml = (value) => String(value || "")
             .replace(/&/g, "&amp;")
@@ -897,6 +1044,41 @@
             toggleBtn.setAttribute("aria-expanded", abierto ? "true" : "false");
             toggleBtn.textContent = abierto ? "Ocultar servicios" : "Ver servicios";
             if (abierto) await cargarServiciosVista();
+        });
+
+        const openGateModal = () => {
+            lastFocusedElement = document.activeElement;
+            gateModal?.classList.add("show");
+            gateModal?.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+            gateModalGoBtn?.focus();
+        };
+
+        const closeGateModal = () => {
+            gateModal?.classList.remove("show");
+            gateModal?.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+            if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+                lastFocusedElement.focus();
+            }
+        };
+
+        gateModalCloseBtn?.addEventListener("click", closeGateModal);
+        gateModalGoBtn?.addEventListener("click", () => {
+            window.location.href = "jornada.html#reserva-jornada";
+        });
+        gateModal?.addEventListener("click", (event) => {
+            if (event.target === gateModal) closeGateModal();
+        });
+        window.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") closeGateModal();
+        });
+
+        btnContinuarFechaEspecial?.addEventListener("click", (event) => {
+            if (tieneRegistroJornadaValido()) return;
+
+            event.preventDefault();
+            openGateModal();
         });
     </script>
     <script src="/js/shared-footer.js"></script>
