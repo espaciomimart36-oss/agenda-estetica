@@ -86,7 +86,7 @@
         .modal-card.delicado p { color: #5e4a50; }
         .modal-card.delicado .modal-actions { margin-top: 14px; }
         @keyframes popInSoft { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        .filtros-advanced { display: grid; grid-template-columns: minmax(190px, 1.3fr) repeat(2, minmax(130px, 1fr)) auto; gap: 8px; margin-bottom: 10px; align-items: center; }
+        .filtros-advanced { display: grid; grid-template-columns: minmax(190px, 1.2fr) repeat(3, minmax(130px, 1fr)) auto; gap: 8px; margin-bottom: 10px; align-items: center; }
         .select-input { width: 100%; min-height: 40px; padding: 10px 12px; border-radius: 12px; border: 1px solid #d1e7dc; box-sizing: border-box; outline: none; background: #fff; color: var(--texto); }
         .result-summary { font-size: 12px; color: #4c7a66; font-weight: 700; margin: 6px 0 8px; }
         .empty-state { text-align:center; opacity:0.65; background:#fff; border:1px dashed #cde5d8; border-radius:14px; padding:14px; margin-top:10px; }
@@ -123,6 +123,10 @@
 
         .busc-input { width: 100%; min-height: 42px; padding: 10px 12px; border-radius: 12px; border: 1px solid #cfe2d9; margin-bottom: 10px; box-sizing: border-box; outline: none; }
         .tag-fecha { background: #eee; padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; color: #666; }
+        .tag-origen { display:inline-flex; align-items:center; gap:6px; padding:3px 8px; border-radius:999px; font-size:11px; font-weight:800; letter-spacing:0.03em; text-transform:uppercase; }
+        .tag-origen.jornada { background:#fff0f2; color:#b53345; border:1px solid #f2b7bf; }
+        .tag-origen.normal { background:#edf8f3; color:#2f7c5d; border:1px solid #b7dfcc; }
+        .tag-origen.admin { background:#eef5ff; color:#2e61b1; border:1px solid #c6daf8; }
 
         /* TOAST */
         #toast-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 999999; pointer-events: none; }
@@ -302,6 +306,12 @@
                 <div class="filtros-advanced">
                     <select id="filtroServicio" class="select-input" onchange="filtrarReservasInput()">
                         <option value="">Todos los servicios</option>
+                    </select>
+                    <select id="filtroOrigen" class="select-input" onchange="filtrarReservasInput()" title="Origen">
+                        <option value="">Todos los origenes</option>
+                        <option value="jornada">Solo jornada</option>
+                        <option value="normal">Solo normales</option>
+                        <option value="admin">Solo cargadas en admin</option>
                     </select>
                     <input type="date" id="filtroDesde" class="select-input" onchange="filtrarReservasInput()" title="Desde">
                     <input type="date" id="filtroHasta" class="select-input" onchange="filtrarReservasInput()" title="Hasta">
@@ -794,6 +804,20 @@
 
         const esReservaActiva = (r) => (r?.estado || '').toString().toLowerCase() !== 'cancelado';
         const resolverMembresiaActiva = (c = {}) => c.membershipActive === true || c.membresia === true;
+        const resolverOrigenReserva = (r = {}) => {
+            const origen = (r.origen || '').toString().trim().toLowerCase();
+            if (origen === 'jornada') return 'jornada';
+            if (origen === 'normal') return 'normal';
+            if (origen === 'admin' || origen === 'admin_manual') return 'admin';
+            const creadoPor = (r.creadoPor || '').toString().trim().toLowerCase();
+            if (creadoPor === 'admin_manual') return 'admin';
+            return 'normal';
+        };
+        const renderTagOrigen = (r = {}) => {
+            const origen = resolverOrigenReserva(r);
+            const labels = { jornada: 'Jornada', normal: 'Normal', admin: 'Admin' };
+            return `<span class="tag-origen ${origen}">${labels[origen] || 'Normal'}</span>`;
+        };
 
         const asegurarCampoMembresiaEnFirestore = async (docsClientes = []) => {
             const pendientes = [];
@@ -1224,6 +1248,7 @@
                     <button id="btnN-${r.id}" class="btn-save" onclick="guardarN('${r.id}','${r.fecha}','${r.phone || ''}','${r.nombreLimpio}','${r.hora}','${r.servicio || ''}')">Guardar nota</button>`;
                 return `
                 <div class="detalle-dia-card">
+                    ${renderTagOrigen(r)}<br>
                     <b>${escapeHtml(r.nombreLimpio || 'Sin nombre')}</b> - ${escapeHtml(r.hora || '--:--')} hs<br>
                     <small>${escapeHtml(r.servicio || 'Servicio')}</small>
                     ${notaDisplay}
@@ -1282,11 +1307,12 @@
         window.filtrarReservas = () => {
             const txt = document.getElementById("inpBusReservas").value.toLowerCase();
             const servicio = document.getElementById("filtroServicio")?.value || "";
+            const origen = document.getElementById("filtroOrigen")?.value || "";
             const desde = document.getElementById("filtroDesde")?.value || "";
             const hasta = document.getElementById("filtroHasta")?.value || "";
             const contenedor = document.getElementById("contenedorBusqueda");
             const resumen = document.getElementById("resumenBusqueda");
-            const hayFiltros = txt.length >= 2 || servicio || desde || hasta;
+            const hayFiltros = txt.length >= 2 || servicio || origen || desde || hasta;
 
             if (!hayFiltros) {
                 if (resumen) resumen.innerHTML = "";
@@ -1297,12 +1323,14 @@
             const filtradas = todasLasReservas.filter(r => {
                 const nombre = (r.nombreLimpio || "").toLowerCase();
                 const servicioReserva = (r.servicio || "").toLowerCase().trim();
+                const origenReserva = resolverOrigenReserva(r);
                 const fechaReserva = r.fecha || "";
                 const okNombre = txt.length < 2 || nombre.includes(txt);
                 const okServicio = !servicio || servicioReserva === servicio;
+                const okOrigen = !origen || origenReserva === origen;
                 const okDesde = !desde || fechaReserva >= desde;
                 const okHasta = !hasta || fechaReserva <= hasta;
-                return okNombre && okServicio && okDesde && okHasta;
+                return okNombre && okServicio && okOrigen && okDesde && okHasta;
             }).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
             if (resumen) {
@@ -1316,6 +1344,7 @@
             contenedor.innerHTML = filtradas.map(r => `
                 <div class="detalle-dia-card">
                     <span class="tag-fecha">${formatoFechaISO(r.fecha)}</span>
+                    ${renderTagOrigen(r)}
                     <b>${escapeHtml(r.nombreLimpio)}</b> - ${escapeHtml(r.servicio || 'Servicio')}<br>
                     <small>${escapeHtml(r.hora || '--:--')} hs · ${escapeHtml((r.phone || 'Sin teléfono').toString())}</small>
                 </div>`).join('');
@@ -1325,6 +1354,7 @@
         window.limpiarFiltrosBusqueda = () => {
             document.getElementById("inpBusReservas").value = "";
             document.getElementById("filtroServicio").value = "";
+            document.getElementById("filtroOrigen").value = "";
             document.getElementById("filtroDesde").value = "";
             document.getElementById("filtroHasta").value = "";
             document.getElementById("resumenBusqueda").innerHTML = "";
@@ -1595,6 +1625,7 @@
                     servicio: servicioIngresado,
                     fecha,
                     hora: horaNormalizada,
+                    origen: "admin",
                     estado: "activo",
                     timestamp: serverTimestamp(),
                     creadoPor: "admin_manual"
@@ -1747,6 +1778,7 @@
             panel.innerHTML = proximos.map(r => `
                 <div class="detalle-dia-card">
                     <span class="tag-fecha">${formatoFechaISO(r.fecha)}</span>
+                    ${renderTagOrigen(r)}
                     <b>${escapeHtml(r.nombreLimpio || 'Sin nombre')}</b> - ${escapeHtml(r.hora || '--:--')} hs<br>
                     <small>${escapeHtml(r.servicio || 'Servicio')}</small>
                 </div>
