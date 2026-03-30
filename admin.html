@@ -86,7 +86,7 @@
         .modal-card.delicado p { color: #5e4a50; }
         .modal-card.delicado .modal-actions { margin-top: 14px; }
         @keyframes popInSoft { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        .filtros-advanced { display: grid; grid-template-columns: minmax(190px, 1.2fr) repeat(3, minmax(130px, 1fr)) auto; gap: 8px; margin-bottom: 10px; align-items: center; }
+        .filtros-advanced { display: grid; grid-template-columns: minmax(190px, 1.2fr) repeat(3, minmax(110px, 1fr)) auto; gap: 8px; margin-bottom: 10px; align-items: center; }
         .select-input { width: 100%; min-height: 40px; padding: 10px 12px; border-radius: 12px; border: 1px solid #d1e7dc; box-sizing: border-box; outline: none; background: #fff; color: var(--texto); }
         .result-summary { font-size: 12px; color: #4c7a66; font-weight: 700; margin: 6px 0 8px; }
         .empty-state { text-align:center; opacity:0.65; background:#fff; border:1px dashed #cde5d8; border-radius:14px; padding:14px; margin-top:10px; }
@@ -174,7 +174,8 @@
             .kpi-card { padding: 10px; }
             .quick-actions { display: grid; grid-template-columns: 1fr 1fr; }
             .quick-actions .btn-mini:last-child { grid-column: span 2; }
-            .filtros-advanced { grid-template-columns: 1fr; }
+            .filtros-advanced { grid-template-columns: 1fr 1fr; }
+            .filtros-advanced > button { grid-column: span 2; }
             .cliente-form-grid { grid-template-columns: 1fr; }
             .cliente-form-grid .full { grid-column: auto; }
             .calendar-container { padding: 12px; border-radius: 16px; }
@@ -1222,12 +1223,14 @@
 
             const cierreDia = cierresPorFecha.get(f);
             if (cierreDia) {
-                document.getElementById("panelDetalleDia").innerHTML = `
+                const panelCierre = document.getElementById("panelDetalleDia");
+                panelCierre.innerHTML = `
                     <div class="empty-state" style="opacity:1; border-style:solid; border-color:#e6c5cb; background:#fff7f8; color:#7f3b48; text-align:left;">
                         <strong>${formatoFechaISO(f)}</strong><br>
                         ${escapeHtml(cierreDia.reason || 'No disponible')}
                     </div>
                 `;
+                setTimeout(() => panelCierre.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
                 mostrarAviso(formatoFechaISO(f), `${cierreDia.reason || 'No disponible'}`);
                 return;
             }
@@ -1301,7 +1304,9 @@
                 </div>
             `;
 
-            document.getElementById("panelDetalleDia").innerHTML = reservasHTML + gestorHTML;
+            const panelEl = document.getElementById("panelDetalleDia");
+            panelEl.innerHTML = reservasHTML + gestorHTML;
+            setTimeout(() => panelEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
         };
 
         window.filtrarReservas = () => {
