@@ -38,13 +38,13 @@
 
     <div id="modalConfirmado">
         <h1>Operación exitosa</h1>
-        <p>Turno confirmado y notificación enviada.</p>
+        <p id="modalMensaje">Turno confirmado y notificación enviada.</p>
         <button onclick="window.location.href='index.html'" style="margin-top:20px; padding:10px 20px; cursor:pointer; border-radius: 10px; border: none; font-family: 'Poppins', sans-serif;">Volver al inicio</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
         const firebaseConfig = { projectId:"estetica-8d067", apiKey:"AIzaSyBc5435tsDnJ_yJqO1ppwSjxSpCIhpjgew" };
         const app = initializeApp(firebaseConfig);
@@ -66,6 +66,7 @@
         document.getElementById("txtServicio").innerText = servLs;
         document.getElementById("txtFecha").innerText = fechaLs;
         document.getElementById("txtHora").innerText = `${horaLs} hs`;
+        const modalMensaje = document.getElementById("modalMensaje");
 
         // Buscar el teléfono en Firestore al cargar la página
         async function obtenerDatosCliente() {
@@ -107,6 +108,32 @@
         // Ejecutar la búsqueda apenas arranca
         obtenerDatosCliente();
 
+        async function ejecutarConfirmacionBackend({ telefono, omitirWhatsapp = false }) {
+            try {
+                const response = await fetch(CF_CONFIRM_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        nombre: nombreLs,
+                        servicio: servLs,
+                        fecha: fechaLs,
+                        hora: `${horaLs} hs`,
+                        telefono: telefono || "",
+                        dni: dniLs,
+                        descontarBalance: true,
+                        omitirWhatsapp
+                    })
+                });
+
+                const data = await response.json().catch(() => ({}));
+                return { ok: response.ok, data };
+            } catch (error) {
+                return { ok: false, error };
+            }
+        }
+
         // Procesar la confirmación final
         async function procesarConfirmacion() {
             const boton = document.getElementById("btnConfirmar");
@@ -138,44 +165,30 @@
                     timestamp: new Date()
                 });
 
-                // 2. Descontar sesión del balance del cliente (hoursBalance)
-                try {
-                    const clientRef = doc(db, "clients", dniLs);
-                    await updateDoc(clientRef, { 
-                        hoursBalance: increment(-1) 
-                    });
-                } catch(e) { 
-                    console.error("No se pudo descontar hoursBalance: ", e); 
+                const resultadoBackend = await ejecutarConfirmacionBackend({
+                    telefono: telefonoExtraido,
+                    omitirWhatsapp: !telefonoExtraido
+                });
+
+                let mensajeModal = "Turno confirmado y notificación enviada.";
+                const warnings = resultadoBackend.ok ? (resultadoBackend.data?.warnings || []) : [];
+
+                if (warnings.includes("balance_update_failed") || warnings.includes("balance_client_not_found")) {
+                    console.warn("Revisar hoursBalance en admin:", warnings);
                 }
 
-                // 3. Enviar confirmación por Cloud Function (backend)
-                if (telefonoExtraido) {
-                    try {
-                        const response = await fetch(CF_CONFIRM_URL, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                nombre: nombreLs,
-                                servicio: servLs,
-                                fecha: fechaLs,
-                                hora: `${horaLs} hs`,
-                                telefono: telefonoExtraido,
-                                dni: dniLs
-                            })
-                        });
-
-                        const resJson = await response.json();
-                        if (!response.ok) {
-                            console.error("Error API Cloud Function:", resJson);
-                            alert("Turno guardado, pero falló el WhatsApp.");
-                        }
-                    } catch (waError) {
-                        console.error("Error enviando WhatsApp vía backend:", waError);
-                        alert("Turno guardado, pero no se pudo enviar WhatsApp.");
-                    }
+                if (!resultadoBackend.ok) {
+                    console.error("Error API Cloud Function:", resultadoBackend.data || resultadoBackend.error);
+                    mensajeModal = telefonoExtraido
+                        ? "Turno confirmado. No se pudo enviar la notificación automática."
+                        : "Turno confirmado. No había un teléfono disponible para el aviso automático.";
+                } else if (!resultadoBackend.data?.whatsappSent) {
+                    mensajeModal = telefonoExtraido
+                        ? "Turno confirmado. El aviso automático quedó pendiente."
+                        : "Turno confirmado. No había un teléfono disponible para el aviso automático.";
                 }
+
+                modalMensaje.textContent = mensajeModal;
 
                 document.getElementById("modalConfirmado").style.display = "flex";
             } catch (error) {

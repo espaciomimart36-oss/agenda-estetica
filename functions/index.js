@@ -1,4 +1,5 @@
 const functions = require("firebase-functions/v1");
+const { onRequest } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 const axios = require("axios");
 
@@ -8,6 +9,20 @@ const db = admin.firestore();
 // TODO seguridad: mover a secretos/variables de entorno de Firebase.
 const TOKEN_PERMANENTE = process.env.WHATSAPP_TOKEN || "EAAMzA3ngIUkBQ630dPYUcq6NBWPoybtHpMw8KbMEqTzv49lsAXW9honZCnblqcVdlxltSO35kXQc42D8P6dNwgx2YN4JWxpCwUxoZAziQVyK5jZArVQYaL63CZChQNZCdZBppqIEymvfBbZCsrdBJbXnUnlpdj06DSpYorrgnkmZCJ4wda6M3pQEdIh1PRHOfwZDZD";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "995248997010108";
+
+function normalizarDni(rawDni) {
+    return String(rawDni || "").replace(/\D/g, "");
+}
+
+function normalizarNombreUsuario(rawName) {
+    return String(rawName || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, "")
+        .trim()
+        .replace(/\s+/g, ".");
+}
 
 function normalizarTelefonoAR(rawPhone) {
     let cleanPhone = (rawPhone || "").toString().replace(/\D/g, "");
@@ -27,6 +42,77 @@ function construirFechaTurno(fecha, hora) {
     const iso = `${fecha}T${horaBase}:00-03:00`;
     const dt = new Date(iso);
     return Number.isNaN(dt.getTime()) ? null : dt;
+}
+
+async function buscarClientePorDni(dni) {
+    const dniNormalizado = normalizarDni(dni);
+    if (!dniNormalizado) return null;
+
+    const clientRef = db.collection("clients").doc(dniNormalizado);
+    const clientDoc = await clientRef.get();
+    if (clientDoc.exists) return clientDoc;
+
+    const legacyByDni = await db.collection("clients")
+        .where("dni", "==", dniNormalizado)
+        .limit(1)
+        .get();
+
+    if (!legacyByDni.empty) return legacyByDni.docs[0];
+    return null;
+}
+
+async function resolverDestinoConfirmacion({ telefono, dni, nombre }) {
+    let telefonoDestino = String(telefono || "").trim();
+    let nombreReal = String(nombre || "").trim() || "Cliente";
+
+    if (telefonoDestino) {
+        return { telefonoDestino, nombreReal, source: "payload" };
+    }
+
+    const clientePorDni = await buscarClientePorDni(dni);
+    if (clientePorDni) {
+        const c = clientePorDni.data() || {};
+        telefonoDestino = c.phone || c.telefono || c.whatsapp || "";
+        nombreReal = c.fullName || c.nombre || nombreReal;
+        if (telefonoDestino) {
+            return { telefonoDestino, nombreReal, source: "dni" };
+        }
+    }
+
+    const username = normalizarNombreUsuario(nombreReal);
+    if (!username) {
+        return { telefonoDestino: "", nombreReal, source: "none" };
+    }
+
+    const clientSnapshot = await db.collection("clients")
+        .where("username", "==", username)
+        .limit(1)
+        .get();
+
+    if (clientSnapshot.empty) {
+        return { telefonoDestino: "", nombreReal, source: "none" };
+    }
+
+    const c = clientSnapshot.docs[0].data() || {};
+    return {
+        telefonoDestino: c.phone || c.telefono || c.whatsapp || "",
+        nombreReal: c.fullName || c.nombre || nombreReal,
+        source: "username"
+    };
+}
+
+async function descontarHoursBalanceCliente(dni) {
+    const clientDoc = await buscarClientePorDni(dni);
+    if (!clientDoc) {
+        return { updated: false, reason: "client_not_found" };
+    }
+
+    await clientDoc.ref.update({
+        hoursBalance: admin.firestore.FieldValue.increment(-1),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    return { updated: true, clientDocId: clientDoc.ref.id };
 }
 
 async function enviarTemplateTurno({ telefono, nombre, servicio, fecha, hora, templateName = "turno_confirmado", templateLang = "en" }) {
@@ -93,7 +179,7 @@ exports.registrarPacienteJornada = functions.https.onRequest(async (req, res) =>
             consentimientoAceptado
         } = req.body || {};
 
-        const dniNormalizado = String(dni || "").replace(/\D/g, "");
+        const dniNormalizado = normalizarDni(dni);
         const nombre = String(fullName || "").trim();
         const tel = String(phone || "").trim();
         const mail = String(email || "").trim().toLowerCase();
@@ -132,7 +218,7 @@ exports.registrarPacienteJornada = functions.https.onRequest(async (req, res) =>
             phone: tel,
             telefono: tel,
             email: mail,
-            username: nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s]/g, "").trim().replace(/\s+/g, "."),
+            username: normalizarNombreUsuario(nombre),
             active: true,
             membershipActive: membershipPrev,
             membresia: membershipPrev,
@@ -172,7 +258,7 @@ exports.registrarPacienteJornada = functions.https.onRequest(async (req, res) =>
     }
 });
 
-exports.enviarConfirmacionTurno = functions.https.onRequest(async (req, res) => {
+exports.enviarConfirmacionTurno = onRequest(async (req, res) => {
     
     // Configuración de CORS para que tu local no rebote
     res.set("Access-Control-Allow-Origin", "*");
@@ -183,60 +269,93 @@ exports.enviarConfirmacionTurno = functions.https.onRequest(async (req, res) => 
         return res.status(204).send("");
     }
 
+    if (req.method !== "POST") {
+        return res.status(405).json({ error: "Metodo no permitido" });
+    }
+
+    let balanceUpdated = false;
+    const warnings = [];
+
     try {
-        const { nombre, servicio, fecha, hora, telefono, dni } = req.body;
+        const {
+            nombre,
+            servicio,
+            fecha,
+            hora,
+            telefono,
+            dni,
+            descontarBalance = false,
+            omitirWhatsapp = false
+        } = req.body || {};
+
+        if (descontarBalance && dni) {
+            try {
+                const balanceResult = await descontarHoursBalanceCliente(dni);
+                balanceUpdated = balanceResult.updated === true;
+                if (!balanceUpdated) warnings.push("balance_client_not_found");
+            } catch (balanceError) {
+                console.error("No se pudo descontar hoursBalance:", balanceError);
+                warnings.push("balance_update_failed");
+            }
+        }
+
+        if (omitirWhatsapp === true) {
+            return res.status(200).json({
+                status: "success",
+                whatsappSent: false,
+                balanceUpdated,
+                warnings
+            });
+        }
 
         if (!nombre || !servicio || !fecha || !hora) {
-            return res.status(400).json({ error: "Faltan datos en el body." });
+            return res.status(400).json({
+                error: "Faltan datos en el body.",
+                balanceUpdated,
+                warnings
+            });
         }
 
-        let telefonoDestino = telefono || "";
-        let nombreReal = nombre;
-
-        if (!telefonoDestino && dni) {
-            const clienteRef = db.collection("clients").doc(String(dni));
-            const clienteDoc = await clienteRef.get();
-            if (clienteDoc.exists) {
-                const c = clienteDoc.data() || {};
-                telefonoDestino = c.phone || c.telefono || c.whatsapp || "";
-                nombreReal = c.fullName || c.nombre || nombre;
-            }
-        }
+        const destino = await resolverDestinoConfirmacion({ telefono, dni, nombre });
+        const telefonoDestino = destino.telefonoDestino;
+        const nombreReal = destino.nombreReal;
 
         if (!telefonoDestino) {
-            const clientSnapshot = await db.collection("clients")
-                .where("username", "==", String(nombre || "").toLowerCase())
-                .limit(1)
-                .get();
-
-            if (!clientSnapshot.empty) {
-                const c = clientSnapshot.docs[0].data() || {};
-                telefonoDestino = c.phone || c.telefono || c.whatsapp || "";
-                nombreReal = c.fullName || c.nombre || nombre;
-            }
+            return res.status(400).json({
+                error: "No se encontró teléfono para enviar WhatsApp.",
+                balanceUpdated,
+                warnings
+            });
         }
 
-        if (!telefonoDestino) {
-            return res.status(400).json({ error: "No se encontró teléfono para enviar WhatsApp." });
-        }
+        const horaTexto = limpiarHora(hora) ? `${limpiarHora(hora)} hs` : String(hora || "-");
 
         const response = await enviarTemplateTurno({
             telefono: telefonoDestino,
             nombre: nombreReal,
             servicio,
             fecha,
-            hora,
+            hora: horaTexto,
             templateName: "turno_confirmado",
             templateLang: "en"
         });
 
-        return res.status(200).json({ status: "success", data: response.data });
+        return res.status(200).json({
+            status: "success",
+            whatsappSent: true,
+            balanceUpdated,
+            warnings,
+            lookupSource: destino.source,
+            data: response.data
+        });
 
     } catch (error) {
         console.error("Error en la Cloud Function:", error.response ? error.response.data : error.message);
         return res.status(500).json({ 
             error: "Error interno en el envío", 
-            detalles: error.response ? error.response.data : error.message 
+            detalles: error.response ? error.response.data : error.message,
+            balanceUpdated,
+            warnings
         });
     }
 });
@@ -331,7 +450,7 @@ exports.enviarRecordatoriosTurnos = functions.pubsub
 // enviarResumenSesion: envía por WhatsApp el detalle de lo realizado ese día
 // Body esperado: { tel, nombre, fecha, sesiones: [{ hora, servicio, detalle }] }
 // ─────────────────────────────────────────────────────────────────────────────
-exports.enviarResumenSesion = functions.https.onRequest(async (req, res) => {
+exports.enviarResumenSesion = onRequest(async (req, res) => {
 
     res.set("Access-Control-Allow-Origin", "*");
     res.set("Access-Control-Allow-Methods", "POST, OPTIONS");

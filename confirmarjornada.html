@@ -178,7 +178,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             projectId: "estetica-8d067",
@@ -254,37 +254,55 @@
             }
         }
 
+        async function ejecutarConfirmacionBackend({ telefono = "", descontarBalance = false, omitirWhatsapp = false }) {
+            try {
+                const response = await fetch(CF_CONFIRM_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        nombre: nombreLs,
+                        servicio: servicioLs,
+                        fecha: fechaLs,
+                        hora: `${horaLs} hs`,
+                        telefono,
+                        dni: dniLs,
+                        descontarBalance,
+                        omitirWhatsapp
+                    })
+                });
+
+                const data = await response.json().catch(() => ({}));
+                return { ok: response.ok, data };
+            } catch (error) {
+                return { ok: false, error };
+            }
+        }
+
         async function enviarWhatsApp(destinos) {
             let ok = 0;
             let fail = 0;
+            const warnings = new Set();
 
-            for (const telefono of destinos) {
-                try {
-                    const response = await fetch(CF_CONFIRM_URL, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            nombre: nombreLs,
-                            servicio: servicioLs,
-                            fecha: fechaLs,
-                            hora: `${horaLs} hs`,
-                            telefono,
-                            dni: dniLs
-                        })
-                    });
+            for (const [index, telefono] of destinos.entries()) {
+                const resultado = await ejecutarConfirmacionBackend({
+                    telefono,
+                    descontarBalance: index === 0 && !!dniLs,
+                    omitirWhatsapp: false
+                });
 
-                    if (!response.ok) {
-                        fail += 1;
-                        continue;
-                    }
-                    ok += 1;
-                } catch (error) {
-                    console.error("Error enviando WhatsApp:", error);
+                if (!resultado.ok) {
+                    console.error("Error enviando WhatsApp:", resultado.data || resultado.error);
+                    if (index === 0 && dniLs) warnings.add("balance_update_failed");
                     fail += 1;
+                    continue;
                 }
+
+                (resultado.data?.warnings || []).forEach((warning) => warnings.add(warning));
+                if (resultado.data?.whatsappSent) ok += 1;
+                else fail += 1;
             }
 
-            return { ok, fail };
+            return { ok, fail, warnings: Array.from(warnings) };
         }
 
         async function confirmarTurnoJornada() {
@@ -320,23 +338,27 @@
                     timestamp: new Date()
                 });
 
-                if (dniLs) {
-                    try {
-                        await updateDoc(doc(db, "clients", dniLs), {
-                            hoursBalance: increment(-1)
-                        });
-                    } catch (balanceError) {
-                        console.error("No se pudo descontar hoursBalance:", balanceError);
-                    }
-                }
-
                 let resumen = "Reserva guardada correctamente.";
                 if (telefonos.length) {
                     setStatus("Enviando avisos por WhatsApp...");
-                    const { ok, fail } = await enviarWhatsApp(telefonos);
+                    const { ok, fail, warnings } = await enviarWhatsApp(telefonos);
                     resumen = `Reserva guardada. Avisos enviados: ${ok}. Avisos con error: ${fail}.`;
+                    if (warnings.includes("balance_update_failed") || warnings.includes("balance_client_not_found")) {
+                        console.warn("Revisar hoursBalance en admin:", warnings);
+                        resumen += " Revisá el saldo del paciente en admin.";
+                    }
                 } else {
+                    const balanceResult = await ejecutarConfirmacionBackend({
+                        descontarBalance: !!dniLs,
+                        omitirWhatsapp: true
+                    });
+                    if (!balanceResult.ok) {
+                        console.error("No se pudo actualizar el balance desde backend:", balanceResult.data || balanceResult.error);
+                    }
                     resumen = "Reserva guardada. No se enviaron avisos porque no se cargaron numeros.";
+                    if (!balanceResult.ok || (balanceResult.data?.warnings || []).includes("balance_update_failed") || (balanceResult.data?.warnings || []).includes("balance_client_not_found")) {
+                        resumen += " Revisá el saldo del paciente en admin.";
+                    }
                 }
 
                 document.getElementById("resultadoFinal").textContent = resumen;
