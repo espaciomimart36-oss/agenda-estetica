@@ -28,6 +28,11 @@
         .btn-nav { padding: 10px 18px; min-height: 40px; border: 1px solid #cfe9dd; background: #fff; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.3s; color: var(--texto); }
         .btn-nav:hover { background: var(--suave); border-color: var(--suave-oscuro); }
         .btn-nav.active { background: #e9f7f0; color: var(--accento-oscuro); border-color: #a9d9c3; }
+        .flow-switch-shortcut { margin-top: 10px; display: flex; justify-content: center; }
+        .flow-switch-button { min-width: min(100%, 360px); border: 1px solid #e7c78f; background: linear-gradient(135deg, #f5c66c 0%, #ecac43 100%); color: #6f4f12; border-radius: 999px; padding: 11px 18px; min-height: 42px; cursor: pointer; font-weight: 800; font-size: 13px; transition: 0.2s; box-shadow: 0 10px 24px rgba(236, 172, 67, 0.2); }
+        .flow-switch-button:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(236, 172, 67, 0.24); }
+        .flow-switch-button.is-jornada { border-color: #c59a36; background: linear-gradient(135deg, #e4b24d 0%, #cf9630 100%); color: #fff7e7; }
+        .flow-switch-button:disabled { opacity: 0.75; cursor: not-allowed; transform: none; box-shadow: none; }
         .install-widget-admin { display: none; margin: 10px auto 6px; width: min(100%, 460px); background: linear-gradient(135deg, rgba(245, 251, 247, 0.98) 0%, rgba(238, 248, 242, 0.98) 100%); border: 1px solid rgba(132, 168, 140, 0.32); border-radius: 14px; box-shadow: 0 8px 20px rgba(30, 54, 37, 0.12); overflow: hidden; }
         .install-widget-admin.show { display: block; animation: popInSoft 0.18s ease-out; }
         .install-widget-admin .install-inner { padding: 12px; display: grid; gap: 8px; }
@@ -247,6 +252,9 @@
                 <button class="btn-nav" id="btn-export" onclick="navegar('export')">Exportar</button>
                 <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
             </div>
+            <div class="flow-switch-shortcut">
+                <button id="btnFlowModeHeader" class="flow-switch-button" onclick="toggleFlowMode()">Cargando modo de flujo...</button>
+            </div>
         </div>
 
         <div class="container">
@@ -346,7 +354,7 @@
             <div id="sec-export" class="section">
                 <div class="detalle-dia-card">
                     <h3 style="margin-top:0">Control Jornada Especial</h3>
-                    <p style="font-size:13px; color:#557b6b; margin:0 0 12px 0;">Activa o desactiva la campaña paralela de jornada. Cuando está activa, los usuarios serán redirigidos automáticamente.</p>
+                    <p style="font-size:13px; color:#557b6b; margin:0 0 12px 0;">Administrá por separado la campaña de jornada y el flujo principal del sitio. Podés cambiar entre modo normal y modo jornada todas las veces que necesites.</p>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:12px;">
                         <button class="btn-mini" id="btnJornadaToggle" onclick="toggleJornadaEspecial()">Cargando estado...</button>
                         <button class="btn-mini" onclick="recargarJornadaStatus()">Recargar</button>
@@ -354,6 +362,13 @@
                     <div id="jornadaStatusBox" style="background:#f5fcf8; border:1px solid #cfe6da; border-radius:12px; padding:12px; margin-bottom:12px;">
                         <p style="margin:0 0 8px; font-size:12px; color:#557b6b; font-weight:600;">Estado actual:</p>
                         <p id="jornadaStatusText" style="margin:0; font-size:13px; color:#2f7c5d; font-weight:700;">Cargando...</p>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr; gap:8px; margin-bottom:12px;">
+                        <button class="btn-mini" id="btnFlowModeToggle" onclick="toggleFlowMode()">Cargando modo...</button>
+                    </div>
+                    <div id="flowModeStatusBox" style="background:#fffaf3; border:1px solid #efd8aa; border-radius:12px; padding:12px; margin-bottom:12px;">
+                        <p style="margin:0 0 8px; font-size:12px; color:#7a6331; font-weight:600;">Flujo activo del sitio:</p>
+                        <p id="jornadaFlowModeText" style="margin:0; font-size:13px; color:#7a5a1c; font-weight:700;">Cargando...</p>
                     </div>
                     <details style="font-size:12px; color:#556a5f; margin-bottom:12px;">
                         <summary style="cursor:pointer; font-weight:600; margin-bottom:8px;">Ver configuración actual</summary>
@@ -2050,37 +2065,69 @@
         };
 
         // === FUNCIONES PARA CONTROL DE JORNADA ESPECIAL ===
+        const setFlowModeButtons = (flowMode, disabled = false) => {
+            const buttons = [
+                document.getElementById("btnFlowModeToggle"),
+                document.getElementById("btnFlowModeHeader")
+            ].filter(Boolean);
+
+            const isJornada = flowMode === "jornada";
+            const text = isJornada ? "Cambiar a modo normal" : "Cambiar a modo jornada";
+            const compactText = isJornada ? "Modo activo: jornada · Cambiar a normal" : "Modo activo: normal · Cambiar a jornada";
+
+            buttons.forEach((button) => {
+                button.disabled = disabled;
+                if (button.id === "btnFlowModeHeader") {
+                    button.textContent = compactText;
+                    button.classList.toggle("is-jornada", isJornada);
+                    return;
+                }
+
+                button.textContent = text;
+                button.style.background = isJornada ? "#d9a441" : "#f0b35a";
+            });
+        };
+
         window.recargarJornadaStatus = async () => {
             try {
                 const snap = await getDoc(doc(db, "configuracion", "jornadaEspecial"));
                 const config = snap.exists() ? snap.data() : null;
                 const btn = document.getElementById("btnJornadaToggle");
                 const statusText = document.getElementById("jornadaStatusText");
+                const flowStatusText = document.getElementById("jornadaFlowModeText");
                 const configView = document.getElementById("jornadaConfigView");
 
                 if (!config) {
                     statusText.innerHTML = "Documento no existe. Hacé clic en el botón para crear y <strong>activar</strong>.";
                     btn.textContent = "Activar (crear doc)";
                     btn.style.background = "#72bd99";
+                    setFlowModeButtons("normal");
+                    flowStatusText.innerHTML = "MODO NORMAL<br><small style=\"color:#8a6e3e;\">Ingreso principal por index.html</small>";
                     configView.textContent = "{}";
                     return;
                 }
 
                 const activa = config.active === true;
+                const flowMode = config.flowMode === "jornada" ? "jornada" : "normal";
                 const color = activa ? "#72bd99" : "#e05252";
                 const label = activa ? "Desactivar" : "Activar";
                 btn.textContent = label;
                 btn.style.background = color;
+                setFlowModeButtons(flowMode);
                 
                 const status = activa ? "ACTIVA" : "INACTIVA";
                 const dates = Array.isArray(config.allowedDates) ? config.allowedDates.join(", ") : "No configuradas";
                 const service = config.serviceName || "(no configurado)";
                 statusText.innerHTML = `${status}<br><small style="color:#7a9d93;">Servicio: ${escapeHtml(service)}<br>Fechas: ${escapeHtml(dates)}</small>`;
+                flowStatusText.innerHTML = flowMode === "jornada"
+                    ? "MODO JORNADA<br><small style=\"color:#8a6e3e;\">El sitio dirige a jornada.html y al flujo especial</small>"
+                    : "MODO NORMAL<br><small style=\"color:#8a6e3e;\">El sitio dirige a index.html y al flujo habitual</small>";
                 
                 configView.textContent = JSON.stringify(config, null, 2);
             } catch (err) {
                 console.error("Error al cargar status de jornada:", err);
                 document.getElementById("jornadaStatusText").textContent = "Error al cargar. Verificá Firestore.";
+                document.getElementById("jornadaFlowModeText").textContent = "Error al cargar el modo de flujo.";
             }
         };
 
@@ -2095,6 +2142,7 @@
                     // Crear documento con valores por defecto y ACTIVO
                     await setDoc(doc(db, "configuracion", "jornadaEspecial"), {
                         active: true,
+                        flowMode: "normal",
                         redirectTo: "serviciosjornada.html",
                         serviceName: "Jornada Única de Criolipólisis",
                         allowedDates: ["2026-04-02"],
@@ -2120,6 +2168,51 @@
                 mostrarAviso("Error al cambiar estado");
             } finally {
                 btn.disabled = false;
+            }
+        };
+
+        window.toggleFlowMode = async () => {
+            setFlowModeButtons(document.getElementById("btnFlowModeHeader")?.classList.contains("is-jornada") ? "jornada" : "normal", true);
+            try {
+                const ref = doc(db, "configuracion", "jornadaEspecial");
+                const snap = await getDoc(ref);
+                const config = snap.exists() ? (snap.data() || {}) : null;
+                const currentMode = config?.flowMode === "jornada" ? "jornada" : "normal";
+                const nextMode = currentMode === "jornada" ? "normal" : "jornada";
+
+                if (!config) {
+                    await setDoc(ref, {
+                        active: true,
+                        flowMode: "jornada",
+                        redirectTo: "serviciosjornada.html",
+                        serviceName: "Jornada Única de Criolipólisis",
+                        allowedDates: ["2026-04-02"],
+                        zones: ["Abdomen", "Rollito espalda", "Banana subglútea", "Caderas"],
+                        sourceTag: "jornada_especial",
+                        startAt: new Date("2026-03-30"),
+                        endAt: new Date("2026-04-03"),
+                        updatedAt: serverTimestamp()
+                    }, { merge: true });
+                    mostrarAviso("Modo jornada activado");
+                } else {
+                    const payload = {
+                        flowMode: nextMode,
+                        updatedAt: serverTimestamp()
+                    };
+
+                    if (nextMode === "jornada" && config.active === false) {
+                        payload.active = true;
+                    }
+
+                    await setDoc(ref, payload, { merge: true });
+                    mostrarAviso(nextMode === "jornada" ? "Modo jornada activado" : "Modo normal activado");
+                }
+
+            } catch (err) {
+                console.error("Error al cambiar modo de flujo:", err);
+                mostrarAviso("No se pudo cambiar el modo de flujo");
+            } finally {
+                await recargarJornadaStatus();
             }
         };
 

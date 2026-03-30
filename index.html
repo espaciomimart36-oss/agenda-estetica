@@ -6,14 +6,6 @@
     
     <link rel="stylesheet" href="mobile-fixes.css">
 <title>Ingreso | Espacio Mimar</title>
-    <script>
-        (function () {
-            window.location.replace("jornada.html" + window.location.search + window.location.hash);
-        })();
-    </script>
-    <noscript>
-        <meta http-equiv="refresh" content="0; url=jornada.html">
-    </noscript>
     <meta name="theme-color" content="#6f8a6d">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="img/icon-192.png">
@@ -457,18 +449,6 @@
             if (forzarJornada) {
                 jornadaLoginRedirect = "serviciosjornada.html";
                 return;
-            }
-
-            try {
-                const snap = await getDoc(doc(db, "configuracion", JORNADA_CONFIG_DOC));
-                if (!snap.exists()) return;
-
-                const cfg = snap.data() || {};
-                if (cfg.active !== true) return;
-
-                jornadaLoginRedirect = "serviciosjornada.html";
-            } catch (error) {
-                console.warn("No se pudo evaluar jornada especial:", error);
             }
         };
 

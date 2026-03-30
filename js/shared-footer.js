@@ -1,21 +1,78 @@
-(function () {
+(async function () {
     const FOOTER_TEXT = "Todos los derechos reservados";
     const BRAND_TEXT = "Espacio Mimar T";
     const STYLE_ID = "shared-site-footer-style";
-    const ADMIN_PAGES = new Set(["admin.html"]);
+    const ADMIN_PAGES = new Set(["admin.html", "login-admin.html", "upload.html", "panel.html", "cargarclientes.html"]);
+    const SHARED_FLOW_PAGES = new Set(["politica.html"]);
     const MAINTENANCE_MODE_ENABLED = false;
     const MAINTENANCE_PAGE = "jornada.html";
+    const FLOW_CONFIG_DOC = "jornadaEspecial";
+    const FLOW_NORMAL_LANDING = "index.html";
+    const FLOW_JORNADA_LANDING = "jornada.html";
+    const FLOW_APP_NAME = "shared-footer-router";
+    const firebaseConfig = {
+        apiKey: "AIzaSyBc5435tsDnJ_yJqO1ppwSjxSpCIhpjgew",
+        authDomain: "estetica-8d067.firebaseapp.com",
+        projectId: "estetica-8d067"
+    };
 
     function getCurrentPage() {
-        return (window.location.pathname.split("/").pop() || "").toLowerCase();
+        return (window.location.pathname.split("/").pop() || FLOW_NORMAL_LANDING).toLowerCase();
     }
 
     function isAdminPage() {
         return ADMIN_PAGES.has(getCurrentPage());
     }
 
+    function isSharedFlowPage() {
+        return SHARED_FLOW_PAGES.has(getCurrentPage());
+    }
+
     function isMaintenancePage() {
         return getCurrentPage() === MAINTENANCE_PAGE;
+    }
+
+    function shouldCheckLandingFlow() {
+        const currentPage = getCurrentPage();
+        if (isAdminPage() || isSharedFlowPage()) return false;
+        return currentPage === FLOW_NORMAL_LANDING || currentPage === FLOW_JORNADA_LANDING;
+    }
+
+    function getLandingRedirect(flowMode) {
+        const currentPage = getCurrentPage();
+        if (flowMode === "jornada" && currentPage === FLOW_NORMAL_LANDING) {
+            return FLOW_JORNADA_LANDING;
+        }
+        if (flowMode !== "jornada" && currentPage === FLOW_JORNADA_LANDING) {
+            return FLOW_NORMAL_LANDING;
+        }
+        return "";
+    }
+
+    async function loadFlowMode() {
+        try {
+            const [{ initializeApp, getApp }, { getFirestore, doc, getDoc }] = await Promise.all([
+                import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+                import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")
+            ]);
+
+            let app;
+            try {
+                app = getApp(FLOW_APP_NAME);
+            } catch (error) {
+                app = initializeApp(firebaseConfig, FLOW_APP_NAME);
+            }
+
+            const db = getFirestore(app);
+            const snap = await getDoc(doc(db, "configuracion", FLOW_CONFIG_DOC));
+
+            if (!snap.exists()) return "normal";
+
+            return snap.data()?.flowMode === "jornada" ? "jornada" : "normal";
+        } catch (error) {
+            console.warn("No se pudo cargar el modo de flujo global:", error);
+            return "normal";
+        }
     }
 
     function injectStyles() {
@@ -176,6 +233,14 @@
         }
         if (isMaintenancePage()) {
             applyMaintenancePage();
+        }
+    }
+    else if (shouldCheckLandingFlow()) {
+        const flowMode = await loadFlowMode();
+        const redirectTarget = getLandingRedirect(flowMode);
+        if (redirectTarget && getCurrentPage() !== redirectTarget) {
+            window.location.replace(`/${redirectTarget}`);
+            return;
         }
     }
     removeLegacyFooters();

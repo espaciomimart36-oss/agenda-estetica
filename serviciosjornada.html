@@ -9,12 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --rojo: #d95b8f;
-            --rojo-oscuro: #9f3f71;
-            --arena: #fff7fc;
-            --texto: #3a2230;
-            --subtexto: #6e4d5d;
-            --borde: #f1d6e3;
+            --rojo: #ef233c;
+            --rojo-oscuro: #a10f25;
+            --arena: #fff8f5;
+            --texto: #361917;
+            --subtexto: #6a4441;
+            --borde: #f0c8bf;
             --font-display: 'Cormorant Garamond', serif;
             --font-body: 'Plus Jakarta Sans', sans-serif;
         }
@@ -26,9 +26,9 @@
             font-family: var(--font-body);
             color: var(--texto);
             background:
-                radial-gradient(1000px 420px at 8% -20%, rgba(239, 139, 183, 0.2), transparent 60%),
-                radial-gradient(900px 380px at 94% 110%, rgba(217, 91, 143, 0.16), transparent 56%),
-                #fff8fc;
+                radial-gradient(1000px 420px at 8% -20%, rgba(255, 90, 95, 0.2), transparent 60%),
+                radial-gradient(900px 380px at 94% 110%, rgba(239, 35, 60, 0.16), transparent 56%),
+                #fff8f5;
         }
 
             @keyframes softRise {
@@ -53,7 +53,7 @@
 
         .back-link {
             text-decoration: none;
-            color: #8c3d66;
+            color: #92212c;
             font-weight: 800;
             font-size: 12px;
             letter-spacing: 0.04em;
@@ -77,10 +77,10 @@
         }
 
         .hero-card {
-            background: linear-gradient(150deg, #fffdfd 0%, #fff4fa 100%);
+            background: linear-gradient(150deg, #fffdfd 0%, #fff3ee 100%);
             border: 1px solid var(--borde);
             border-radius: 20px;
-            box-shadow: 0 20px 44px rgba(132, 58, 100, 0.14);
+            box-shadow: 0 20px 44px rgba(142, 34, 42, 0.14);
             padding: clamp(18px, 3vw, 30px);
             animation: softRise 0.55s ease-out both;
             text-align: center;
@@ -88,7 +88,7 @@
 
         .kicker {
             margin: 0 0 6px;
-            color: #8f4b72;
+            color: #a11f2a;
             font-family: var(--font-display);
             font-size: clamp(24px, 5vw, 34px);
             line-height: 1.05;
@@ -104,7 +104,7 @@
             line-height: 1.2;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: #6d5963;
+            color: #6f403d;
             font-weight: 800;
         }
 
@@ -124,11 +124,11 @@
         }
 
         .card {
-            background: linear-gradient(145deg, #fffefe 0%, #fff8fc 100%);
+            background: linear-gradient(145deg, #fffefe 0%, #fff8f5 100%);
             border: 1px solid var(--borde);
             border-radius: 12px;
             padding: 14px;
-            box-shadow: 0 10px 22px rgba(136, 61, 106, 0.08);
+            box-shadow: 0 10px 22px rgba(142, 34, 42, 0.08);
             animation: softRise 0.5s ease-out both;
             text-align: center;
         }
@@ -160,9 +160,9 @@
         .card-premium {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(145deg, #fffaf6 0%, #fff4fa 55%, #fffdfb 100%);
-            border-color: rgba(182, 219, 201, 0.92);
-            box-shadow: 0 18px 38px rgba(136, 61, 106, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.88) inset;
+            background: linear-gradient(145deg, #fff8f3 0%, #fff1ec 55%, #fffdfb 100%);
+            border-color: rgba(240, 192, 182, 0.92);
+            box-shadow: 0 18px 38px rgba(142, 34, 42, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.88) inset;
         }
 
         .card-premium::before {
@@ -170,7 +170,7 @@
             position: absolute;
             inset: 14px 18px auto 18px;
             height: 2px;
-            background: linear-gradient(90deg, rgba(133, 184, 156, 0) 0%, rgba(133, 184, 156, 0.95) 18%, rgba(133, 184, 156, 0.95) 82%, rgba(133, 184, 156, 0) 100%);
+            background: linear-gradient(90deg, rgba(239, 99, 88, 0) 0%, rgba(239, 99, 88, 0.95) 18%, rgba(239, 99, 88, 0.95) 82%, rgba(239, 99, 88, 0) 100%);
             border-radius: 999px;
             pointer-events: none;
             z-index: 1;
@@ -178,7 +178,7 @@
 
         .premium-kicker {
             margin: 8px 0 8px;
-            color: #6d9d84;
+            color: #b43430;
             font-size: 10px;
             font-weight: 900;
             letter-spacing: 0.16em;
@@ -195,7 +195,7 @@
 
         .premium-title {
             display: inline-block;
-            background: linear-gradient(90deg, #c85388 0%, #f1c87b 28%, #fff3d2 38%, #d95b8f 58%, #f1c87b 78%, #c85388 100%);
+            background: linear-gradient(90deg, #c5142d 0%, #ff7a45 28%, #ffe4b3 38%, #ef233c 58%, #ff9f54 78%, #c5142d 100%);
             background-size: 220% auto;
             -webkit-background-clip: text;
             background-clip: text;
@@ -218,9 +218,9 @@
             margin: 0;
             padding: 16px 14px 14px;
             border-radius: 12px;
-            border: 1px solid rgba(210, 232, 220, 0.95);
+            border: 1px solid rgba(242, 214, 206, 0.95);
             background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 10px 22px rgba(136, 61, 106, 0.05), 0 1px 0 rgba(255,255,255,0.92) inset;
+            box-shadow: 0 10px 22px rgba(142, 34, 42, 0.05), 0 1px 0 rgba(255,255,255,0.92) inset;
             animation: softRise 0.6s ease-out both;
         }
 
@@ -235,9 +235,9 @@
             top: 7px;
             width: 10px;
             height: 10px;
-            background: linear-gradient(135deg, #fff1cf 0%, #f1c87b 38%, #d95b8f 100%);
-            border: 1px solid rgba(255, 244, 214, 0.88);
-            box-shadow: 0 0 0 4px rgba(241, 200, 123, 0.1), 0 6px 14px rgba(201, 98, 145, 0.18);
+            background: linear-gradient(135deg, #ffd7aa 0%, #ff864c 38%, #ef233c 100%);
+            border: 1px solid rgba(255, 226, 196, 0.88);
+            box-shadow: 0 0 0 4px rgba(255, 159, 84, 0.1), 0 6px 14px rgba(170, 31, 39, 0.18);
             transform: translateX(-50%) rotate(45deg);
         }
 
@@ -257,9 +257,9 @@
         .card-alert {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(145deg, #fffdfd 0%, #fff8fa 46%, #fff4f6 100%);
-            border: 1px solid rgba(193, 109, 140, 0.34);
-            box-shadow: 0 18px 36px rgba(126, 45, 94, 0.12);
+            background: linear-gradient(145deg, #fffdfd 0%, #fff7f4 46%, #fff1ee 100%);
+            border: 1px solid rgba(205, 83, 92, 0.34);
+            box-shadow: 0 18px 36px rgba(170, 31, 39, 0.12);
         }
 
         .card-alert::before {
@@ -267,12 +267,12 @@
             position: absolute;
             inset: 0 auto 0 0;
             width: 6px;
-            background: linear-gradient(180deg, #f1c87b 0%, #d95b8f 60%, #9f3f71 100%);
+            background: linear-gradient(180deg, #ffbf6b 0%, #ef233c 60%, #a10f25 100%);
         }
 
         .alert-kicker {
             margin: 0 0 8px;
-            color: #9b4e75;
+            color: #b03535;
             font-size: 10px;
             font-weight: 900;
             letter-spacing: 0.14em;
@@ -286,7 +286,7 @@
 
         .alert-heading span {
             display: inline-block;
-            color: #7b274f;
+            color: #861d23;
             text-shadow: 0 1px 0 rgba(255,255,255,0.7);
         }
 
@@ -294,9 +294,9 @@
             margin: 0 0 12px;
             padding: 10px 12px;
             border-radius: 12px;
-            background: linear-gradient(135deg, rgba(255, 246, 235, 0.92) 0%, rgba(255, 239, 246, 0.92) 100%);
-            border: 1px solid rgba(226, 183, 121, 0.28);
-            color: #6f4b57;
+            background: linear-gradient(135deg, rgba(255, 244, 234, 0.92) 0%, rgba(255, 233, 228, 0.92) 100%);
+            border: 1px solid rgba(255, 168, 104, 0.28);
+            color: #6d413d;
             font-size: 12px;
             line-height: 1.5;
             font-weight: 600;
@@ -389,7 +389,7 @@
             border: 1px solid var(--borde);
             border-radius: 14px;
             padding: 12px;
-            box-shadow: 0 10px 22px rgba(136, 61, 106, 0.08);
+            box-shadow: 0 10px 22px rgba(142, 34, 42, 0.08);
             animation: softRise 0.55s ease-out 0.08s both;
         }
 
@@ -455,10 +455,10 @@
             border-radius: 16px;
             padding: 14px;
             background:
-                radial-gradient(420px 160px at 10% -10%, rgba(239, 139, 183, 0.16), transparent 58%),
-                radial-gradient(380px 150px at 96% 118%, rgba(217, 91, 143, 0.13), transparent 58%),
-                linear-gradient(160deg, #fffdfd 0%, #fff5fb 100%);
-            box-shadow: 0 14px 30px rgba(126, 45, 94, 0.12);
+                radial-gradient(420px 160px at 10% -10%, rgba(255, 90, 95, 0.16), transparent 58%),
+                radial-gradient(380px 150px at 96% 118%, rgba(239, 35, 60, 0.13), transparent 58%),
+                linear-gradient(160deg, #fffdfd 0%, #fff4ef 100%);
+            box-shadow: 0 14px 30px rgba(170, 31, 39, 0.12);
             animation: softRise 0.55s ease-out 0.14s both;
         }
 
@@ -472,7 +472,7 @@
 
         .services-showcase-kicker {
             margin: 0;
-            color: #9c4f78;
+            color: #b03635;
             font-size: 10px;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -490,7 +490,7 @@
 
         .services-showcase-sub {
             margin: 0;
-            color: #735061;
+            color: #6b4744;
             font-size: 12px;
             line-height: 1.5;
             font-weight: 600;
@@ -506,8 +506,8 @@
             font-weight: 900;
             cursor: pointer;
             color: #fff;
-            background: linear-gradient(135deg, #ef7eb0 0%, #d95b8f 54%, #9f3f71 100%);
-            box-shadow: 0 10px 22px rgba(126, 45, 94, 0.24);
+            background: linear-gradient(135deg, #ff6b5d 0%, #ef233c 54%, #a10f25 100%);
+            box-shadow: 0 10px 22px rgba(170, 31, 39, 0.24);
         }
 
         .services-toggle-btn:hover {
@@ -525,7 +525,7 @@
 
         .services-showcase-loading {
             margin-top: 10px;
-            color: #7f5f6f;
+            color: #7d5750;
             font-size: 12px;
             font-weight: 700;
         }
@@ -549,11 +549,11 @@
         }
 
         .services-showcase-card {
-            border: 1px solid #f0d5e4;
+            border: 1px solid #f0d1c8;
             background: #fff;
             border-radius: 12px;
             padding: 12px;
-            box-shadow: 0 8px 16px rgba(129, 57, 97, 0.08);
+            box-shadow: 0 8px 16px rgba(170, 31, 39, 0.08);
         }
 
         .services-showcase-card h3 {
@@ -566,7 +566,7 @@
 
         .services-showcase-card p {
             margin: 0;
-            color: #715765;
+            color: #6d5451;
             font-size: 12px;
             line-height: 1.42;
             font-weight: 500;
@@ -592,13 +592,13 @@
 
         .btn-primary {
             color: #fff;
-            background: linear-gradient(135deg, #ef7eb0 0%, #d95b8f 54%, #9f3f71 100%);
-            box-shadow: 0 12px 26px rgba(126, 45, 94, 0.26);
+            background: linear-gradient(135deg, #ff6b5d 0%, #ef233c 54%, #a10f25 100%);
+            box-shadow: 0 12px 26px rgba(170, 31, 39, 0.26);
         }
 
         .btn-secondary {
-            color: #8c3d66;
-            border: 1px solid #f0cadf;
+            color: #92212c;
+            border: 1px solid #f0cdc3;
             background: #fff;
         }
 
@@ -640,7 +640,7 @@
         <section class="hero-card" aria-label="Información completa del tratamiento CRIO LIPOCELL 360">
             <p class="kicker">Jornada Especial</p>
             <h1 class="title">CRIO LIPOCELL 360</h1>
-            <p class="desc">Esta jornada fue pensada para que te regales un momento de cuidado real. CRIO LIPOCELL 360 trabaja de forma no invasiva sobre adiposidad localizada, con un proceso progresivo y acompañado, para que te sientas cómoda, linda y segura en cada etapa.</p>
+            <p class="desc">Esta jornada fue pensada para que tengas información clara antes de reservar. CRIO LIPOCELL 360 es un tratamiento no invasivo que utiliza frío controlado sobre adiposidad localizada, con un proceso progresivo y criterios profesionales de evaluación para definir indicación, tiempos y cuidados posteriores.</p>
 
             <div class="info-grid">
                 <article class="card card-premium">
@@ -660,6 +660,17 @@
                         <li>Sobrepeso leve.</li>
                         <li>No indicado para obesidad generalizada.</li>
                         <li>Requiere evaluación previa.</li>
+                    </ul>
+                </article>
+
+                <article class="card card-wide">
+                    <h3>Qué tenés que saber antes de reservar</h3>
+                    <ul>
+                        <li>Utiliza frío controlado para actuar sobre adiposidad localizada.</li>
+                        <li>El proceso biológico esperado es progresivo, no inmediato.</li>
+                        <li>Los cambios suelen empezar a notarse desde los 15 a 20 días y continúan evolucionando hasta alrededor de los 60 días.</li>
+                        <li>Para volver a tratar la misma zona, normalmente se recomienda esperar entre 30 y 45 días.</li>
+                        <li>Los hábitos diarios influyen en el resultado: hidratación, alimentación equilibrada, actividad física y evitar excesos acompañan el proceso.</li>
                     </ul>
                 </article>
 
@@ -691,11 +702,21 @@
             </div>
 
             <section class="faq-block" aria-label="Preguntas frecuentes sobre criolipólisis">
-                <h2 class="faq-title">FAQ</h2>
+                <h2 class="faq-title">Preguntas Frecuentes</h2>
+
+                <details class="faq-item">
+                    <summary>¿Qué es la criolipólisis?</summary>
+                    <div class="faq-answer">Es un tratamiento no invasivo que utiliza frío controlado para actuar sobre grasa localizada. Su objetivo es trabajar zonas específicas con criterio profesional, sin cirugía ni tiempos largos de recuperación.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Cómo funciona el tratamiento?</summary>
+                    <div class="faq-answer">El frío controlado actúa sobre el tejido adiposo de la zona tratada y desencadena un proceso gradual. Por eso los cambios no se observan de un día para el otro, sino de forma progresiva en las semanas siguientes.</div>
+                </details>
 
                 <details class="faq-item" open>
                     <summary>¿Cuándo se empiezan a ver resultados?</summary>
-                    <div class="faq-answer">El cuerpo elimina los adipocitos de manera progresiva. Generalmente se observan cambios entre la semana 3 y la semana 8, con evolución hasta los 60 días.</div>
+                    <div class="faq-answer">Los cambios suelen empezar a notarse desde los 15 a 20 días. Después continúan evolucionando de manera progresiva, con una ventana de mejora que puede extenderse hasta alrededor de los 60 días.</div>
                 </details>
 
                 <details class="faq-item">
@@ -704,8 +725,53 @@
                 </details>
 
                 <details class="faq-item">
+                    <summary>¿Es un tratamiento doloroso?</summary>
+                    <div class="faq-answer">En general se considera bien tolerado. La sensación más habitual es frío intenso al comienzo y luego adaptación progresiva de la zona. La percepción puede variar según cada persona y cada área tratada.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Necesita recuperación o reposo?</summary>
+                    <div class="faq-answer">Habitualmente no requiere tiempo de recuperación prolongado. De todos modos, la conducta posterior siempre debe seguir la indicación profesional según la evaluación y la respuesta de la zona.</div>
+                </details>
+
+                <details class="faq-item">
                     <summary>¿Sirve para bajar de peso general?</summary>
                     <div class="faq-answer">No. Está indicado para adiposidad localizada y modelado de zonas. No reemplaza un plan médico de descenso de peso.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Cada cuánto puede tratarse la misma zona?</summary>
+                    <div class="faq-answer">Como referencia general, para volver a trabajar la misma zona suele recomendarse esperar entre 30 y 45 días. Ese intervalo permite respetar los tiempos biológicos del proceso y definir mejor la evolución.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Alcanza con una sola sesión?</summary>
+                    <div class="faq-answer">Depende del caso, de la zona y del objetivo. Algunas personas observan cambios satisfactorios con una sola sesión y otras requieren más de una para potenciar y sostener el resultado esperado.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Los resultados dependen solo del equipo?</summary>
+                    <div class="faq-answer">No. El tratamiento se potencia cuando se acompaña con buena hidratación, alimentación equilibrada, actividad física y una conducta general coherente con el objetivo corporal trabajado.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Por qué los resultados varían entre personas?</summary>
+                    <div class="faq-answer">Porque cada cuerpo responde de manera diferente. La zona tratada, el punto de partida, los hábitos y la respuesta individual influyen en la evolución. Por eso la evaluación personalizada sigue siendo clave.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Qué zonas suelen tratarse?</summary>
+                    <div class="faq-answer">Se utiliza principalmente en zonas con adiposidad localizada, siempre que la evaluación profesional confirme que esa área es apta para el procedimiento y que el objetivo es realista para esta tecnología.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Se ven cambios de un día para el otro?</summary>
+                    <div class="faq-answer">No. Este no es un cambio inmediato. Es un proceso progresivo y natural, por lo que la expectativa correcta es observar evolución con el paso de los días y las semanas.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Necesito evaluación aunque crea que soy apta?</summary>
+                    <div class="faq-answer">Sí. La evaluación previa es importante incluso cuando no hay dudas aparentes. Permite revisar antecedentes, zona a tratar, expectativas, contraindicaciones y si la técnica es realmente adecuada para tu caso.</div>
                 </details>
 
                 <details class="faq-item">
@@ -716,6 +782,16 @@
                 <details class="faq-item">
                     <summary>¿Cómo confirmo si soy apta?</summary>
                     <div class="faq-answer">Primero se realiza una evaluación personalizada. Ahí se revisan indicaciones, antecedentes clínicos y contraindicaciones para definir aptitud.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Qué hábitos ayudan a acompañar mejor el proceso?</summary>
+                    <div class="faq-answer">La base sigue siendo simple: buena hidratación, alimentación equilibrada, movimiento regular y evitar excesos. No reemplazan la evaluación profesional, pero sí acompañan mejor la evolución esperada.</div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>¿Qué pasa si tengo dudas y no quiero reservar sin preguntar?</summary>
+                    <div class="faq-answer">Lo correcto es consultar antes. Si tenés antecedentes, usás medicación, estás en un proceso médico o simplemente querés confirmar si este tratamiento es para vos, conviene hablarlo con la profesional antes de avanzar.</div>
                 </details>
             </section>
 

@@ -9,12 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --green-700: #2f6f57;
-            --green-600: #3f8f6f;
-            --green-500: #61b18d;
-            --green-100: #e7f5ee;
-            --ink: #22332c;
-            --muted: #5f746b;
+            --red-700: #9f1024;
+            --red-600: #cf1d35;
+            --red-500: #ff5a5f;
+            --red-100: #fff0f1;
+            --ink: #331f22;
+            --muted: #7b6165;
         }
 
         * { box-sizing: border-box; }
@@ -26,9 +26,9 @@
             align-items: center;
             justify-content: center;
             background:
-                radial-gradient(circle at 85% 10%, rgba(97, 177, 141, 0.2), rgba(97, 177, 141, 0) 45%),
-                radial-gradient(circle at 10% 90%, rgba(47, 111, 87, 0.16), rgba(47, 111, 87, 0) 42%),
-                linear-gradient(135deg, #f8fffb 0%, #edf8f2 60%, #e6f3ec 100%);
+                radial-gradient(circle at 85% 10%, rgba(255, 90, 95, 0.2), rgba(255, 90, 95, 0) 45%),
+                radial-gradient(circle at 10% 90%, rgba(159, 16, 36, 0.16), rgba(159, 16, 36, 0) 42%),
+                linear-gradient(135deg, #fff9fa 0%, #fff0f1 60%, #ffe8ea 100%);
             font-family: 'Montserrat', sans-serif;
             color: var(--ink);
             padding: 20px;
@@ -38,21 +38,21 @@
             width: 100%;
             max-width: 520px;
             background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(63, 143, 111, 0.24);
+            border: 1px solid rgba(207, 29, 53, 0.24);
             border-radius: 22px;
-            box-shadow: 0 20px 45px rgba(38, 73, 58, 0.16);
+            box-shadow: 0 20px 45px rgba(117, 18, 33, 0.16);
             padding: 26px;
         }
 
         h1 {
             margin: 0 0 14px;
             font-size: 1.5rem;
-            color: var(--green-700);
+            color: var(--red-700);
         }
 
         .summary {
-            background: var(--green-100);
-            border: 1px solid rgba(63, 143, 111, 0.26);
+            background: var(--red-100);
+            border: 1px solid rgba(207, 29, 53, 0.2);
             border-radius: 14px;
             padding: 14px;
             margin-bottom: 16px;
@@ -61,24 +61,24 @@
         }
 
         .summary p { margin: 6px 0; }
-        .summary strong { color: var(--green-700); }
+        .summary strong { color: var(--red-700); }
 
         .label {
             display: block;
             font-weight: 600;
             margin-bottom: 8px;
-            color: var(--green-700);
+            color: var(--red-700);
         }
 
         textarea {
             width: 100%;
             min-height: 84px;
             border-radius: 12px;
-            border: 1px solid #b8d9c9;
+            border: 1px solid #efc3c8;
             padding: 11px 12px;
             font: inherit;
             resize: vertical;
-            background: #fafffc;
+            background: #fffcfc;
         }
 
         .hint {
@@ -90,7 +90,7 @@
         .status {
             min-height: 20px;
             margin-top: 10px;
-            color: var(--green-700);
+            color: var(--red-700);
             font-size: 0.92rem;
         }
 
@@ -103,9 +103,9 @@
             font: inherit;
             font-weight: 700;
             margin-top: 12px;
-            background: linear-gradient(135deg, var(--green-500), var(--green-600));
+            background: linear-gradient(135deg, var(--red-500), var(--red-600));
             color: #fff;
-            box-shadow: 0 12px 26px rgba(63, 143, 111, 0.34);
+            box-shadow: 0 12px 26px rgba(159, 16, 36, 0.3);
             transition: transform 0.18s ease, opacity 0.18s ease;
         }
 
@@ -133,7 +133,7 @@
 
         .modal-card h2 {
             margin-top: 0;
-            color: var(--green-700);
+            color: var(--red-700);
         }
 
         .modal-card p {
@@ -143,10 +143,10 @@
 
         .btn-secondary {
             margin-top: 10px;
-            background: #f0f6f3;
-            color: var(--green-700);
+            background: #fff4f5;
+            color: var(--red-700);
             box-shadow: none;
-            border: 1px solid #d3e8dd;
+            border: 1px solid #f0d1d5;
         }
     </style>
 </head>
