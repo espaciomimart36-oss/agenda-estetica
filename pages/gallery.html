@@ -453,54 +453,46 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Datos de ejemplo (placeholder hasta que Gimena suba fotos reales)
+        // Fotos reales de Espacio Mimar T
         const serviciosEjemplo = [
             {
                 id: 1,
-                servicio: 'facial-led',
-                nombre: 'Facial LED Regenerativo',
-                descripcion: 'Tratamiento no invasivo que estimula colágeno y elastina. Mejora firmeza, luminosidad y textura. Ideal para acné, inflamación y manchas.',
-                foto: 'https://images.unsplash.com/photo-1552852081-cfed0c94c0ad?w=500&h=500&fit=crop',
-                tags: ['facial-led', 'todos']
+                servicio: 'ambiente',
+                nombre: 'Cabina de Tratamientos',
+                descripcion: 'Nuestra cabina profesional equipada con tecnología de última generación para ofrecerte los mejores resultados en un ambiente cómodo y seguro.',
+                foto: '/img/cabina.jpeg',
+                tags: ['ambiente', 'todos']
             },
             {
                 id: 2,
                 servicio: 'corporal',
-                nombre: 'Sesión Corporal - Abdomen',
-                descripcion: 'Combinación de tecnologías para combatir flacidez y mejorar el tono muscular. Estimula colágeno y mejora la textura de la piel.',
-                foto: 'https://images.unsplash.com/photo-1570172619644-e15faf5ffdf9?w=500&h=500&fit=crop',
+                nombre: 'Sesión en Camilla',
+                descripcion: 'Tratamientos corporales personalizados en camilla profesional. Cada sesión es diseñada según tus necesidades para lograr resultados visibles y duraderos.',
+                foto: '/img/camilla.jpeg',
                 tags: ['corporal', 'todos']
             },
             {
                 id: 3,
                 servicio: 'facial-led',
-                nombre: 'Facial LED - Sesión 2',
-                descripcion: 'Segunda sesión de tratamiento LED para potenciar resultados. Se observan mejoras visibles en iluminación y firmeza.',
-                foto: 'https://images.unsplash.com/photo-1540389949218-a12ce90416b5?w=500&h=500&fit=crop',
+                nombre: 'Tratamiento Facial',
+                descripcion: 'Atención personalizada de la mano de nuestra especialista. Evaluación y tratamiento facial con respaldo farmacéutico y técnicas avanzadas.',
+                foto: '/img/cosmetologa.jpeg',
                 tags: ['facial-led', 'todos']
             },
             {
                 id: 4,
                 servicio: 'ambiente',
-                nombre: 'Nuestro Espacio',
-                descripcion: 'Ambiente profesional y acogedor diseñado para tu comodidad. Tecnología de punta en un espacio tranquilo.',
-                foto: 'https://images.unsplash.com/photo-1576091160550-112173f7f869?w=500&h=500&fit=crop',
+                nombre: 'Agenda tu Cita',
+                descripcion: 'Sistema de turnos organizado y flexible. Elegí el día y horario que más te convenga para recibir tu tratamiento sin esperas.',
+                foto: '/img/fecha.jpeg',
                 tags: ['ambiente', 'todos']
             },
             {
                 id: 5,
-                servicio: 'corporal',
-                nombre: 'Sesión Corporal - Glúteos',
-                descripcion: 'Tratamiento especializado para gluteos con resultados visibles. Combate flacidez y mejora la definición.',
-                foto: 'https://images.unsplash.com/photo-1552074022-5b02419db467?w=500&h=500&fit=crop',
-                tags: ['corporal', 'todos']
-            },
-            {
-                id: 6,
                 servicio: 'ambiente',
-                nombre: 'Cabina de Tecnología',
-                descripcion: 'Equipamiento profesional de última generación. Garantiza seguridad y resultados óptimos en cada tratamiento.',
-                foto: 'https://images.unsplash.com/photo-1584308666744-24d5f15714ae?w=500&h=500&fit=crop',
+                nombre: 'Recepción y Bienvenida',
+                descripcion: 'Un espacio cuidado y acogedor donde cada detalle fue pensado para que tu experiencia sea única desde el momento en que llegás.',
+                foto: '/img/recepcion.jpeg',
                 tags: ['ambiente', 'todos']
             }
         ];
