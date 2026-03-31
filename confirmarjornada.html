@@ -338,14 +338,13 @@
                     timestamp: new Date()
                 });
 
-                let resumen = "Reserva guardada correctamente.";
+                let resumen = "Turno confirmado.";
                 if (telefonos.length) {
                     setStatus("Enviando avisos por WhatsApp...");
                     const { ok, fail, warnings } = await enviarWhatsApp(telefonos);
-                    resumen = `Reserva guardada. Avisos enviados: ${ok}. Avisos con error: ${fail}.`;
+                    resumen = ok > 0 ? "Mensaje enviado." : "Turno confirmado.";
                     if (warnings.includes("balance_update_failed") || warnings.includes("balance_client_not_found")) {
                         console.warn("Revisar hoursBalance en admin:", warnings);
-                        resumen += " Revisá el saldo del paciente en admin.";
                     }
                 } else {
                     const balanceResult = await ejecutarConfirmacionBackend({
@@ -355,9 +354,9 @@
                     if (!balanceResult.ok) {
                         console.error("No se pudo actualizar el balance desde backend:", balanceResult.data || balanceResult.error);
                     }
-                    resumen = "Reserva guardada. No se enviaron avisos porque no se cargaron numeros.";
+                    resumen = "Turno confirmado.";
                     if (!balanceResult.ok || (balanceResult.data?.warnings || []).includes("balance_update_failed") || (balanceResult.data?.warnings || []).includes("balance_client_not_found")) {
-                        resumen += " Revisá el saldo del paciente en admin.";
+                        console.warn("Revisar hoursBalance en admin:", balanceResult.data || balanceResult.error);
                     }
                 }
 
