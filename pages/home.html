@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#72bd99">
     <link rel="manifest" href="/manifest.webmanifest">
     <link rel="apple-touch-icon" href="/img/icon-192.png">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --mimar-color-bg: #f4f7f6;
@@ -25,6 +25,10 @@
             --mimar-shadow-md: 0 12px 24px rgba(29, 51, 42, 0.12);
             --mimar-shadow-lg: 0 22px 48px rgba(29, 51, 42, 0.16);
             --mimar-transition-base: 0.24s ease;
+            --mimar-radius-pill: 100px;
+            --mimar-glow-primary: 0 0 24px rgba(114, 189, 153, 0.45);
+            --mimar-glass-bg: rgba(255, 255, 255, 0.08);
+            --mimar-glass-border: rgba(255, 255, 255, 0.18);
         }
 
         * {
@@ -68,28 +72,50 @@
         .hero-content {
             position: relative;
             z-index: 2;
-            max-width: 700px;
+            max-width: 680px;
             text-align: center;
             animation: fadeInUp 1s ease both;
+            background: var(--mimar-glass-bg);
+            border: 1px solid var(--mimar-glass-border);
+            border-radius: 32px;
+            padding: 52px 44px;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        .hero-logo {
+            width: clamp(80px, 16vw, 130px);
+            margin-bottom: 18px;
+            filter: drop-shadow(0 4px 16px rgba(114, 189, 153, 0.5));
+            animation: floatLogo 5s ease-in-out infinite;
+        }
+
+        .hero-eyebrow {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(20px, 4vw, 28px);
+            color: var(--mimar-color-primary);
+            margin-bottom: 6px;
+            text-shadow: 0 2px 12px rgba(114, 189, 153, 0.4);
         }
 
         .hero-subtitle {
-            font-size: 14px;
-            letter-spacing: 2px;
+            font-size: 12px;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 20px;
-            font-weight: 700;
+            color: rgba(255, 255, 255, 0.65);
+            margin-bottom: 14px;
+            font-weight: 500;
         }
 
         .hero-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(42px, 8vw, 72px);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(52px, 10vw, 86px);
+            font-style: italic;
             color: #ffffff;
-            margin-bottom: 20px;
-            line-height: 1.1;
-            letter-spacing: -1px;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            margin-bottom: 18px;
+            line-height: 1.05;
+            letter-spacing: 0;
+            text-shadow: 0 4px 28px rgba(0,0,0,0.35), 0 0 60px rgba(114, 189, 153, 0.15);
         }
 
         .hero-desc {
@@ -109,41 +135,63 @@
         }
 
         .btn-primary {
+            position: relative;
+            overflow: hidden;
             background: linear-gradient(135deg, var(--mimar-color-primary) 0%, var(--mimar-color-primary-strong) 100%);
             color: white;
             border: none;
-            padding: 16px 40px;
-            border-radius: var(--mimar-radius-md);
-            font-size: 15px;
+            padding: 17px 44px;
+            border-radius: var(--mimar-radius-pill);
+            font-size: 14px;
             font-weight: 600;
+            letter-spacing: 0.5px;
             cursor: pointer;
             transition: transform var(--mimar-transition-base), box-shadow var(--mimar-transition-base);
-            box-shadow: 0 8px 20px rgba(114, 189, 153, 0.25);
+            box-shadow: 0 8px 24px rgba(114, 189, 153, 0.3);
             text-decoration: none;
             display: inline-block;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 65%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+            transition: left 0.55s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 160%;
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(114, 189, 153, 0.35);
+            box-shadow: 0 14px 34px rgba(114, 189, 153, 0.45), var(--mimar-glow-primary);
         }
 
         .btn-secondary {
-            background: var(--mimar-color-surface);
-            color: var(--mimar-color-primary);
-            border: 2px solid var(--mimar-color-primary);
-            padding: 14px 38px;
-            border-radius: var(--mimar-radius-md);
-            font-size: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1.5px solid rgba(255, 255, 255, 0.5);
+            padding: 15px 38px;
+            border-radius: var(--mimar-radius-pill);
+            font-size: 14px;
             font-weight: 600;
+            letter-spacing: 0.5px;
             cursor: pointer;
             transition: all var(--mimar-transition-base);
             text-decoration: none;
             display: inline-block;
+            backdrop-filter: blur(4px);
         }
 
         .btn-secondary:hover {
-            background: var(--mimar-color-primary-soft);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
         }
 
         /* SECCIÓN SERVICIOS */
@@ -155,12 +203,24 @@
         }
 
         .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(36px, 6vw, 56px);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(38px, 6vw, 60px);
+            font-style: italic;
             color: var(--mimar-color-ink);
             text-align: center;
             margin-bottom: 15px;
-            letter-spacing: -0.5px;
+            letter-spacing: 0;
+            font-weight: 600;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 44px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--mimar-color-primary), var(--mimar-color-primary-strong));
+            border-radius: var(--mimar-radius-pill);
+            margin: 14px auto 0;
         }
 
         .section-desc {
@@ -180,19 +240,36 @@
 
         .servicio-card {
             background: var(--mimar-color-surface);
-            border-radius: var(--mimar-radius-lg);
-            padding: 30px;
+            border-radius: 24px;
+            padding: 28px;
             text-align: center;
             box-shadow: var(--mimar-shadow-sm);
             transition: all var(--mimar-transition-base);
             border: 1px solid var(--mimar-color-border);
             cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .servicio-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(114,189,153,0) 0%, rgba(114,189,153,0.06) 100%);
+            opacity: 0;
+            transition: opacity var(--mimar-transition-base);
+            pointer-events: none;
         }
 
         .servicio-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--mimar-shadow-lg);
+            transform: translateY(-10px);
+            box-shadow: var(--mimar-shadow-lg), 0 0 0 1.5px var(--mimar-color-primary);
             border-color: var(--mimar-color-primary);
+        }
+
+        .servicio-card:hover::after {
+            opacity: 1;
         }
 
         .servicio-icon {
@@ -201,8 +278,9 @@
         }
 
         .servicio-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 20px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-style: italic;
             color: var(--mimar-color-ink);
             margin-bottom: 12px;
         }
@@ -215,15 +293,21 @@
         }
 
         .servicio-link {
-            color: var(--mimar-color-primary);
+            display: inline-block;
+            background: var(--mimar-color-primary-soft);
+            color: var(--mimar-color-primary-strong);
             text-decoration: none;
             font-weight: 600;
-            font-size: 13px;
-            transition: color var(--mimar-transition-base);
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            padding: 8px 20px;
+            border-radius: var(--mimar-radius-pill);
+            transition: all var(--mimar-transition-base);
         }
 
         .servicio-link:hover {
-            color: var(--mimar-color-primary-strong);
+            background: var(--mimar-color-primary);
+            color: white;
         }
 
         /* SECCIÓN QUIÉNES SOMOS */
@@ -239,8 +323,9 @@
         }
 
         .quienes-text h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 42px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 46px;
+            font-style: italic;
             margin-bottom: 20px;
             color: var(--mimar-color-ink);
         }
@@ -255,15 +340,29 @@
         .gimena-card {
             background: var(--mimar-color-surface);
             padding: 30px;
-            border-radius: var(--mimar-radius-lg);
+            border-radius: 24px;
             text-align: center;
             box-shadow: var(--mimar-shadow-md);
             border: 1px solid var(--mimar-color-border);
+            border-top: 3px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+
+        .gimena-card::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 26px;
+            background: linear-gradient(135deg, var(--mimar-color-primary), var(--mimar-color-primary-strong), #a8d9bd);
+            z-index: -1;
+            opacity: 0.7;
         }
 
         .gimena-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-style: italic;
             color: var(--mimar-color-ink);
             margin-bottom: 8px;
         }
@@ -313,8 +412,9 @@
         }
 
         .ubicacion-info h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 34px;
+            font-style: italic;
             margin-bottom: 30px;
         }
 
@@ -340,9 +440,23 @@
 
         /* SECCIÓN CONTACTO */
         .contacto {
-            background: linear-gradient(135deg, var(--mimar-color-ink) 0%, #1f2824 100%);
+            background: linear-gradient(160deg, #1a2e22 0%, var(--mimar-color-ink) 50%, #0e1e16 100%);
             color: white;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contacto::before {
+            content: '';
+            position: absolute;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(114, 189, 153, 0.12) 0%, transparent 65%);
+            pointer-events: none;
         }
 
         .contacto .section-title {
@@ -362,32 +476,37 @@
         }
 
         .contacto-link {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(114, 189, 153, 0.4);
-            color: var(--mimar-color-primary);
-            padding: 15px 30px;
-            border-radius: var(--mimar-radius-md);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(114, 189, 153, 0.35);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 15px 32px;
+            border-radius: var(--mimar-radius-pill);
             text-decoration: none;
             transition: all var(--mimar-transition-base);
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(6px);
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .contacto-link:hover {
-            background: rgba(114, 189, 153, 0.15);
+            background: var(--mimar-color-primary);
             border-color: var(--mimar-color-primary);
+            box-shadow: var(--mimar-glow-primary);
+            transform: translateY(-2px);
         }
 
         /* ANIMACIONES */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-8px); }
         }
 
         .fade-in {
@@ -397,7 +516,7 @@
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .hero-title {
-                font-size: 42px;
+                font-size: 50px;
             }
 
             .hero-desc {
@@ -435,7 +554,7 @@
 
             .quienes-text h2,
             .ubicacion-info h3 {
-                font-size: 28px;
+                font-size: 32px;
             }
 
             .servicio-card {
@@ -451,7 +570,9 @@
     <!-- HERO SECTION -->
     <section class="hero" id="inicio">
         <div class="hero-content">
-            <div class="hero-subtitle">Bienvenida a</div>
+            <img src="/img/logo.png" alt="Espacio Mimar T" class="hero-logo">
+            <div class="hero-eyebrow">Bienvenida a</div>
+            <div class="hero-subtitle">Estética Avanzada · La Plata</div>
             <h1 class="hero-title">Espacio Mimar T</h1>
             <p class="hero-desc">Tratamientos dermoestéticos personalizados con tecnología avanzada y respaldo farmacéutico</p>
             <div class="hero-cta">
