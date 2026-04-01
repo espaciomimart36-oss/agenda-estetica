@@ -84,7 +84,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBc5435tsDnJ_yJqO1ppwSjxSpCIhpjgew",
@@ -98,6 +98,43 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        const limpiarSesionYSalir = () => {
+            localStorage.removeItem("clienteDNI");
+            localStorage.removeItem("clienteNombre");
+            localStorage.removeItem("servicioSeleccionado");
+            window.location.href = "/";
+        };
+
+        async function validarAccesoCliente() {
+            const dniSesion = localStorage.getItem("clienteDNI");
+            const nombreSesion = (localStorage.getItem("clienteNombre") || "").trim().toLowerCase();
+
+            if (!dniSesion || dniSesion === "null" || !nombreSesion) {
+                limpiarSesionYSalir();
+                return false;
+            }
+
+            try {
+                const clienteSnap = await getDoc(doc(db, "clients", dniSesion));
+                if (!clienteSnap.exists()) {
+                    limpiarSesionYSalir();
+                    return false;
+                }
+
+                const nombreDb = (clienteSnap.data()?.fullName || "").trim().toLowerCase();
+                if (!nombreDb || nombreDb !== nombreSesion) {
+                    limpiarSesionYSalir();
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                console.error("No se pudo validar cliente:", error);
+                limpiarSesionYSalir();
+                return false;
+            }
+        }
 
         const getServiciosErrorMessage = (error) => {
             switch (error?.code) {
@@ -231,6 +268,9 @@
 
         // Carga inicial de servicios
         async function cargarServicios() {
+            const accesoValido = await validarAccesoCliente();
+            if (!accesoValido) return;
+
             try {
                 const snapshot = await getDocs(collection(db, "services"));
                 let servicios = [];

@@ -838,6 +838,7 @@ let fechaActual=new Date();
 let fechaSeleccionada=null, horaSeleccionada=null, duracionTurno=60, excepciones={};
 const hoy=new Date(); hoy.setHours(0,0,0,0);
 const dniUsuario=localStorage.getItem("clienteDNI");
+const nombreUsuarioSesion=(localStorage.getItem("clienteNombre") || "").trim().toLowerCase();
 const servicioGuardado=localStorage.getItem("servicioSeleccionado")||"";
 const esMioUp=servicioGuardado.toLowerCase().includes("mio");
 const jornadaModo = localStorage.getItem("jornadaModo") === "1";
@@ -924,6 +925,33 @@ async function cargarDatos(){
 
     if (jornadaModo) fijarMesJornada();
     renderCalendario();
+}
+
+async function validarAccesoCliente() {
+    if (!dniUsuario || dniUsuario === "null" || !nombreUsuarioSesion || !servicioGuardado) {
+        window.location.href = "/";
+        return false;
+    }
+
+    try {
+        const snap = await getDoc(doc(db, "clients", dniUsuario));
+        if (!snap.exists()) {
+            window.location.href = "/";
+            return false;
+        }
+
+        const nombreDb = (snap.data()?.fullName || "").trim().toLowerCase();
+        if (!nombreDb || nombreDb !== nombreUsuarioSesion) {
+            window.location.href = "/";
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error("No se pudo validar cliente en fecha:", error);
+        window.location.href = "/";
+        return false;
+    }
 }
 
 
@@ -1130,8 +1158,14 @@ if (localStorage.getItem("floatingWarningHidden") === "true") {
     if (fl) fl.style.display = "none";
 }
 
-aplicarModoVisualJornada();
-cargarDatos();
+async function iniciarFlujoFecha() {
+    const accesoValido = await validarAccesoCliente();
+    if (!accesoValido) return;
+    aplicarModoVisualJornada();
+    cargarDatos();
+}
+
+iniciarFlujoFecha();
 function renderHorariosPorConfig(config, container, fStr) {
     return getDocs(query(collection(db, "reservas"), where("fecha", "==", fStr)))
         .then(snapRes => {

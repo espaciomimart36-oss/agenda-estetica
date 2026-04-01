@@ -55,10 +55,10 @@
         // Variables globales para este script
         let telefonoExtraido = "";
         const dniLs = localStorage.getItem("clienteDNI");
-        const nombreLs = localStorage.getItem("clienteNombre") || localStorage.getItem("nombre") || "Cliente";
-        const servLs = localStorage.getItem("servicioSeleccionado") || "Tratamiento";
-        const fechaLs = localStorage.getItem("fechaSeleccionada") || "Pendiente";
-        const horaRawLs = localStorage.getItem("horaSeleccionada") || "00:00";
+        const nombreLs = localStorage.getItem("clienteNombre") || localStorage.getItem("nombre") || "";
+        const servLs = localStorage.getItem("servicioSeleccionado") || "";
+        const fechaLs = localStorage.getItem("fechaSeleccionada") || "";
+        const horaRawLs = localStorage.getItem("horaSeleccionada") || "";
         const horaLs = horaRawLs;
 
         // Mostrar datos iniciales en pantalla
@@ -72,9 +72,8 @@
         async function obtenerDatosCliente() {
             const boton = document.getElementById("btnConfirmar");
 
-            if (!dniLs) {
-                document.getElementById("txtTelefono").innerText = "Error: DNI no encontrado en sesión";
-                boton.innerText = "Error de sesión";
+            if (!dniLs || !nombreLs || !servLs || !fechaLs || !horaLs) {
+                window.location.href = "/";
                 return;
             }
 
@@ -84,6 +83,14 @@
 
                 if (docSnap.exists()) {
                     const datosCliente = docSnap.data();
+                    const nombreDb = (datosCliente.fullName || "").trim().toLowerCase();
+                    const nombreSesion = (nombreLs || "").trim().toLowerCase();
+
+                    if (!nombreDb || nombreDb !== nombreSesion) {
+                        window.location.href = "/";
+                        return;
+                    }
+
                     telefonoExtraido = datosCliente.phone || datosCliente.telefono || datosCliente.whatsapp || "";
 
                     if (telefonoExtraido) {
@@ -96,12 +103,11 @@
                         boton.innerText = "Confirmar turno";
                     }
                 } else {
-                    document.getElementById("txtTelefono").innerText = "Usuario no registrado";
-                    boton.innerText = "Error de registro";
+                    window.location.href = "/";
                 }
             } catch (error) {
                 console.error("Error obteniendo documento:", error);
-                document.getElementById("txtTelefono").innerText = "Error de conexión";
+                window.location.href = "/";
             }
         }
 

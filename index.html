@@ -106,10 +106,10 @@
         }
 
         .hero-logo {
-            width: min(150px, 34vw);
+            width: min(230px, 42vw);
             height: auto;
             display: block;
-            margin: 0 auto 14px;
+            margin: 0 auto 16px;
         }
 
         .hero-kicker {
@@ -571,7 +571,7 @@
             }
 
             .hero-logo {
-                width: 100px;
+                width: 140px;
                 margin-bottom: 12px;
             }
 
@@ -717,7 +717,7 @@
                 <div class="hero-location">Comandante Andresito · Misiones</div>
 
                 <div class="hero-actions">
-                    <a id="btnIngresoCliente" class="hero-primary" href="https://wa.me/543757585029?text=Hola%2C%20quiero%20ser%20cliente%20de%20Espacio%20Mimar%20T.%20%C2%BFMe%20pueden%20guiar%20paso%20a%20paso%20para%20comenzar%3F" target="_blank" rel="noopener noreferrer">Quiero ser cliente</a>
+                    <button id="btnBajarIngreso" class="hero-primary" type="button">Ingreso de pacientes</button>
                     <a href="/servicios-pro.html" class="hero-secondary">Ver servicios</a>
                 </div>
             </div>
@@ -855,6 +855,13 @@
         };
 
         await cargarContextoJornada();
+
+        const btnBajarIngreso = document.getElementById("btnBajarIngreso");
+        const loginAccess = document.getElementById("loginAccess");
+
+        btnBajarIngreso?.addEventListener("click", () => {
+            loginAccess?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
 
         // Limpieza de inputs en tiempo real (Pro UX)
         const inputDni = document.getElementById("dni");
