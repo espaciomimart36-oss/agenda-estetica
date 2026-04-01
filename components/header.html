@@ -8,7 +8,7 @@
         
         <nav class="header-nav">
             <a href="/" class="nav-link">Inicio</a>
-            <a href="/servicios-pro.html" class="nav-link">Servicios</a>
+            <a id="serviciosLink" href="/servicios-pro.html" class="nav-link">Servicios</a>
             <a href="/" class="nav-link">Agendar</a>
             <a href="https://wa.me/543757585029" class="nav-link" target="_blank" rel="noopener noreferrer">Contacto</a>
         </nav>
@@ -30,7 +30,7 @@
 
     <nav class="mobile-menu" id="mobileMenu">
         <a href="/" class="mobile-nav-link">Inicio</a>
-        <a href="/servicios-pro.html" class="mobile-nav-link">Servicios</a>
+        <a id="serviciosLinkMobile" href="/servicios-pro.html" class="mobile-nav-link">Servicios</a>
         <a href="/" class="mobile-nav-link">Agendar</a>
         <a href="https://wa.me/543757585029" class="mobile-nav-link" target="_blank" rel="noopener noreferrer">Contacto</a>
         <button class="btn-agendar-mobile" id="btnAgendarMobile">Agendar Cita</button>
@@ -235,9 +235,9 @@
     }
 
     .header-container {
-        height: 60px;
-        gap: 10px;
-        padding: 0 14px;
+        height: 56px;
+        gap: 8px;
+        padding: 0 16px;
     }
 
     .header-nav {
@@ -254,11 +254,12 @@
     }
 
     .header-logo {
-        height: 34px;
+        height: 32px;
     }
 
     #headerSessionInfo {
-        gap: 8px;
+        gap: 6px;
+        display: flex !important;
     }
 
     .session-name {
@@ -266,16 +267,28 @@
     }
 
     .btn-session-exit {
-        padding: 8px 10px;
+        padding: 6px 12px;
         font-size: 11px;
-        border-radius: 12px;
+        border-radius: 8px;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
     }
 
     .mobile-menu {
-        padding: 14px;
-        gap: 8px;
+        padding: 12px 16px;
+        gap: 6px;
+    }
+
+    .mobile-nav-link {
+        font-size: 14px;
+        padding: 10px 0;
+    }
+
+    .btn-agendar-mobile {
+        padding: 12px;
+        font-size: 13px;
+        margin-top: 8px;
     }
 }
 </style>
@@ -313,18 +326,25 @@ function actualizarHeaderSesion() {
     const headerSessionInfo = document.getElementById('headerSessionInfo');
     const sessionNameDisplay = document.getElementById('sessionNameDisplay');
     const btnAgendar = document.getElementById('btnAgendar');
-    const btnAgendar2 = document.getElementById('btnAgendar');
     const btnAgendarMobile = document.getElementById('btnAgendarMobile');
+    const serviciosLink = document.getElementById('serviciosLink');
+    const serviciosLinkMobile = document.getElementById('serviciosLinkMobile');
 
     if (clienteDNI && clienteNombre) {
         // Usuario logueado
         if (headerSessionInfo) headerSessionInfo.style.display = 'flex';
         if (sessionNameDisplay) sessionNameDisplay.textContent = clienteNombre;
         if (btnAgendar) btnAgendar.style.display = 'none';
+        // Link de servicios apunta a la versión funcional
+        if (serviciosLink) serviciosLink.href = '/servicios.html';
+        if (serviciosLinkMobile) serviciosLinkMobile.href = '/servicios.html';
     } else {
         // Usuario no logueado
         if (headerSessionInfo) headerSessionInfo.style.display = 'none';
         if (btnAgendar) btnAgendar.style.display = 'block';
+        // Link de servicios apunta al catálogo bonito
+        if (serviciosLink) serviciosLink.href = '/servicios-pro.html';
+        if (serviciosLinkMobile) serviciosLinkMobile.href = '/servicios-pro.html';
     }
 
     // Botones de agendar

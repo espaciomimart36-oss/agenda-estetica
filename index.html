@@ -349,56 +349,135 @@
             }
 
             .container {
-                padding: 32px 22px;
-                border-radius: 22px;
-                width: min(92vw, 420px);
+                padding: 36px 24px;
+                border-radius: 24px;
+                width: min(94vw, 420px);
+                margin-top: 8px;
             }
 
             .logo {
-                width: min(62vw, 220px);
+                width: min(64vw, 240px);
                 height: auto;
-                margin-bottom: 14px;
+                margin-bottom: 16px;
             }
 
             .profesional-card {
-                padding: 18px 16px;
-                margin-bottom: 24px;
+                padding: 20px 18px;
+                margin-bottom: 26px;
+                border-radius: 16px;
             }
 
             .subtitulo {
-                margin-bottom: 22px;
-            }
-
-            h2 {
-                margin-bottom: 18px;
-            }
-
-            input,
-            button {
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 420px) {
-            .container {
-                width: 94%;
-                padding: 24px 16px;
-            }
-
-            .subtitulo {
+                margin-bottom: 20px;
+                font-size: 10px;
                 letter-spacing: 2px;
             }
 
             h2 {
+                margin-bottom: 20px;
                 font-size: 18px;
             }
 
             .profesional {
                 font-size: 17px;
+                margin-bottom: 3px;
+            }
+
+            .titulo-profesional {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+
+            .credenciales {
+                font-size: 11px;
+                margin-bottom: 8px;
             }
 
             .descripcion {
                 font-size: 12px;
+            }
+
+            input,
+            button {
+                font-size: 14px;
+                padding: 14px;
+                border-radius: 10px;
+            }
+
+            button {
+                padding: 16px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .container {
+                width: 96%;
+                padding: 28px 18px;
+                border-radius: 20px;
+            }
+
+            .logo {
+                width: min(70vw, 200px);
+                margin-bottom: 14px;
+            }
+
+            .subtitulo {
+                letter-spacing: 1.5px;
+                font-size: 9px;
+            }
+
+            h2 {
+                font-size: 17px;
+                margin-bottom: 16px;
+            }
+
+            .profesional {
+                font-size: 16px;
+            }
+
+            .descripcion {
+                font-size: 11px;
+                line-height: 1.5;
+            }
+
+            input {
+                padding: 13px 12px;
+                font-size: 13px;
+                margin-bottom: 12px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 12px;
+                letter-spacing: 1px;
+            }
+
+            .install-widget {
+                margin: 10px 0 14px 0;
+            }
+
+            .install-widget-inner {
+                padding: 12px;
+                gap: 8px;
+            }
+
+            .install-title {
+                font-size: 13px;
+            }
+
+            .install-text {
+                font-size: 11px;
+            }
+
+            .install-actions .btn-install {
+                padding: 10px;
+                font-size: 11px;
+            }
+
+            .install-actions .btn-dismiss {
+                padding: 10px 12px;
+                font-size: 11px;
             }
         }
     </style>
@@ -590,7 +669,7 @@
                         } else if (!cliente.historiaCompletada) {
                             window.location.href = "historia.html";
                         } else {
-                            window.location.href = "servicios-pro.html";
+                            window.location.href = "servicios.html";
                         }
                     } else {
                         errorDiv.innerText = "El nombre no coincide con el DNI.";
