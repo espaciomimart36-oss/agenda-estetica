@@ -3,12 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        // Home queda fuera del flujo publico por ahora.
-        if (window.location.pathname === '/pages/home.html') {
-            window.location.replace('/');
-        }
-    </script>
     <title>Espacio Mimar T - Estética Avanzada</title>
     <meta name="description" content="Tratamientos dermoestéticos personalizados con tecnología de punta y respaldo farmacéutico en Comandante Andresito.">
     <meta name="theme-color" content="#72bd99">
@@ -81,12 +75,10 @@
             max-width: 680px;
             text-align: center;
             animation: fadeInUp 1s ease both;
-            background: var(--mimar-glass-bg);
-            border: 1px solid var(--mimar-glass-border);
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 32px;
             padding: 52px 44px;
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
         }
 
         .hero-logo-wrap {
@@ -191,9 +183,9 @@
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.2);
             color: #ffffff;
-            border: 1.5px solid rgba(255, 255, 255, 0.5);
+            border: 1.5px solid rgba(255, 255, 255, 0.6);
             padding: 15px 38px;
             border-radius: var(--mimar-radius-pill);
             font-size: 14px;
@@ -203,7 +195,6 @@
             transition: all var(--mimar-transition-base);
             text-decoration: none;
             display: inline-block;
-            backdrop-filter: blur(4px);
         }
 
         .btn-secondary:hover {
@@ -494,8 +485,8 @@
         }
 
         .contacto-link {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(114, 189, 153, 0.35);
+            background: rgba(114, 189, 153, 0.15);
+            border: 1px solid rgba(114, 189, 153, 0.4);
             color: rgba(255, 255, 255, 0.9);
             padding: 15px 32px;
             border-radius: var(--mimar-radius-pill);
@@ -504,7 +495,6 @@
             font-weight: 600;
             font-size: 13px;
             letter-spacing: 0.5px;
-            backdrop-filter: blur(6px);
             cursor: pointer;
             font-family: 'Montserrat', sans-serif;
             display: inline-flex;
