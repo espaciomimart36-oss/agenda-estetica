@@ -161,7 +161,7 @@
             try {
                 await setDoc(doc(db, "historias", dni), datos);
                 await updateDoc(doc(db, "clients", dni), { historiaCompletada: true });
-                window.location.href = "servicios.html";
+                window.location.href = "servicios-pro.html";
             } catch (e) { alert("Error al guardar"); }
         });
     </script>

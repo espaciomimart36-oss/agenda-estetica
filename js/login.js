@@ -52,7 +52,7 @@ sessionStorage.setItem("userRole","client");
 
 if(clientData.aceptoPolitica){
 
-window.location.href="servicios.html";
+window.location.href="servicios-pro.html";
 
 }else{
 

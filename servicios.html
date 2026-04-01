@@ -120,6 +120,9 @@
         const SERVICIO_CORPORAL_NOMBRE = "Sesión Corporal Combinada por Zona";
         const SERVICIO_CORPORAL_RESUMEN = `Tratamiento integral que combina distintas tecnologías para mejorar la flacidez, celulitis, estrías, retención de líquidos y tono muscular.\nSe trabaja de forma personalizada según la necesidad de la zona, estimulando el colágeno, mejorando la textura de la piel y favoreciendo el drenaje y la activación muscular.\n\n<strong>Importante</strong>\nCada sesión corresponde a una sola zona (abdomen, flancos, glúteos o zona subglútea).\nSi se desean trabajar dos zonas, se deben reservar sesiones adicionales.\n\n<strong>Plan de tratamiento</strong>\nSe recomienda un mínimo de 6 sesiones por zona para lograr resultados visibles y duraderos.`;
 
+        const SERVICIO_BRAZOS_NOMBRE = "💎 Reafirmación Integral de Brazos";
+        const SERVICIO_BRAZOS_RESUMEN = `Tratamiento orientado a mejorar la flacidez del brazo mediante un abordaje integral que contempla tanto la calidad de la piel como el sostén del tejido.\n\nLa pérdida de firmeza puede estar asociada a distintos factores, como el paso del tiempo, cambios de peso o disminución del tono muscular. Por este motivo, cada caso requiere una evaluación personalizada para definir la estrategia más adecuada.\n\nEl objetivo es lograr una mejora progresiva en la firmeza, la textura y el contorno del brazo, respetando siempre las características propias de cada piel.\n\n<strong>🎯 Objetivos del tratamiento</strong>\n- Mejorar la firmeza del brazo\n- Optimizar la calidad de la piel\n- Favorecer el sostén del tejido\n- Redefinir el contorno\n- Disminuir la apariencia de flacidez\n\n<strong>⚙️ Modalidad de trabajo</strong>\nEl tratamiento se adapta a cada paciente, pudiendo combinar diferentes abordajes según la evaluación profesional, considerando si predomina la flacidez, alteraciones en la calidad de la piel o cambios en el volumen del tejido.\n\n<strong>📅 Plan de tratamiento</strong>\nSe requieren varias sesiones para lograr resultados visibles y sostenidos en el tiempo. La frecuencia y cantidad se definen de manera personalizada según cada caso.\n\n<strong>⚠️ Consideraciones</strong>\nEste tratamiento no reemplaza procedimientos médicos ni quirúrgicos. En casos de flacidez avanzada, los resultados serán progresivos y acordes a las características del tejido.\n\n<strong>💬 Enfoque profesional</strong>\nEn Espacio Mimar T trabajamos con un criterio dermocosmiátrico, priorizando la evaluación individual y la selección adecuada de cada protocolo para lograr resultados reales y seguros.`;
+
 
         // LÓGICA DE BÚSQUEDA Y ORDENAMIENTO
         async function ejecutarConsulta(dni) {
@@ -224,6 +227,9 @@
                 const yaExisteServicioCorporal = servicios.some(
                     s => (s.nombre || "").trim().toLowerCase() === SERVICIO_CORPORAL_NOMBRE.toLowerCase()
                 );
+                const yaExisteServicioBrazos = servicios.some(
+                    s => (s.nombre || "").trim().toLowerCase() === SERVICIO_BRAZOS_NOMBRE.toLowerCase()
+                );
 
                 if (!yaExisteServicioLED) {
                     const ordenMax = servicios.reduce((max, s) => Math.max(max, Number(s.orden) || 0), 0);
@@ -242,6 +248,17 @@
                         nombre: SERVICIO_CORPORAL_NOMBRE,
                         duracion: 60,
                         descripcion: SERVICIO_CORPORAL_RESUMEN,
+                        orden: ordenMax + 1,
+                        activo: true
+                    });
+                }
+
+                if (!yaExisteServicioBrazos) {
+                    const ordenMax = servicios.reduce((max, s) => Math.max(max, Number(s.orden) || 0), 0);
+                    servicios.push({
+                        nombre: SERVICIO_BRAZOS_NOMBRE,
+                        duracion: 60,
+                        descripcion: SERVICIO_BRAZOS_RESUMEN,
                         orden: ordenMax + 1,
                         activo: true
                     });

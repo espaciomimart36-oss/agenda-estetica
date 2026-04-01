@@ -7,11 +7,10 @@
         </div>
         
         <nav class="header-nav">
-            <a href="/pages/home.html" class="nav-link">Inicio</a>
-            <a href="/pages/home.html#servicios" class="nav-link">Servicios</a>
-            <a href="/pages/gallery.html" class="nav-link">Galería</a>
-            <a href="/pages/home.html#ubicacion" class="nav-link">Ubicación</a>
-            <a href="/pages/home.html#contacto" class="nav-link">Contacto</a>
+            <a href="/" class="nav-link">Inicio</a>
+            <a href="/servicios-pro.html" class="nav-link">Servicios</a>
+            <a href="/" class="nav-link">Agendar</a>
+            <a href="https://wa.me/543757585029" class="nav-link" target="_blank" rel="noopener noreferrer">Contacto</a>
         </nav>
 
         <div class="header-actions">
@@ -30,11 +29,10 @@
     </div>
 
     <nav class="mobile-menu" id="mobileMenu">
-        <a href="/pages/home.html" class="mobile-nav-link">Inicio</a>
-        <a href="/pages/home.html#servicios" class="mobile-nav-link">Servicios</a>
-        <a href="/pages/gallery.html" class="mobile-nav-link">Galería</a>
-        <a href="/pages/home.html#ubicacion" class="mobile-nav-link">Ubicación</a>
-        <a href="/pages/home.html#contacto" class="mobile-nav-link">Contacto</a>
+        <a href="/" class="mobile-nav-link">Inicio</a>
+        <a href="/servicios-pro.html" class="mobile-nav-link">Servicios</a>
+        <a href="/" class="mobile-nav-link">Agendar</a>
+        <a href="https://wa.me/543757585029" class="mobile-nav-link" target="_blank" rel="noopener noreferrer">Contacto</a>
         <button class="btn-agendar-mobile" id="btnAgendarMobile">Agendar Cita</button>
     </nav>
 </header>
@@ -302,9 +300,9 @@ function actualizarHeaderSesion() {
         if (btn) {
             btn.addEventListener('click', () => {
                 if (clienteDNI) {
-                    window.location.href = '/servicios.html';
+                    window.location.href = '/servicios-pro.html';
                 } else {
-                    window.location.href = '/login.html';
+                    window.location.href = '/';
                 }
             });
         }

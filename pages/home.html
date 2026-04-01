@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Home queda fuera del flujo publico por ahora.
+        if (window.location.pathname === '/pages/home.html') {
+            window.location.replace('/');
+        }
+    </script>
     <title>Espacio Mimar T - Estética Avanzada</title>
     <meta name="description" content="Tratamientos dermoestéticos personalizados con tecnología de punta y respaldo farmacéutico en Comandante Andresito.">
     <meta name="theme-color" content="#72bd99">
@@ -618,6 +624,137 @@
                 font-size: 15px;
             }
         }
+
+        /* ── REVEAL AL SCROLL ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(26px);
+            transition: opacity .7s ease, transform .7s ease;
+        }
+        .reveal.visible { opacity: 1; transform: none; }
+
+        /* ── SERVICIO ICON (emoji, sin imagen) ── */
+        .servicio-icon {
+            font-size: 42px;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        /* ── GIMENA BADGE (compacta, sin foto) ── */
+        .gimena-badge {
+            background: var(--mimar-color-surface);
+            border-radius: 20px;
+            padding: 28px 28px;
+            text-align: center;
+            box-shadow: var(--mimar-shadow-md);
+            border: 1px solid var(--mimar-color-border);
+            min-width: 210px;
+        }
+        .gimena-badge .badge-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 26px;
+            font-style: italic;
+            color: var(--mimar-color-ink);
+            margin-bottom: 6px;
+        }
+        .gimena-badge .badge-title {
+            font-size: 11.5px;
+            color: var(--mimar-color-primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            margin-bottom: 10px;
+        }
+        .gimena-badge .badge-mp {
+            font-size: 12px;
+            color: var(--mimar-color-muted);
+        }
+
+        /* ── QUIÉNES INNER ── */
+        .quienes-inner {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 48px;
+            align-items: center;
+        }
+        .credentials-pill {
+            display: inline-flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .credentials-pill span {
+            background: var(--mimar-color-surface);
+            border: 1px solid var(--mimar-color-border);
+            border-radius: var(--mimar-radius-pill);
+            padding: 5px 14px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--mimar-color-primary-strong);
+        }
+
+        /* ── UBICACIÓN STRIP (dentro de contacto) ── */
+        .ubicacion-strip {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 36px;
+            border-top: 1px solid rgba(255,255,255,.12);
+            padding-top: 28px;
+        }
+        .ubicacion-item { text-align: center; }
+        .ubicacion-item .u-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--mimar-color-primary);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .ubicacion-item .u-val {
+            font-size: 14px;
+            color: rgba(255,255,255,.78);
+            line-height: 1.5;
+        }
+        .ubicacion-item a { color: var(--mimar-color-primary); text-decoration: none; }
+
+        /* ── BANNER EN DESARROLLO ── */
+        .dev-banner {
+            background: rgba(15, 30, 20, .97);
+            border-top: 1px solid rgba(114,189,153,.18);
+            padding: 16px 24px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .dev-banner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--mimar-color-primary);
+            animation: pulseDot 2.2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        .dev-banner p {
+            font-size: 12px;
+            color: rgba(255,255,255,.48);
+            letter-spacing: .4px;
+        }
+        .dev-banner strong { color: rgba(255,255,255,.72); font-weight: 600; }
+        @keyframes pulseDot {
+            0%,100% { opacity:1; transform:scale(1); }
+            50%      { opacity:.35; transform:scale(1.5); }
+        }
+
+        @media (max-width: 768px) {
+            .quienes-inner { grid-template-columns: 1fr; gap: 24px; }
+            .gimena-badge  { min-width: unset; width: 100%; }
+            .ubicacion-strip { gap: 20px; }
+            .dev-banner { gap: 6px; }
+        }
     </style>
 </head>
 <body>
@@ -645,113 +782,70 @@
         </div>
     </section>
 
-    <!-- SERVICIOS PREVIEW -->
-    <section class="section" id="servicios">
+    <!-- SERVICIOS -->
+    <section class="section reveal" id="servicios">
         <h2 class="section-title">Nuestros Servicios</h2>
-        <p class="section-desc">Ofrecemos tratamientos integrales para mejorar tu piel y bienestar</p>
-        
+        <p class="section-desc">Tratamientos integrales diseñados para realzar tu piel y bienestar</p>
+
         <div class="servicios-grid">
             <div class="servicio-card">
-                <img src="/img/cosmetologa.jpeg" alt="Facial LED" style="width: 100%; height: 160px; object-fit: cover; border-radius: 14px; margin-bottom: 15px;">
+                <span class="servicio-icon">✨</span>
                 <h3>Facial LED Regenerativo</h3>
-                <p>Tratamiento no invasivo que estimula colágeno y elastina para mejorar firmeza, luminosidad y textura.</p>
-                <a href="/pages/gallery.html" class="servicio-link">Ver en galería →</a>
+                <p>Estimula colágeno y elastina para mejorar firmeza, luminosidad y textura de forma no invasiva.</p>
             </div>
 
             <div class="servicio-card">
-                <img src="/img/camilla.jpeg" alt="Sesión Corporal" style="width: 100%; height: 160px; object-fit: cover; border-radius: 14px; margin-bottom: 15px;">
+                <span class="servicio-icon">🌿</span>
                 <h3>Sesión Corporal Combinada</h3>
-                <p>Tecnologías integradas para combatir flacidez, celulitis, estrías y mejorar el tono muscular.</p>
-                <a href="/pages/gallery.html" class="servicio-link">Ver en galería →</a>
+                <p>Tecnologías integradas para combatir flacidez, celulitis y mejorar el tono muscular.</p>
             </div>
 
             <div class="servicio-card">
-                <img src="/img/cabina.jpeg" alt="Cabina profesional" style="width: 100%; height: 160px; object-fit: cover; border-radius: 14px; margin-bottom: 15px;">
-                <h3>Nuestro Equipamiento</h3>
-                <p>Tecnología de última generación para garantizar tratamientos seguros y resultados visibles desde la primera sesión.</p>
-                <a href="/pages/gallery.html" class="servicio-link">Ver en galería →</a>
+                <span class="servicio-icon">💎</span>
+                <h3>Tecnología Avanzada</h3>
+                <p>Equipamiento de última generación para resultados visibles y seguros desde la primera sesión.</p>
             </div>
         </div>
 
         <div style="text-align: center;">
-            <button class="btn-primary" id="btnVerServicios">
-                Ver todos los servicios
-            </button>
+            <button class="btn-primary" id="btnVerServicios">Ver todos los servicios</button>
         </div>
     </section>
 
     <!-- QUIÉNES SOMOS -->
-    <section class="section quienes-somos" id="quienes">
-        <h2 class="section-title" style="margin-bottom: 50px;">Quiénes Somos</h2>
-        <div class="quienes-content">
+    <section class="section quienes-somos reveal" id="quienes">
+        <h2 class="section-title">Quiénes Somos</h2>
+        <p class="section-desc">Ciencia y cuidado en cada tratamiento</p>
+        <div class="quienes-inner">
             <div class="quienes-text">
-                <h2>Gimena Knack</h2>
-                <p>Farmacéutica y especialista en Dermatocosmética, con amplia experiencia en tratamientos dermoestéticos personalizados.</p>
-                <p>En Espacio Mimar T disponemos de tecnología de punta combinada con respaldo farmacéutico para ofrecerte resultados visibles y seguros.</p>
-                <p>Cada tratamiento es diseñado específicamente para ti, considerando tu tipo de piel, objetivos y necesidades particulares.</p>
+                <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,42px);font-style:italic;margin-bottom:16px;color:var(--mimar-color-ink);">Gimena Knack</h2>
+                <p style="font-size:14.5px;line-height:1.8;color:var(--mimar-color-muted);margin-bottom:14px;">Farmacéutica y especialista en Dermatocosmética, con amplia experiencia en tratamientos dermoestéticos personalizados.</p>
+                <p style="font-size:14.5px;line-height:1.8;color:var(--mimar-color-muted);margin-bottom:14px;">En Espacio Mimar T combinamos tecnología de punta con respaldo farmacéutico para ofrecerte resultados visibles y seguros. Cada tratamiento es diseñado específicamente para vos.</p>
+                <div class="credentials-pill">
+                    <span>MP 1212</span>
+                    <span>R.C. 2319</span>
+                    <span>Farmacéutica</span>
+                    <span>Dermatocosmiatra</span>
+                </div>
             </div>
-            <div class="gimena-card">
-                <img src="/img/cosmetologa.jpeg" alt="Gimena Knack" style="width: 100%; height: 200px; object-fit: cover; border-radius: 14px; margin-bottom: 20px;">
-                <h3>Gimena Knack</h3>
-                <div class="titulo">Farmacéutica · Dermatocosmiatra</div>
-                <div class="credentials">
-                    MP 1212 · R.C. 2319
-                </div>
-                <p class="descripcion">Tratamientos dermoestéticos personalizados con respaldo farmacéutico y tecnología avanzada para el cuidado integral de la piel</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- UBICACIÓN -->
-    <section class="section ubicacion" id="ubicacion">
-        <h2 class="section-title" style="margin-bottom: 50px;">Ubicación</h2>
-        <div class="ubicacion-content">
-            <div class="mapa-placeholder">
-                🗺️
-            </div>
-            <div class="ubicacion-info">
-                <h3>Visitanos</h3>
-                <div class="info-item">
-                    <div class="info-label">Dirección</div>
-                    <div class="info-value">
-                        Quintas Bajas<br>
-                        Comandante Andresito<br>
-                        Misiones, Argentina
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Atenci&oacute;n</div>
-                    <div class="info-value">
-                        Lunes a S&aacute;bados<br>
-                        <span style="font-size:13px; color: var(--mimar-color-muted);">Exclusivamente con turno previo</span>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Contacto</div>
-                    <div class="info-value">
-                        <a href="tel:+543757585029" style="color: var(--mimar-color-primary); text-decoration: none; font-weight: 600;">+54 3757 585029</a><br>
-                        <a href="https://wa.me/543757585029" target="_blank" style="display:inline-flex;align-items:center;gap:6px;color: var(--mimar-color-primary); text-decoration: none; font-weight: 600; margin-top: 6px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-                                <path fill="#25D366" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                            </svg>
-                            WhatsApp
-                        </a>
-                    </div>
-                </div>
+            <div class="gimena-badge">
+                <div class="badge-name">Gimena Knack</div>
+                <div class="badge-title">Farmacéutica · Dermatocosmiatra</div>
+                <div class="badge-mp">MP 1212 · R.C. 2319</div>
             </div>
         </div>
     </section>
 
     <!-- CONTACTO CTA -->
-    <section class="section contacto" id="contacto">
-        <h2 class="section-title">¿Listás para transformar tu piel?</h2>
-        <p class="section-desc">Agenda tu primera consulta hoy y comenzá el camino hacia la mejor versión de vos</p>
+    <section class="section contacto reveal" id="contacto">
+        <h2 class="section-title">¿Lista para transformar tu piel?</h2>
+        <p class="section-desc">Agendá tu primera consulta hoy y comenzá el camino hacia la mejor versión de vos</p>
         <div class="contacto-links">
             <a href="tel:+543757585029" class="contacto-link">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="17" height="17" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
                 Llamar
             </a>
-            <a href="https://wa.me/543757585029" class="contacto-link" target="_blank">
+            <a href="https://wa.me/543757585029" class="contacto-link" target="_blank" rel="noopener noreferrer">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="#25D366" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 WhatsApp
             </a>
@@ -770,67 +864,73 @@
                 </svg>
                 Instagram
             </a>
-            <button class="contacto-link" id="btnAgendarContacto" style="cursor: pointer;">
+            <button class="contacto-link" id="btnAgendarContacto">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="17" height="17" aria-hidden="true"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
                 Agendar Cita
             </button>
         </div>
+
+        <div class="ubicacion-strip">
+            <div class="ubicacion-item">
+                <div class="u-label">Ubicación</div>
+                <div class="u-val">Quintas Bajas · Cte. Andresito, Misiones</div>
+            </div>
+            <div class="ubicacion-item">
+                <div class="u-label">Atención</div>
+                <div class="u-val">Lunes a Sábados · Solo con turno</div>
+            </div>
+            <div class="ubicacion-item">
+                <div class="u-label">Teléfono</div>
+                <div class="u-val"><a href="tel:+543757585029">+54 3757 585029</a></div>
+            </div>
+        </div>
     </section>
 
-    <!-- FOOTER (se carga via JavaScript) -->
+    <!-- BANNER EN DESARROLLO -->
+    <div class="dev-banner">
+        <div class="dev-banner-dot"></div>
+        <p><strong>Sitio en desarrollo</strong> — pronto más contenido e información</p>
+    </div>
+
     <div id="footerContainer"></div>
 
     <script>
-        // Cargar header y footer dinámicamente
         async function cargarComponentes() {
             try {
-                // Cargar header
-                const headerRes = await fetch('/components/header.html');
-                const headerHtml = await headerRes.text();
-                document.getElementById('headerContainer').innerHTML = headerHtml;
-
-                // Cargar footer
-                const footerRes = await fetch('/components/footer.html');
-                const footerHtml = await footerRes.text();
-                document.getElementById('footerContainer').innerHTML = footerHtml;
-
-                // Ejecutar scripts del header (menú móvil, etc)
-                setTimeout(() => {
-                    actualizarHeaderSesion?.();
-                }, 100);
-            } catch (error) {
-                console.error('Error cargando componentes:', error);
+                const [headerRes, footerRes] = await Promise.all([
+                    fetch('/components/header.html'),
+                    fetch('/components/footer.html')
+                ]);
+                document.getElementById('headerContainer').innerHTML = await headerRes.text();
+                document.getElementById('footerContainer').innerHTML = await footerRes.text();
+                setTimeout(() => actualizarHeaderSesion?.(), 100);
+            } catch (e) {
+                console.error('Error cargando componentes:', e);
             }
         }
 
         cargarComponentes();
 
-        // Botones de agendar
         function redirigirAgendar() {
-            const clienteDNI = localStorage.getItem('clienteDNI');
-            if (clienteDNI) {
-                window.location.href = '/servicios.html';
-            } else {
-                window.location.href = '/login.html';
-            }
+            window.location.href = localStorage.getItem('clienteDNI') ? '/servicios-pro.html' : '/login.html';
         }
 
         document.getElementById('btnAgendarHero')?.addEventListener('click', redirigirAgendar);
-        document.getElementById('btnVerServicios')?.addEventListener('click', redirigirAgendar);
+        document.getElementById('btnVerServicios')?.addEventListener('click', () => {
+            window.location.href = '/servicios-pro.html';
+        });
         document.getElementById('btnAgendarContacto')?.addEventListener('click', redirigirAgendar);
 
-        // Efecto de scroll
-        document.querySelectorAll('[class*="section"]').forEach((section, idx) => {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
-                        observer.unobserve(entry.target);
-                    }
-                });
+        // Scroll reveal suave
+        const revealObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    revealObs.unobserve(e.target);
+                }
             });
-            observer.observe(section);
-        });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
     </script>
 </body>
 </html>
