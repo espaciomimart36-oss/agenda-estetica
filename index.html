@@ -101,30 +101,24 @@
             animation: fadeUp 0.55s ease both;
         }
 
-        .hero-logo {
-            width: min(150px, 34vw);
-            height: auto;
-            display: block;
-            margin: 0 auto 14px;
-        }
-
         .hero-kicker {
-            margin: 0 0 8px;
+            margin: 0 0 10px;
             font-size: 11px;
             letter-spacing: 0.24em;
             text-transform: uppercase;
             font-weight: 800;
-            color: #6e8b73;
+            color: #f5fbf6;
         }
 
         .hero-title {
             margin: 0;
             font-family: var(--font-display);
-            font-size: clamp(38px, 7.2vw, 68px);
+            font-size: clamp(34px, 6.2vw, 58px);
             line-height: 1;
-            color: #2d4134;
+            color: #ffffff;
             letter-spacing: 0;
             white-space: nowrap;
+            text-shadow: 0 10px 26px rgba(24, 39, 30, 0.26);
         }
 
         .hero-copy {
@@ -132,27 +126,8 @@
             max-width: 560px;
             font-size: clamp(14px, 2.9vw, 18px);
             line-height: 1.65;
-            color: #5c6b60;
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 500;
-        }
-
-        .hero-badges {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 16px;
-        }
-
-        .hero-badge {
-            padding: 8px 14px;
-            border-radius: 999px;
-            background: #edf5ef;
-            border: 1px solid #d9e7dc;
-            font-size: 11px;
-            font-weight: 700;
-            color: #4d6655;
-            letter-spacing: 0.03em;
         }
 
         .hero-location {
@@ -161,7 +136,7 @@
             font-weight: 800;
             letter-spacing: 0.22em;
             text-transform: uppercase;
-            color: #4f6757;
+            color: #dcebdd;
         }
 
         .hero-actions {
@@ -223,6 +198,23 @@
             border: 1px solid rgba(144, 171, 148, 0.22);
             box-shadow: 0 20px 42px rgba(37, 54, 41, 0.12);
             animation: fadeUp 0.55s ease 0.08s both;
+        }
+
+        .trust-brand-box {
+            width: min(280px, 100%);
+            margin: 0 auto 16px;
+            padding: 18px 20px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, #ffffff 0%, #f6faf7 100%);
+            border: 1px solid #dce7de;
+            box-shadow: 0 16px 34px rgba(37, 54, 41, 0.1);
+        }
+
+        .trust-brand-logo {
+            display: block;
+            width: min(220px, 100%);
+            margin: 0 auto;
+            height: auto;
         }
 
         .trust-title {
@@ -354,6 +346,10 @@
             padding: 22px 20px;
             background: #fffdfa;
             border: 1px solid rgba(145, 173, 149, 0.22);
+        }
+
+        .login-form {
+            display: block;
         }
 
         .form-heading {
@@ -557,18 +553,13 @@
                 border-radius: 22px;
             }
 
-            .hero-logo {
-                width: 100px;
-                margin-bottom: 12px;
-            }
-
             .hero-kicker {
                 font-size: 10px;
                 letter-spacing: 0.18em;
             }
 
             .hero-title {
-                font-size: clamp(34px, 8.6vw, 46px);
+                font-size: clamp(28px, 8vw, 38px);
             }
 
             .hero-copy {
@@ -599,6 +590,12 @@
             .trust-card {
                 padding: 16px 14px;
                 border-radius: 20px;
+            }
+
+            .trust-brand-box {
+                padding: 16px 14px;
+                border-radius: 18px;
+                margin-bottom: 14px;
             }
 
             .trust-grid {
@@ -675,7 +672,7 @@
             }
 
             .hero-title {
-                font-size: clamp(31px, 8.8vw, 40px);
+                font-size: clamp(26px, 7.8vw, 32px);
             }
 
             .hero-location {
@@ -695,16 +692,9 @@
             <div class="hero-overlay"></div>
 
             <div class="hero-content">
-                <img src="img/logo.png" alt="Espacio Mimar T" class="hero-logo">
                 <p class="hero-kicker">Farmacéutica · Dermatocosmiatra</p>
                 <h1 class="hero-title">Espacio Mimar T</h1>
                 <p class="hero-copy">Estética avanzada con tratamientos personalizados, seguimiento profesional y una entrada ordenada desde el celular.</p>
-
-                <div class="hero-badges">
-                    <span class="hero-badge">Turnos online</span>
-                    <span class="hero-badge">Respaldo farmacéutico</span>
-                    <span class="hero-badge">Seguimiento paciente</span>
-                </div>
 
                 <div class="hero-location">Comandante Andresito · Misiones</div>
 
@@ -717,6 +707,9 @@
 
         <section class="trust-strip" aria-label="Presentación del espacio">
             <div class="trust-card">
+                <div class="trust-brand-box">
+                    <img src="img/logo.png" alt="Espacio Mimar T" class="trust-brand-logo">
+                </div>
                 <h2 class="trust-title">Cuidado profesional, estética delicada y atención personalizada.</h2>
                 <p class="trust-copy">Cada experiencia está pensada para acompañarte con calidez, criterio profesional y una estética serena desde el primer contacto.</p>
 
@@ -767,20 +760,22 @@
                     <h2 class="form-heading">Ingreso de pacientes</h2>
                     <p class="form-subcopy">Completá tus datos para continuar con tu seguimiento y tus turnos.</p>
 
-                    <div class="form-fields">
-                        <div class="form-group">
-                            <label for="nombre">Nombre + inicial apellido</label>
-                            <input id="nombre" placeholder="Ej: juan p">
+                    <form id="loginForm" class="login-form">
+                        <div class="form-fields">
+                            <div class="form-group">
+                                <label for="nombre">Nombre + inicial apellido</label>
+                                <input id="nombre" placeholder="Ej: juan p">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dni">DNI</label>
+                                <input id="dni" placeholder="Sin puntos">
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="dni">DNI</label>
-                            <input id="dni" placeholder="Sin puntos">
-                        </div>
-                    </div>
-
-                    <button id="btnIngresar" class="primary-submit">Iniciar sesión</button>
-                    <div id="error" class="error"></div>
+                        <button id="btnIngresar" class="primary-submit" type="submit">Iniciar sesión</button>
+                        <div id="error" class="error"></div>
+                    </form>
                 </div>
             </div>
         </section>
@@ -860,7 +855,10 @@
         });
 
         const btnIngresar = document.getElementById("btnIngresar");
-        document.getElementById("btnIngresar").addEventListener("click", async () => {
+        const loginForm = document.getElementById("loginForm");
+
+        const manejarIngreso = async (event) => {
+            event?.preventDefault();
             const nombreIngresado = document.getElementById("nombre").value.trim().toLowerCase();
             const dniIngresado = document.getElementById("dni").value.trim();
             const errorDiv = document.getElementById("error");
@@ -917,7 +915,9 @@
                 btnIngresar.disabled = false;
                 btnIngresar.innerText = "Iniciar sesión";
             }
-        });
+        };
+
+        loginForm?.addEventListener("submit", manejarIngreso);
 
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", () => {
