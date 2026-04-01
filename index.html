@@ -332,11 +332,11 @@
 
         @media (max-width: 768px) {
             body {
-                background-position: 58% top;
+                background-position: center top;
                 background-size: cover;
                 min-height: 100svh;
                 height: auto;
-                padding: max(14px, env(safe-area-inset-top)) 10px max(18px, env(safe-area-inset-bottom));
+                padding: 0;
             }
 
             body::before {
@@ -351,18 +351,38 @@
             .container {
                 padding: 32px 22px;
                 border-radius: 22px;
+                width: min(92vw, 420px);
             }
 
             .logo {
-                width: min(72vw, 280px);
+                width: min(62vw, 220px);
                 height: auto;
+                margin-bottom: 14px;
+            }
+
+            .profesional-card {
+                padding: 18px 16px;
+                margin-bottom: 24px;
+            }
+
+            .subtitulo {
+                margin-bottom: 22px;
+            }
+
+            h2 {
+                margin-bottom: 18px;
+            }
+
+            input,
+            button {
+                font-size: 14px;
             }
         }
 
         @media (max-width: 420px) {
             .container {
                 width: 94%;
-                padding: 28px 18px;
+                padding: 24px 16px;
             }
 
             .subtitulo {
@@ -371,6 +391,14 @@
 
             h2 {
                 font-size: 18px;
+            }
+
+            .profesional {
+                font-size: 17px;
+            }
+
+            .descripcion {
+                font-size: 12px;
             }
         }
     </style>
@@ -387,6 +415,7 @@
             min-height: calc(100vh - 140px);
             display: grid;
             place-items: center;
+            align-content: center;
             padding: 24px 0;
         }
 
@@ -408,7 +437,9 @@
         @media (max-width: 768px) {
             .login-page-container {
                 min-height: auto;
-                padding: 20px 0;
+                place-items: start center;
+                align-content: start;
+                padding: 16px 0 24px;
             }
 
             .login-page-container > .container {
