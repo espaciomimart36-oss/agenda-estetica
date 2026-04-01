@@ -113,6 +113,13 @@
         const modalBusqueda = document.getElementById("modalBusquedaDNI");
         const modalResultados = document.getElementById("modalCitasCliente");
         const listaResultados = document.getElementById("listaResultadosCitas");
+        const btnAbrirBusqueda = document.getElementById("btnAbrirBusqueda");
+        const dniSesion = localStorage.getItem("clienteDNI");
+        const haySesionCliente = !!(dniSesion && dniSesion !== "null" && dniSesion !== "");
+
+        if (!haySesionCliente && btnAbrirBusqueda) {
+            btnAbrirBusqueda.style.display = "none";
+        }
 
         const SERVICIO_LED_NOMBRE = "Facial LED Regenerativo";
         const SERVICIO_LED_RESUMEN = "Tratamiento no invasivo con cabina LED profesional que estimula colágeno y elastina para mejorar firmeza, luminosidad y textura, ayudando también en acné, inflamación, rojeces y manchas. Sesión relajante de 30 minutos, sin dolor ni recuperación; ideal para piel sensible y resultados progresivos desde la primera aplicación.";
@@ -191,14 +198,9 @@
         // CONTROL DE BOTÓN PRINCIPAL (CON AUTO-DETECCIÓN DE SESIÓN)
         document.getElementById("btnAbrirBusqueda").onclick = () => {
             const dniGuardado = localStorage.getItem("clienteDNI");
-            
+
             if (dniGuardado && dniGuardado !== "null" && dniGuardado !== "") {
-                // Si ya tenemos el DNI del login, buscamos directo
                 ejecutarConsulta(dniGuardado);
-            } else {
-                // Si no hay sesión, pedimos DNI
-                modalBusqueda.style.display = "flex";
-                document.getElementById("inputDNI").focus();
             }
         };
 

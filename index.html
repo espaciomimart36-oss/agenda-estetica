@@ -717,7 +717,7 @@
                 <div class="hero-location">Comandante Andresito · Misiones</div>
 
                 <div class="hero-actions">
-                    <button id="btnBajarIngreso" class="hero-primary" type="button">Ingreso de pacientes</button>
+                    <a id="btnIngresoCliente" class="hero-primary" href="https://wa.me/543757585029?text=Hola%2C%20quiero%20ser%20cliente%20de%20Espacio%20Mimar%20T.%20%C2%BFMe%20pueden%20guiar%20paso%20a%20paso%20para%20comenzar%3F" target="_blank" rel="noopener noreferrer">Quiero ser cliente</a>
                     <a href="/servicios-pro.html" class="hero-secondary">Ver servicios</a>
                 </div>
             </div>
@@ -731,11 +731,11 @@
                 <div class="trust-grid">
                     <div class="trust-item">
                         <strong>Profesional</strong>
-                        <span>Gimena Knack · MP 1212 · R.C. 2319</span>
+                        <span>Farmacéutica · MP 1212 · Dermatocosmiatra · R.C. 2319</span>
                     </div>
                     <div class="trust-item">
                         <strong>Especialidad</strong>
-                        <span>Dermatocosmiatría y tratamientos personalizados</span>
+                        <span>Tratamientos faciales y corporales, profesionales y personalizados</span>
                     </div>
                     <div class="trust-item">
                         <strong>Ubicación</strong>
@@ -748,9 +748,9 @@
         <section class="login-panel" id="loginAccess" aria-label="Ingreso de pacientes">
             <div class="login-shell">
                 <div class="login-copy">
-                    <p class="login-copy-kicker">Acceso pacientes</p>
-                    <h2>Tu espacio de seguimiento y turnos.</h2>
-                    <p>Desde aquí podés continuar tu experiencia de forma simple, cómoda y ordenada.</p>
+                    <p class="login-copy-kicker">Pacientes registrados</p>
+                    <h2>Ingresá a tu seguimiento.</h2>
+                    <p>Si ya sos paciente, desde aquí podés continuar tu experiencia de forma simple, cómoda y ordenada.</p>
 
                     <div class="feature-points">
                         <div class="feature-point">Acceso rápido desde el celular.</div>
@@ -855,13 +855,6 @@
         };
 
         await cargarContextoJornada();
-
-        const btnBajarIngreso = document.getElementById("btnBajarIngreso");
-        const loginAccess = document.getElementById("loginAccess");
-
-        btnBajarIngreso?.addEventListener("click", () => {
-            loginAccess?.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
 
         // Limpieza de inputs en tiempo real (Pro UX)
         const inputDni = document.getElementById("dni");
