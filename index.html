@@ -3,294 +3,379 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <link rel="stylesheet" href="mobile-fixes.css">
-    <title>Ingreso | Espacio Mimar</title>
-    
+    <title>Ingreso | Espacio Mimar T</title>
+
     <meta name="theme-color" content="#6f8a6d">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="img/icon-192.png">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <title>Agendar Cita | Espacio Mimar T</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --verde-principal: #8ca38a;
-            --verde-oscuro: #6f8a6d;
-            --texto-suave: #6b706a;
-            --ink: #2f3d32;
-            --card-shadow: 0 32px 84px rgba(19, 33, 23, 0.22), 0 8px 20px rgba(19, 33, 23, 0.11);
+            --verde-principal: #86a486;
+            --verde-oscuro: #5d7461;
+            --verde-suave: #eef4ef;
+            --verde-tinta: #2f4438;
+            --borde-suave: #d8e3da;
+            --sombra-card: 0 22px 48px rgba(28, 46, 34, 0.12);
+            --font-display: 'Cormorant Garamond', serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
         }
 
-        html, body {
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
             margin: 0;
             padding: 0;
             width: 100%;
+            min-height: 100%;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #dfe8e2;
-            background-image:
-                linear-gradient(160deg, rgba(44, 84, 63, 0.28) 0%, rgba(44, 84, 63, 0.18) 46%, rgba(97, 135, 115, 0.24) 100%),
-                url("img/recepcion.jpeg");
-            background-position: center top;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            min-height: 100vh;
+            font-family: var(--font-body);
+            color: var(--verde-tinta);
+            background:
+                radial-gradient(1200px 560px at 8% -18%, rgba(167, 196, 170, 0.24), transparent 62%),
+                radial-gradient(900px 460px at 92% 112%, rgba(120, 151, 126, 0.18), transparent 58%),
+                linear-gradient(180deg, #f6faf6 0%, #edf4ee 54%, #e6eee7 100%);
             display: flex;
             flex-direction: column;
+        }
+
+        #headerContainer,
+        #footerContainer {
+            width: 100%;
             position: relative;
-            -webkit-text-size-adjust: 100%;
-            line-height: 1.42;
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
+            z-index: 30;
         }
 
-        body::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 82% 9%, rgba(199, 225, 205, 0.2) 0%, rgba(199, 225, 205, 0) 42%),
-                radial-gradient(circle at 10% 92%, rgba(126, 177, 151, 0.16) 0%, rgba(126, 177, 151, 0) 44%);
+        .login-page-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 36px;
         }
 
-        body::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background-image: radial-gradient(rgba(14, 33, 21, 0.06) 0.6px, transparent 0.6px);
-            background-size: 3px 3px;
-            opacity: 0.17;
-        }
-
-        .container {
+        .hero-section {
             position: relative;
-            background: rgba(255,255,255,0.96);
-            padding: 48px 40px;
-            border-radius: 30px;
-            text-align: center;
-            box-shadow: var(--card-shadow);
-            max-width: 420px;
-            width: 90%;
-            border: 1px solid rgba(255,255,255,0.42);
-            z-index: 1;
+            min-height: clamp(560px, 82svh, 760px);
+            padding: 18px 16px 128px;
             overflow: hidden;
-            margin: 0 auto;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
         }
 
-        .container::before {
-            content: "";
+        .hero-bg {
             position: absolute;
-            inset: 0 0 auto 0;
-            height: 3px;
-            background: linear-gradient(90deg, rgba(140,163,138,0) 0%, rgba(140,163,138,0.9) 50%, rgba(140,163,138,0) 100%);
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 34%;
+            transform: scale(1.02);
         }
 
-        .container > * {
-            animation: riseFade .42s ease both;
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(27, 52, 37, 0.38) 0%, rgba(27, 52, 37, 0.48) 42%, rgba(27, 52, 37, 0.72) 100%);
         }
 
-        .container > *:nth-child(2) { animation-delay: .04s; }
-        .container > *:nth-child(3) { animation-delay: .08s; }
-        .container > *:nth-child(4) { animation-delay: .12s; }
-        .container > *:nth-child(5) { animation-delay: .16s; }
-
-        .logo {
-            width: 300px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 8px 18px rgba(33, 63, 44, 0.14));
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            width: min(760px, 100%);
+            text-align: center;
+            padding: 26px 24px 24px;
+            border-radius: 28px;
+            background: rgba(255, 252, 248, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 24px 48px rgba(23, 37, 28, 0.22);
+            animation: fadeUp 0.55s ease both;
         }
 
-        .subtitulo {
-            color: var(--verde-principal);
+        .hero-logo {
+            width: min(150px, 34vw);
+            height: auto;
+            display: block;
+            margin: 0 auto 14px;
+        }
+
+        .hero-kicker {
+            margin: 0 0 8px;
             font-size: 11px;
-            letter-spacing: 3px;
+            letter-spacing: 0.24em;
             text-transform: uppercase;
-            margin-bottom: 30px;
-            font-weight: 700;
+            font-weight: 800;
+            color: #6e8b73;
         }
 
-        .profesional-card {
-            background: linear-gradient(145deg, rgba(238,243,238,0.9) 0%, rgba(230,236,230,0.9) 100%);
-            padding: 22px;
-            border-radius: 18px;
-            margin-bottom: 32px;
-            border: 1px solid rgba(136, 166, 138, 0.22);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+        .hero-title {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: clamp(48px, 10vw, 88px);
+            line-height: 0.95;
+            color: #2d4134;
+            letter-spacing: 0.01em;
         }
 
-        .profesional {
-            font-weight: 700;
-            font-size: 19px;
-            color: #3e5140;
-            margin-bottom: 4px;
-            letter-spacing: .2px;
-        }
-
-        .titulo-profesional {
-            font-size: 13px;
-            color: #677566;
-            margin-bottom: 8px;
-        }
-
-        .credenciales {
-            font-size: 12px;
-            color: #6b706a;
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-
-        .descripcion {
-            font-size: 13px;
-            color: #6f756f;
-            line-height: 1.6;
-            font-style: italic;
-        }
-
-        .intro-copy {
-            display: grid;
-            gap: 10px;
-            margin-top: 4px;
-        }
-
-        .intro-kicker {
-            font-size: 10px;
-            letter-spacing: 2.2px;
-            text-transform: uppercase;
-            color: #6f8a6d;
-            font-weight: 700;
-        }
-
-        .intro-text {
-            font-size: 13px;
-            color: #5c685d;
-            line-height: 1.6;
-            max-width: 290px;
-            margin: 0 auto;
-        }
-
-        .btn-anchor {
-            width: auto;
-            min-width: 220px;
-            margin: 6px auto 0;
-            padding: 14px 22px;
-            border-radius: 999px;
-            letter-spacing: 1.2px;
-            box-shadow: 0 10px 22px rgba(74, 98, 72, 0.22);
-        }
-
-        .login-stack {
-            margin-top: 36px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(111, 138, 109, 0.18);
-        }
-
-        h2 {
-            font-size: 20px;
+        .hero-copy {
+            margin: 12px auto 0;
+            max-width: 560px;
+            font-size: clamp(14px, 2.9vw, 18px);
+            line-height: 1.65;
+            color: #5c6b60;
             font-weight: 500;
-            color: #3e463f;
-            margin-bottom: 25px;
-            letter-spacing: 1px;
         }
 
-        input {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px solid #d7e0d8;
-            font-size: 15px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-            color: var(--ink);
-            background: rgba(255,255,255,0.92);
-            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
         }
 
-        input:focus {
-            border-color: #8bb797;
-            box-shadow: 0 0 0 3px rgba(119, 178, 146, 0.18);
-            background: #fff;
-            outline: none;
-        }
-
-        button {
-            background: linear-gradient(135deg, #8ca38a 0%, #6f8a6d 100%);
-            border: none;
-            color: white;
-            padding: 18px;
-            width: 100%;
-            border-radius: 12px;
-            font-size: 14px;
+        .hero-badge {
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #edf5ef;
+            border: 1px solid #d9e7dc;
+            font-size: 11px;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
-            box-shadow: 0 12px 24px rgba(74, 98, 72, 0.28);
+            color: #4d6655;
+            letter-spacing: 0.03em;
         }
 
-        button:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none !important;
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            filter: saturate(1.05);
-            box-shadow: 0 14px 26px rgba(74, 98, 72, 0.34);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        button:focus-visible,
-        input:focus-visible {
-            outline: 3px solid rgba(106, 152, 118, 0.42);
-            outline-offset: 2px;
-        }
-
-        .error {
-            color: #d9534f;
+        .hero-primary,
+        .hero-secondary,
+        .primary-submit {
+            border: none;
+            border-radius: 999px;
+            padding: 16px 22px;
+            font-family: var(--font-body);
             font-size: 13px;
-            margin-top: 15px;
-            display: none;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .hero-primary,
+        .primary-submit {
+            color: #fff;
+            background: linear-gradient(135deg, #93b191 0%, #5f7764 100%);
+            box-shadow: 0 14px 28px rgba(69, 92, 73, 0.24);
+        }
+
+        .hero-secondary {
+            color: #385042;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(87, 113, 92, 0.18);
+            box-shadow: 0 10px 24px rgba(69, 92, 73, 0.12);
+        }
+
+        .hero-primary:hover,
+        .hero-secondary:hover,
+        .primary-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        .trust-strip {
+            width: min(960px, calc(100% - 28px));
+            margin: -82px auto 0;
+            position: relative;
+            z-index: 4;
+        }
+
+        .trust-card {
+            padding: 18px;
+            border-radius: 24px;
+            background: #fffaf8;
+            border: 1px solid rgba(144, 171, 148, 0.22);
+            box-shadow: 0 20px 42px rgba(37, 54, 41, 0.12);
+            animation: fadeUp 0.55s ease 0.08s both;
+        }
+
+        .trust-title {
+            margin: 0 0 6px;
+            font-family: var(--font-display);
+            font-size: clamp(26px, 4vw, 34px);
+            color: #34503e;
+        }
+
+        .trust-copy {
+            margin: 0;
+            color: #5d695f;
+            font-size: 13px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .trust-item {
+            padding: 14px;
+            border-radius: 18px;
+            background: #ffffff;
+            border: 1px solid #e0e9e2;
+            box-shadow: 0 10px 20px rgba(37, 54, 41, 0.06);
+        }
+
+        .trust-item strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #6d876f;
+        }
+
+        .trust-item span {
+            display: block;
+            color: #4f6053;
+            font-size: 12px;
+            line-height: 1.5;
             font-weight: 600;
         }
 
-        .footer {
-            margin-top: 25px;
-            font-size: 12px;
-            color: rgba(255,255,255,0.86);
-            text-shadow: 0 1px 3px rgba(23, 38, 26, 0.28);
-            padding-bottom: 20px;
-            text-align: center;
-            width: 100%;
-            z-index: 1;
-            letter-spacing: .2px;
+        .login-panel {
+            padding: 24px 16px 0;
+        }
+
+        .login-shell {
+            width: min(1040px, 100%);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .login-copy,
+        .login-card {
+            border-radius: 24px;
+            box-shadow: var(--sombra-card);
+            animation: fadeUp 0.55s ease 0.14s both;
+        }
+
+        .login-copy {
+            padding: 22px 22px 20px;
+            background: linear-gradient(180deg, #f7fbf7 0%, #eef5ef 100%);
+            border: 1px solid var(--borde-suave);
+        }
+
+        .login-copy-kicker,
+        .form-topline {
+            margin: 0;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #739076;
+        }
+
+        .login-copy h2 {
+            margin: 8px 0 10px;
+            font-family: var(--font-display);
+            font-size: clamp(34px, 5vw, 46px);
+            line-height: 0.98;
+            color: #2f4337;
+        }
+
+        .login-copy p {
+            margin: 0;
+            color: #5f6d62;
+            font-size: 14px;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .feature-points {
+            display: grid;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .feature-point {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #46604d;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .feature-point::before {
+            content: "";
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #96ba98 0%, #5e7a64 100%);
+            flex-shrink: 0;
+        }
+
+        .login-card {
+            padding: 22px 20px;
+            background: #fffdfa;
+            border: 1px solid rgba(145, 173, 149, 0.22);
+        }
+
+        .form-heading {
+            margin: 8px 0 6px;
+            font-family: var(--font-display);
+            font-size: 34px;
+            line-height: 0.98;
+            color: #304338;
+        }
+
+        .form-subcopy {
+            margin: 0 0 18px;
+            color: #5e6b61;
+            font-size: 13px;
+            line-height: 1.6;
+            font-weight: 500;
         }
 
         .install-widget {
             position: static;
             width: 100%;
-            background: linear-gradient(135deg, rgba(244, 250, 246, 0.95) 0%, rgba(248, 251, 249, 0.95) 100%);
-            border: 1px solid rgba(132, 168, 140, 0.25);
-            border-radius: 14px;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 4px 12px rgba(30, 54, 37, 0.08);
-            z-index: 10;
             display: none;
+            margin: 0 0 16px;
             overflow: hidden;
-            margin: 12px 0 18px 0;
+            border: 1px solid #d7e4da;
+            border-radius: 16px;
+            background: #f5faf6;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
         }
 
         .install-widget.show {
             display: block;
-            animation: riseFade .25s ease both;
         }
 
         .install-widget-inner {
@@ -301,297 +386,276 @@
 
         .install-title {
             margin: 0;
-            color: #355342;
             font-size: 14px;
-            font-weight: 700;
+            color: #315040;
+            font-weight: 800;
         }
 
         .install-text {
             margin: 0;
             color: #567061;
             font-size: 12px;
+            line-height: 1.55;
         }
 
         .install-actions {
             display: flex;
             gap: 8px;
-            align-items: center;
+        }
+
+        .install-actions .btn-install,
+        .install-actions .btn-dismiss {
+            width: auto;
+            flex: 1;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: var(--font-body);
         }
 
         .install-actions .btn-install {
-            flex: 1;
-            padding: 12px;
-            border: 0;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: .04em;
-            text-transform: uppercase;
+            border: none;
             color: #fff;
-            background: linear-gradient(135deg, #89ab91 0%, #5d7f66 100%);
-            cursor: pointer;
+            background: linear-gradient(135deg, #93b191 0%, #5f7764 100%);
         }
 
         .install-actions .btn-dismiss {
-            padding: 12px 14px;
-            border: 1px solid #d5e2d8;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #5f7467;
-            background: #f7fbf8;
-            cursor: pointer;
+            border: 1px solid #d6e3d9;
+            color: #587061;
+            background: #ffffff;
         }
 
-        @keyframes riseFade {
-            0% {
+        .form-fields {
+            display: grid;
+            gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #6e8573;
+        }
+
+        input {
+            width: 100%;
+            border: 1.5px solid #d7e2d8;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 15px 16px;
+            font-size: 14px;
+            color: #304338;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            font-family: var(--font-body);
+            font-weight: 600;
+        }
+
+        input:focus {
+            border-color: #89aa8b;
+            box-shadow: 0 0 0 4px rgba(118, 151, 121, 0.14);
+        }
+
+        .primary-submit {
+            width: 100%;
+            margin-top: 14px;
+        }
+
+        .primary-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error {
+            color: #bb4b4b;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeUp {
+            from {
                 opacity: 0;
-                transform: translateY(8px);
+                transform: translateY(16px);
             }
-            100% {
+            to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .container > * {
+            html,
+            body {
+                scroll-behavior: auto;
+            }
+
+            .hero-content,
+            .trust-card,
+            .login-copy,
+            .login-card {
                 animation: none;
             }
 
-            button,
+            .hero-primary,
+            .hero-secondary,
+            .primary-submit,
             input {
                 transition: none;
             }
         }
 
-        @media (max-width: 768px) {
-            body {
-                background-position: center top;
-                background-size: cover;
-                background-attachment: scroll;
+        @media (max-width: 900px) {
+            .login-shell {
+                grid-template-columns: 1fr;
+                max-width: 520px;
             }
-
-            body::before {
-                background:
-                    linear-gradient(180deg, rgba(32, 62, 48, 0.2) 0%, rgba(32, 62, 48, 0.1) 45%, rgba(32, 62, 48, 0.24) 100%);
-            }
-
-            body::after {
-                display: none;
-            }
-
-            .container {
-                padding: 34px 22px 24px;
-                border-radius: 24px;
-                width: min(94vw, 420px);
-                margin-top: 0;
-            }
-
-            .logo {
-                width: min(64vw, 240px);
-                height: auto;
-                margin-bottom: 16px;
-            }
-
-            .profesional-card {
-                padding: 20px 18px;
-                margin-bottom: 26px;
-                border-radius: 16px;
-            }
-
-            .subtitulo {
-                margin-bottom: 20px;
-                font-size: 10px;
-                letter-spacing: 2px;
-            }
-
-            h2 {
-                margin-bottom: 20px;
-                font-size: 18px;
-            }
-
-            .profesional {
-                font-size: 17px;
-                margin-bottom: 3px;
-            }
-
-            .titulo-profesional {
-                font-size: 12px;
-                margin-bottom: 6px;
-            }
-
-            .credenciales {
-                font-size: 11px;
-                margin-bottom: 8px;
-            }
-
-            .descripcion {
-                font-size: 12px;
-            }
-
-            .intro-copy {
-                gap: 9px;
-            }
-
-            .intro-text {
-                max-width: 100%;
-                font-size: 12px;
-            }
-
-            .btn-anchor {
-                width: 100%;
-                min-width: 0;
-                padding: 14px 18px;
-                font-size: 12px;
-                letter-spacing: 1px;
-            }
-
-            .login-stack {
-                margin-top: 26px;
-                padding-top: 22px;
-            }
-
-            input,
-            button {
-                font-size: 14px;
-                padding: 14px;
-                border-radius: 10px;
-            }
-
-            button {
-                padding: 16px;
-                font-size: 13px;
-            }
-        }
-
-        @media (max-width: 420px) {
-            .container {
-                width: 96%;
-                padding: 28px 18px 22px;
-                border-radius: 20px;
-            }
-
-            .logo {
-                width: min(70vw, 200px);
-                margin-bottom: 14px;
-            }
-
-            .subtitulo {
-                letter-spacing: 1.5px;
-                font-size: 9px;
-            }
-
-            h2 {
-                font-size: 17px;
-                margin-bottom: 16px;
-            }
-
-            .profesional {
-                font-size: 16px;
-            }
-
-            .descripcion {
-                font-size: 11px;
-                line-height: 1.5;
-            }
-
-            .intro-kicker {
-                font-size: 9px;
-                letter-spacing: 1.6px;
-            }
-
-            .intro-text {
-                font-size: 11px;
-            }
-
-            .login-stack {
-                margin-top: 22px;
-                padding-top: 20px;
-            }
-
-            input {
-                padding: 13px 12px;
-                font-size: 13px;
-                margin-bottom: 12px;
-            }
-
-            button {
-                padding: 14px;
-                font-size: 12px;
-                letter-spacing: 1px;
-            }
-
-            .install-widget {
-                margin: 10px 0 14px 0;
-            }
-
-            .install-widget-inner {
-                padding: 12px;
-                gap: 8px;
-            }
-
-            .install-title {
-                font-size: 13px;
-            }
-
-            .install-text {
-                font-size: 11px;
-            }
-
-            .install-actions .btn-install {
-                padding: 10px;
-                font-size: 11px;
-            }
-
-            .install-actions .btn-dismiss {
-                padding: 10px 12px;
-                font-size: 11px;
-            }
-        }
-    </style>
-
-    <style>
-        /* Estilos para página de login con header/footer */
-        body {
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-        }
-
-        .login-page-container {
-            width: 100%;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 32px 16px;
-        }
-
-        #headerContainer {
-            flex-shrink: 0;
-            width: 100%;
-        }
-
-        .login-page-container > .container {
-            width: 100%;
-        }
-
-        #footerContainer {
-            flex-shrink: 0;
-            width: 100%;
-            margin-top: auto;
         }
 
         @media (max-width: 768px) {
             .login-page-container {
-                padding: 24px 16px 32px;
-                min-height: auto;
+                padding-bottom: 28px;
             }
 
-            .login-page-container > .container {
-                width: min(94vw, 420px);
+            .hero-section {
+                min-height: 78svh;
+                padding: calc(14px + env(safe-area-inset-top, 0px)) 10px 112px;
+            }
+
+            .hero-bg {
+                object-position: center 28%;
+                transform: none;
+            }
+
+            .hero-content {
+                padding: 20px 16px 18px;
+                border-radius: 22px;
+            }
+
+            .hero-logo {
+                width: 100px;
+                margin-bottom: 12px;
+            }
+
+            .hero-kicker {
+                font-size: 10px;
+                letter-spacing: 0.18em;
+            }
+
+            .hero-title {
+                font-size: clamp(42px, 13vw, 60px);
+            }
+
+            .hero-copy {
+                margin-top: 10px;
+                font-size: 14px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .hero-primary,
+            .hero-secondary {
+                width: 100%;
+            }
+
+            .trust-strip {
+                width: calc(100% - 20px);
+                margin-top: -74px;
+            }
+
+            .trust-card {
+                padding: 16px 14px;
+                border-radius: 20px;
+            }
+
+            .trust-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .login-panel {
+                padding: 14px 10px 0;
+            }
+
+            .login-shell {
+                gap: 14px;
+            }
+
+            .login-copy,
+            .login-card {
+                border-radius: 20px;
+            }
+
+            .login-copy {
+                padding: 18px 16px;
+            }
+
+            .login-card {
+                padding: 20px 16px;
+            }
+
+            .login-copy h2,
+            .form-heading {
+                font-size: 30px;
+            }
+
+            .install-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section {
+                min-height: 72svh;
+                padding-bottom: 104px;
+            }
+
+            .trust-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-title {
+                font-size: 28px;
+            }
+
+            .login-copy h2,
+            .form-heading {
+                font-size: 28px;
+            }
+
+            .feature-point,
+            .login-copy p,
+            .form-subcopy {
+                font-size: 13px;
+            }
+
+            input {
+                padding: 14px;
+                font-size: 13px;
+            }
+
+            .hero-primary,
+            .hero-secondary,
+            .primary-submit {
+                padding: 15px 18px;
+                font-size: 12px;
             }
         }
     </style>
@@ -601,44 +665,99 @@
     <div id="headerContainer"></div>
 
     <div class="login-page-container">
-    <div class="container">
-        <img src="img/logo.png" class="logo">
+        <section class="hero-section" aria-label="Bienvenida">
+            <img src="img/recepcion.jpeg" alt="" class="hero-bg">
+            <div class="hero-overlay"></div>
 
-        <div class="subtitulo">Estética Avanzada</div>
-        
-        <div class="profesional-card">
-            <div class="profesional">Gimena Knack</div>
-            <div class="titulo-profesional">Farmacéutica · Dermatocosmiatra</div>
-            <div class="credenciales">MP 1212 · R.C. 2319</div>
-            <div class="descripcion">Tratamientos dermoestéticos personalizados con respaldo farmacéutico y tecnología avanzada para el cuidado integral de la piel</div>
-        </div>
+            <div class="hero-content">
+                <img src="img/logo.png" alt="Espacio Mimar T" class="hero-logo">
+                <p class="hero-kicker">Farmacéutica · Dermatocosmiatra · Andresito</p>
+                <h1 class="hero-title">Espacio Mimar T</h1>
+                <p class="hero-copy">Estética avanzada con tratamientos personalizados, seguimiento profesional y una entrada ordenada desde el celular.</p>
 
-        <div class="intro-copy">
-            <div class="intro-kicker">Turnos y seguimiento online</div>
-            <p class="intro-text">Primero ves la presentación del espacio. El acceso para pacientes queda más abajo, en una segunda sección clara y ordenada.</p>
-            <button id="btnBajarIngreso" class="btn-anchor" type="button">Ingreso de pacientes</button>
-        </div>
+                <div class="hero-badges">
+                    <span class="hero-badge">Turnos online</span>
+                    <span class="hero-badge">Respaldo farmacéutico</span>
+                    <span class="hero-badge">Seguimiento paciente</span>
+                </div>
 
-        <div id="loginAccess" class="login-stack">
-            <div id="installWidget" class="install-widget" aria-live="polite">
-                <div class="install-widget-inner">
-                    <p class="install-title">Descargar app</p>
-                    <p id="installText" class="install-text">Instala Espacio Mimar T para abrirla rápido desde tu inicio.</p>
-                    <div class="install-actions">
-                        <button id="btnInstallApp" class="btn-install" type="button">Instalar</button>
-                        <button id="btnDismissInstall" class="btn-dismiss" type="button">Ahora no</button>
+                <div class="hero-actions">
+                    <button id="btnBajarIngreso" class="hero-primary" type="button">Ingreso de pacientes</button>
+                    <a href="/servicios-pro.html" class="hero-secondary">Ver servicios</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="trust-strip" aria-label="Presentación del espacio">
+            <div class="trust-card">
+                <h2 class="trust-title">Primero la portada. Después el acceso.</h2>
+                <p class="trust-copy">La vista móvil ahora queda partida en dos bloques reales, con una apertura visual arriba y el ingreso de pacientes claramente separado más abajo.</p>
+
+                <div class="trust-grid">
+                    <div class="trust-item">
+                        <strong>Profesional</strong>
+                        <span>Gimena Knack · MP 1212 · R.C. 2319</span>
+                    </div>
+                    <div class="trust-item">
+                        <strong>Enfoque</strong>
+                        <span>Cuidado integral con criterio farmacéutico</span>
+                    </div>
+                    <div class="trust-item">
+                        <strong>Acceso</strong>
+                        <span>Nombre y DNI para seguir tu recorrido</span>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <h2>Ingreso de Pacientes</h2>
-            <input id="nombre" placeholder="Nombre + inicial apellido (ej: juan p)">
-            <input id="dni" placeholder="DNI (sin puntos)">
-            <button id="btnIngresar">Iniciar sesión</button>
-            <div id="error" class="error"></div>
-        </div>
-    </div><!-- fin container -->
-    </div><!-- fin login-page-container -->
+        <section class="login-panel" id="loginAccess" aria-label="Ingreso de pacientes">
+            <div class="login-shell">
+                <div class="login-copy">
+                    <p class="login-copy-kicker">Acceso pacientes</p>
+                    <h2>Ingresá cuando lo necesites, no antes.</h2>
+                    <p>Desde este bloque continuás con tu historial, validás tu cuenta y accedés a la versión correcta del flujo según tu estado.</p>
+
+                    <div class="feature-points">
+                        <div class="feature-point">Validación simple con nombre e inicial del apellido.</div>
+                        <div class="feature-point">Continuidad automática hacia política, historia o servicios.</div>
+                        <div class="feature-point">Diseño cómodo para usar desde el celular sin desorden arriba.</div>
+                    </div>
+                </div>
+
+                <div class="login-card">
+                    <div id="installWidget" class="install-widget" aria-live="polite">
+                        <div class="install-widget-inner">
+                            <p class="install-title">Descargar app</p>
+                            <p id="installText" class="install-text">Instala Espacio Mimar T para abrirla rápido desde tu inicio.</p>
+                            <div class="install-actions">
+                                <button id="btnInstallApp" class="btn-install" type="button">Instalar</button>
+                                <button id="btnDismissInstall" class="btn-dismiss" type="button">Ahora no</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="form-topline">Ingreso seguro</p>
+                    <h2 class="form-heading">Ingreso de pacientes</h2>
+                    <p class="form-subcopy">Completá tus datos para continuar con tu seguimiento y tus turnos.</p>
+
+                    <div class="form-fields">
+                        <div class="form-group">
+                            <label for="nombre">Nombre + inicial apellido</label>
+                            <input id="nombre" placeholder="Ej: juan p">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dni">DNI</label>
+                            <input id="dni" placeholder="Sin puntos">
+                        </div>
+                    </div>
+
+                    <button id="btnIngresar" class="primary-submit">Iniciar sesión</button>
+                    <div id="error" class="error"></div>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <!-- FOOTER -->
     <div id="footerContainer"></div>

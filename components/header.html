@@ -34,6 +34,7 @@
         <a href="/" class="mobile-nav-link">Agendar</a>
         <a href="https://wa.me/543757585029" class="mobile-nav-link" target="_blank" rel="noopener noreferrer">Contacto</a>
         <button class="btn-agendar-mobile" id="btnAgendarMobile">Agendar Cita</button>
+        <button class="btn-session-exit-mobile" id="btnCerrarSesionMobile" style="display: none;">Cerrar sesión</button>
     </nav>
 </header>
 
@@ -229,6 +230,16 @@
     margin-top: 10px;
 }
 
+.btn-session-exit-mobile {
+    background: #f6faf7;
+    color: var(--mimar-color-muted);
+    border: 1px solid var(--mimar-color-border);
+    padding: 12px;
+    border-radius: var(--mimar-radius-md);
+    font-weight: 700;
+    cursor: pointer;
+}
+
 @media (max-width: 768px) {
     .site-header {
         top: 0;
@@ -258,21 +269,11 @@
     }
 
     #headerSessionInfo {
-        gap: 6px;
-        display: flex !important;
+        display: none !important;
     }
 
     .session-name {
         display: none;
-    }
-
-    .btn-session-exit {
-        padding: 6px 12px;
-        font-size: 11px;
-        border-radius: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
     }
 
     .mobile-menu {
@@ -327,6 +328,7 @@ function actualizarHeaderSesion() {
     const sessionNameDisplay = document.getElementById('sessionNameDisplay');
     const btnAgendar = document.getElementById('btnAgendar');
     const btnAgendarMobile = document.getElementById('btnAgendarMobile');
+    const btnCerrarSesionMobile = document.getElementById('btnCerrarSesionMobile');
     const serviciosLink = document.getElementById('serviciosLink');
     const serviciosLinkMobile = document.getElementById('serviciosLinkMobile');
 
@@ -335,6 +337,7 @@ function actualizarHeaderSesion() {
         if (headerSessionInfo) headerSessionInfo.style.display = 'flex';
         if (sessionNameDisplay) sessionNameDisplay.textContent = clienteNombre;
         if (btnAgendar) btnAgendar.style.display = 'none';
+        if (btnCerrarSesionMobile) btnCerrarSesionMobile.style.display = 'block';
         // Link de servicios apunta a la versión funcional
         if (serviciosLink) serviciosLink.href = '/servicios.html';
         if (serviciosLinkMobile) serviciosLinkMobile.href = '/servicios.html';
@@ -342,6 +345,7 @@ function actualizarHeaderSesion() {
         // Usuario no logueado
         if (headerSessionInfo) headerSessionInfo.style.display = 'none';
         if (btnAgendar) btnAgendar.style.display = 'block';
+        if (btnCerrarSesionMobile) btnCerrarSesionMobile.style.display = 'none';
         // Link de servicios apunta al catálogo bonito
         if (serviciosLink) serviciosLink.href = '/servicios-pro.html';
         if (serviciosLinkMobile) serviciosLinkMobile.href = '/servicios-pro.html';
@@ -352,9 +356,9 @@ function actualizarHeaderSesion() {
         if (btn) {
             btn.addEventListener('click', () => {
                 if (clienteDNI) {
-                    window.location.href = '/servicios-pro.html';
+                    window.location.href = '/servicios.html';
                 } else {
-                    window.location.href = '/';
+                    window.location.href = '/servicios-pro.html';
                 }
             });
         }
@@ -362,13 +366,20 @@ function actualizarHeaderSesion() {
 }
 
 const btnCerrarSesion = document.getElementById('btnCerrarSesion');
-if (btnCerrarSesion) {
-    btnCerrarSesion.addEventListener('click', () => {
+const cerrarSesion = () => {
         localStorage.removeItem('clienteDNI');
         localStorage.removeItem('clienteNombre');
         localStorage.removeItem('jornadaModo');
         window.location.href = '/';
-    });
+};
+
+if (btnCerrarSesion) {
+    btnCerrarSesion.addEventListener('click', cerrarSesion);
+}
+
+const btnCerrarSesionMobile = document.getElementById('btnCerrarSesionMobile');
+if (btnCerrarSesionMobile) {
+    btnCerrarSesionMobile.addEventListener('click', cerrarSesion);
 }
 
 actualizarHeaderSesion();
