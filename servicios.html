@@ -130,9 +130,10 @@
 
                 return true;
             } catch (error) {
-                console.error("No se pudo validar cliente:", error);
-                limpiarSesionYSalir();
-                return false;
+                // Error de red (móvil inestable): NO borrar sesión ni redirigir.
+                // El usuario ya fue validado en el login; dejar pasar.
+                console.warn("Validación Firestore falló por red, continuando con sesión guardada:", error?.code || error?.message);
+                return true;
             }
         }
 

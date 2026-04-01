@@ -948,9 +948,10 @@ async function validarAccesoCliente() {
 
         return true;
     } catch (error) {
-        console.error("No se pudo validar cliente en fecha:", error);
-        window.location.href = "/";
-        return false;
+        // Error de red (móvil inestable): NO redirigir.
+        // El usuario ya fue validado en el login; dejar pasar.
+        console.warn("Validación Firestore falló por red en fecha, continuando:", error?.code || error?.message);
+        return true;
     }
 }
 

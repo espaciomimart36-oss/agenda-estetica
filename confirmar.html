@@ -106,8 +106,11 @@
                     window.location.href = "/";
                 }
             } catch (error) {
-                console.error("Error obteniendo documento:", error);
-                window.location.href = "/";
+                // Error de red (móvil inestable): NO redirigir.
+                // Habilitar el botón igualmente para poder confirmar el turno.
+                console.warn("Error de red en confirmar, habilitando de todos modos:", error?.code || error?.message);
+                boton.disabled = false;
+                boton.innerText = "Confirmar turno";
             }
         }
 
