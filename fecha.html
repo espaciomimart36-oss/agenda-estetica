@@ -856,6 +856,45 @@
             100% { transform:skewX(-18deg) translateX(420%); opacity:0; }
         }
 
+        /* ── Cartelito "Próximamente" ── */
+        .pronto-bloqueo {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 32px 20px;
+            background: linear-gradient(135deg, #f0faf4 0%, #e8f5ed 100%);
+            border: 1.5px dashed #7dbf94;
+            border-radius: 16px;
+            text-align: center;
+            animation: prontoFadeIn .45s ease both;
+        }
+        .pronto-bloqueo .pronto-icon {
+            font-size: 2.2rem;
+            line-height: 1;
+        }
+        .pronto-bloqueo .pronto-titulo {
+            margin: 0;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #2a6641;
+            letter-spacing: .04em;
+        }
+        .pronto-bloqueo .pronto-texto {
+            margin: 0;
+            font-size: .88rem;
+            color: #4a7a5a;
+            max-width: 260px;
+            line-height: 1.5;
+        }
+        @keyframes prontoFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0);   }
+        }
+
         @keyframes horaSelectPop {
             0% { transform:translateY(0) scale(.98); }
             60% { transform:translateY(-2px) scale(1.04); }
@@ -1274,7 +1313,28 @@ function renderCalendario(){
     if (jornadaModo) fijarMesJornada();
     const y=fechaActual.getFullYear(); const m=fechaActual.getMonth();
     document.getElementById("mes").innerText=`${["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][m]} ${y}`;
+
+    // Bloquear meses a partir de junio 2026
+    const btnSig = document.getElementById("btnMesSiguiente");
+    const MES_LIMITE_Y = 2026, MES_LIMITE_M = 4; // Mayo = 4 (0-indexed)
+    const esBloqueado = y > MES_LIMITE_Y || (y === MES_LIMITE_Y && m > MES_LIMITE_M);
+    btnSig.disabled = esBloqueado || (y === MES_LIMITE_Y && m === MES_LIMITE_M);
+    btnSig.style.opacity = btnSig.disabled ? "0.45" : "";
+    btnSig.style.cursor  = btnSig.disabled ? "not-allowed" : "";
+
     const contenedor=document.getElementById("dias"); contenedor.innerHTML="";
+
+    if (esBloqueado) {
+        contenedor.innerHTML = `<div class="pronto-bloqueo">
+            <span class="pronto-icon">🌸</span>
+            <p class="pronto-titulo">Próximamente</p>
+            <p class="pronto-texto">Los turnos para este período se habilitarán muy pronto. Volvé a revisar en los próximos días.</p>
+        </div>`;
+        document.getElementById("horarios").innerHTML = "";
+        document.getElementById("reservarBtn").disabled = true;
+        return;
+    }
+
     const diasMes=new Date(y,m+1,0).getDate(); const primerDia=new Date(y,m,1).getDay();
     let offset=primerDia===0?6:primerDia-1;
     for(let i=0;i<offset;i++){ contenedor.appendChild(document.createElement("div")); }
@@ -1442,7 +1502,11 @@ document.getElementById("reservarBtn").onclick=()=>{
     window.location.href = destinoConfirmacion;
 };
 
-document.getElementById("btnMesSiguiente").onclick=()=>{ fechaActual.setMonth(fechaActual.getMonth()+1); renderCalendario(); };
+document.getElementById("btnMesSiguiente").onclick=()=>{
+    const y=fechaActual.getFullYear(), m=fechaActual.getMonth();
+    if(y > 2026 || (y === 2026 && m >= 4)) return; // no pasar de mayo 2026
+    fechaActual.setMonth(m+1); renderCalendario();
+};
 document.getElementById("btnMesAnterior").onclick=()=>{ fechaActual.setMonth(fechaActual.getMonth()-1); renderCalendario(); };
 
 if (jornadaModo) {
