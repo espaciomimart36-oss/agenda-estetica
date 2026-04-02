@@ -657,6 +657,8 @@
 
                 document.querySelectorAll(".btn-reservar").forEach((btn) => {
                     btn.addEventListener("click", () => {
+                        localStorage.setItem("jornadaModo", "0");
+                        localStorage.removeItem("jornadaSource");
                         localStorage.setItem("servicioSeleccionado", btn.getAttribute("data-nombre"));
                         window.location.href = "/fecha.html";
                     });

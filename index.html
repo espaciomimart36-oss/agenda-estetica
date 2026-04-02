@@ -948,6 +948,12 @@
                             return;
                         }
 
+                        localStorage.setItem("jornadaModo", "0");
+                        localStorage.removeItem("jornadaSource");
+                        localStorage.removeItem("jornadaAllowedDates");
+                        localStorage.removeItem("jornadaAllowedMonth");
+                        localStorage.removeItem("jornadaSlots");
+
                         // --- LÓGICA DE REDIRECCIÓN ACTUALIZADA (Sin consentimiento.html) ---
                         if (!cliente.politicaAceptada) {
                             window.location.href = "politica.html";

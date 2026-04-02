@@ -68,15 +68,16 @@
             position:absolute;
             inset:auto 0 0 0;
             height:44%;
-            background:linear-gradient(180deg, rgba(244,247,246,0) 0%, rgba(244,247,246,0.92) 68%, rgba(244,247,246,1) 100%);
+            background:linear-gradient(180deg, rgba(244,247,246,0) 0%, rgba(244,247,246,0.45) 76%, rgba(244,247,246,0.74) 100%);
             pointer-events:none;
         }
 
         .hero img{
             width:100%;
-            max-height:280px;
+            max-height:248px;
             object-fit:cover;
-            filter:saturate(1.04) contrast(1.02);
+            object-position:center 42%;
+            filter:saturate(1.02) contrast(1.01);
         }
 
         .container{
@@ -84,7 +85,7 @@
             margin:auto;
             padding:20px;
             text-align:center;
-            margin-top:clamp(-96px, -7vw, -58px);
+            margin-top:clamp(-70px, -5.5vw, -44px);
             position:relative;
             z-index:2;
         }
@@ -238,7 +239,11 @@
             letter-spacing:.5px;
         }
 
-        .grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:8px }
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(7,1fr);
+            gap:8px;
+        }
 
         .dia{
             padding:12px 2px;
@@ -255,6 +260,9 @@
             align-items:center;
             justify-content:center;
             box-shadow:inset 0 1px 0 rgba(255,255,255,0.7);
+            position:relative;
+            overflow:hidden;
+            isolation:isolate;
         }
 
         .dia:hover{
@@ -263,6 +271,35 @@
             background:#ecf6f1;
             box-shadow:0 8px 16px rgba(89,146,119,0.14);
         }
+
+        .dia:not(.domingo):not(.pasado):not(.bloqueado):not(.seleccionado){
+            animation:fechaGlow 3.8s ease-in-out infinite;
+        }
+
+        .dia:not(.domingo):not(.pasado):not(.bloqueado):not(.seleccionado)::after{
+            content:"";
+            position:absolute;
+            top:-35%;
+            left:-46%;
+            width:34%;
+            height:170%;
+            transform:skewX(-18deg) translateX(0);
+            background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(210,244,227,0.7) 45%, rgba(255,255,255,0) 100%);
+            pointer-events:none;
+            animation:fechaShimmer 3.6s linear infinite;
+            z-index:1;
+        }
+
+        .grid .dia:nth-child(5n+1){ animation-delay: .12s; }
+        .grid .dia:nth-child(5n+2){ animation-delay: .48s; }
+        .grid .dia:nth-child(5n+3){ animation-delay: .95s; }
+        .grid .dia:nth-child(5n+4){ animation-delay: 1.34s; }
+        .grid .dia:nth-child(5n){ animation-delay: 1.82s; }
+
+        .grid .dia:nth-child(4n+1)::after{ animation-delay: .2s; }
+        .grid .dia:nth-child(4n+2)::after{ animation-delay: .9s; }
+        .grid .dia:nth-child(4n+3)::after{ animation-delay: 1.5s; }
+        .grid .dia:nth-child(4n)::after{ animation-delay: 2.1s; }
 
         .seleccionado{
             border:2px solid var(--verde-mimar)!important;
@@ -434,9 +471,9 @@
             left: auto;
             width: 100%;
             z-index: 100;
-            background: linear-gradient(90deg, rgba(252, 244, 225, 0.97) 0%, rgba(248, 236, 206, 0.97) 100%);
-            color: #7c2d12;
-            border: 1px solid #efbf67;
+            background: linear-gradient(90deg, rgba(238, 248, 243, 0.98) 0%, rgba(228, 243, 235, 0.98) 100%);
+            color: #2f5a47;
+            border: 1px solid #9acfb8;
             border-radius: 14px;
             box-shadow: 0 10px 24px rgba(88, 68, 28, 0.12);
             overflow: hidden;
@@ -458,7 +495,7 @@
         .floating-warning span {
             font-size: 14px;
             font-weight: 700;
-            color: #7c2d12;
+            color: #2f5a47;
             padding: 0 40px;
             pointer-events: auto;
         }
@@ -469,7 +506,7 @@
             right: 10px;
             border: none;
             background: transparent;
-            color: #7c2d12;
+            color: #2f5a47;
             font-size: 16px;
             cursor: pointer;
             pointer-events: auto;
@@ -480,15 +517,15 @@
         }
 
         .floating-warning-close:hover {
-            color: #f59e0b;
+            color: #5f8f78;
         }
 
         /* Apariencia premium exclusiva para jornada */
         body.jornada-calendar-mode {
             background:
-                radial-gradient(920px 360px at 6% -10%, rgba(255, 90, 95, 0.22) 0%, rgba(255, 90, 95, 0) 58%),
-                radial-gradient(860px 340px at 94% 112%, rgba(239, 35, 60, 0.18) 0%, rgba(239, 35, 60, 0) 56%),
-                linear-gradient(180deg, #fffaf8 0%, #fff1ec 100%);
+                radial-gradient(920px 360px at 6% -10%, rgba(152, 200, 173, 0.2) 0%, rgba(152, 200, 173, 0) 58%),
+                radial-gradient(860px 340px at 94% 112%, rgba(118, 180, 150, 0.18) 0%, rgba(118, 180, 150, 0) 56%),
+                linear-gradient(180deg, #f7fcf9 0%, #eef6f1 100%);
         }
 
         body.jornada-calendar-mode .hero {
@@ -514,24 +551,19 @@
             filter: drop-shadow(0 10px 22px rgba(107, 20, 33, 0.24));
         }
 
-        body.jornada-calendar-mode .card-recommendations,
-        body.jornada-calendar-mode .floating-warning {
-            display: none !important;
-        }
-
         body.jornada-calendar-mode .badge-balance {
-            background: linear-gradient(135deg, #ffe0bf 0%, #ffb27f 100%);
-            border-color: #ff9b67;
-            color: #6a1f18;
-            box-shadow: 0 10px 20px rgba(161, 31, 24, 0.14);
+            background: linear-gradient(135deg, #ecf8f1 0%, #deefe5 100%);
+            border-color: #9acfb8;
+            color: #2f5a47;
+            box-shadow: 0 10px 20px rgba(55, 105, 82, 0.14);
         }
 
         body.jornada-calendar-mode .aviso-mio,
         body.jornada-calendar-mode .calendario {
-            border: 1px solid #f0c8bb;
+            border: 1px solid #d5e8de;
             border-radius: 22px;
-            background: linear-gradient(160deg, #fffefc 0%, #fff3ed 100%);
-            box-shadow: 0 20px 42px rgba(132, 30, 37, 0.14);
+            background: linear-gradient(160deg, #ffffff 0%, #f3faf6 100%);
+            box-shadow: 0 20px 42px rgba(55, 105, 82, 0.14);
         }
 
         body.jornada-calendar-mode .aviso-mio {
@@ -540,35 +572,35 @@
         }
 
         body.jornada-calendar-mode .aviso-mio p {
-            color: #7a312a !important;
+            color: #355d4a !important;
             font-size: 13px !important;
             font-weight: 700;
             letter-spacing: 0.01em;
         }
 
         body.jornada-calendar-mode .mes button {
-            background: linear-gradient(135deg, #ff3a4c 0%, #e11d2e 56%, #98101f 100%);
-            box-shadow: 0 10px 22px rgba(137, 15, 29, 0.28);
+            background: linear-gradient(135deg, #77c39f 0%, #4e9f7b 100%);
+            box-shadow: 0 10px 22px rgba(63, 143, 111, 0.28);
         }
 
         body.jornada-calendar-mode .semana {
-            color: #a34036;
+            color: #5f786c;
             letter-spacing: 0.06em;
         }
 
         body.jornada-calendar-mode .dia {
             background: #fff;
-            border-color: #efcbc0;
-            color: #5d2d28;
+            border-color: #d6e7de;
+            color: #355747;
             font-weight: 700;
         }
 
         body.jornada-calendar-mode .dia.bloqueado,
         body.jornada-calendar-mode .dia.pasado,
         body.jornada-calendar-mode .dia.domingo {
-            background: linear-gradient(180deg, #fff0f2 0%, #ffe5e9 100%);
-            border-color: #f2b7bf;
-            color: #b53345;
+            background: linear-gradient(180deg, #f3f6f5 0%, #eaf0ed 100%);
+            border-color: #dce5e1;
+            color: #93a19b;
             opacity: 1;
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
         }
@@ -578,21 +610,21 @@
         body.jornada-calendar-mode .dia.domingo:hover {
             transform: none;
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
-            border-color: #f2b7bf;
-            background: linear-gradient(180deg, #fff0f2 0%, #ffe5e9 100%);
+            border-color: #dce5e1;
+            background: linear-gradient(180deg, #f3f6f5 0%, #eaf0ed 100%);
         }
 
         body.jornada-calendar-mode .dia:hover {
-            border-color: #ff9475;
-            background: #fff3ef;
-            box-shadow: 0 10px 22px rgba(176, 45, 44, 0.16);
+            border-color: #95cdb3;
+            background: #edf7f1;
+            box-shadow: 0 10px 22px rgba(75, 131, 104, 0.16);
         }
 
         body.jornada-calendar-mode .seleccionado {
-            border: 2px solid #d11b2d !important;
-            background: linear-gradient(180deg, #fff1f1 0%, #ffe6e8 100%) !important;
-            color: #7e1824;
-            box-shadow: 0 10px 20px rgba(175, 34, 55, 0.24);
+            border: 2px solid #5ca983 !important;
+            background: linear-gradient(180deg, #f3fbf7 0%, #e5f4ec 100%) !important;
+            color: #2f5a47;
+            box-shadow: 0 10px 20px rgba(75, 131, 104, 0.24);
         }
 
         body.jornada-calendar-mode .horarios {
@@ -600,27 +632,27 @@
         }
 
         body.jornada-calendar-mode .hora {
-            border-color: #efc9bc;
+            border-color: #d6e7de;
             background: #fff;
-            color: #672f29;
+            color: #355747;
             font-weight: 800;
         }
 
         body.jornada-calendar-mode .hora:hover {
-            border-color: #ff9b67;
-            box-shadow: 0 10px 18px rgba(176, 45, 44, 0.16);
+            border-color: #95cdb3;
+            box-shadow: 0 10px 18px rgba(75, 131, 104, 0.16);
         }
 
         body.jornada-calendar-mode .hora.selected {
-            background: linear-gradient(135deg, #ff3a4c 0%, #e11d2e 56%, #991020 100%);
-            border-color: #b71527;
+            background: linear-gradient(135deg, #77c39f 0%, #4e9f7b 100%);
+            border-color: #4e9f7b;
             color: #fff;
-            box-shadow: 0 12px 22px rgba(142, 18, 33, 0.32);
+            box-shadow: 0 12px 22px rgba(63, 143, 111, 0.32);
         }
 
         body.jornada-calendar-mode .boton {
-            background: linear-gradient(135deg, #ff3a4c 0%, #e11d2e 56%, #95101f 100%);
-            box-shadow: 0 14px 24px rgba(139, 16, 30, 0.33);
+            background: linear-gradient(135deg, #77c39f 0%, #4e9f7b 100%);
+            box-shadow: 0 14px 24px rgba(63, 143, 111, 0.33);
         }
 
         @keyframes floatWarning {
@@ -637,6 +669,22 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        @keyframes fechaGlow {
+            0%, 100% {
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 0 0 rgba(114,189,153,0);
+            }
+            50% {
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.78), 0 0 14px rgba(114,189,153,0.22);
+            }
+        }
+
+        @keyframes fechaShimmer {
+            0% { transform:skewX(-18deg) translateX(0); opacity:0; }
+            8% { opacity:.85; }
+            72% { opacity:.75; }
+            100% { transform:skewX(-18deg) translateX(420%); opacity:0; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -656,11 +704,19 @@
             .hero img {
                 filter:none;
             }
+
+            .dia:not(.domingo):not(.pasado):not(.bloqueado):not(.seleccionado){
+                animation:none;
+            }
+
+            .dia:not(.domingo):not(.pasado):not(.bloqueado):not(.seleccionado)::after{
+                animation:none;
+            }
         }
 
         @media (max-width: 768px) {
             .container {
-                margin-top: -68px;
+                margin-top: -46px;
                 padding: 16px;
             }
 
@@ -716,8 +772,8 @@
         }
 
         @media (max-width: 480px) {
-            .container { padding: 14px; margin-top: -52px; }
-            .hero img { max-height: 220px; }
+            .container { padding: 14px; margin-top: -34px; }
+            .hero img { max-height: 188px; object-position: center 40%; }
             .card-recommendations { padding: 16px; border-radius: 18px; }
             .card-recommendations h2 { font-size: 20px; }
             .recommendation-block { font-size: 12px; padding: 14px; }
@@ -841,7 +897,12 @@ const dniUsuario=localStorage.getItem("clienteDNI");
 const nombreUsuarioSesion=(localStorage.getItem("clienteNombre") || "").trim().toLowerCase();
 const servicioGuardado=localStorage.getItem("servicioSeleccionado")||"";
 const esMioUp=servicioGuardado.toLowerCase().includes("mio");
-const jornadaModo = localStorage.getItem("jornadaModo") === "1";
+const jornadaSource = localStorage.getItem("jornadaSource");
+let jornadaModo = localStorage.getItem("jornadaModo") === "1";
+if (jornadaModo && jornadaSource !== "jornada_especial_login") {
+    jornadaModo = false;
+    localStorage.setItem("jornadaModo", "0");
+}
 const jornadaAllowedMonth = (localStorage.getItem("jornadaAllowedMonth") || "2026-04").trim();
 
 let jornadaSlots = [];
@@ -899,10 +960,10 @@ const aplicarModoVisualJornada = () => {
     if (logo) logo.src = "img/logo2.jpg";
 
     const recomendaciones = document.querySelector(".card-recommendations");
-    if (recomendaciones) recomendaciones.style.display = "none";
+    if (recomendaciones) recomendaciones.style.display = "block";
 
     const warning = document.getElementById("floatingWarning");
-    if (warning) warning.style.display = "none";
+    if (warning) warning.style.display = "block";
 
     const aviso = document.querySelector(".aviso-mio p");
     if (aviso) {
@@ -991,6 +1052,7 @@ function renderCalendario(){
         }
         contenedor.appendChild(div);
     }
+
 }
 
 async function cargarHorarios(fecha, fStr){
