@@ -816,7 +816,12 @@
         let resolverModalBorrado = null;
         let membresiaNormalizadaSesion = false;
 
-        const esReservaActiva = (r) => (r?.estado || '').toString().toLowerCase() !== 'cancelado';
+        const esReservaActiva = (r) => {
+            const estados = [r?.estado, r?.status]
+                .map((valor) => (valor || '').toString().trim().toLowerCase())
+                .filter(Boolean);
+            return !estados.includes('cancelado');
+        };
         const resolverMembresiaActiva = (c = {}) => c.membershipActive === true || c.membresia === true;
         const resolverOrigenReserva = (r = {}) => {
             const origen = (r.origen || '').toString().trim().toLowerCase();
@@ -973,7 +978,8 @@
                 const fecha = (data.fecha || '').toString();
                 const hora = normalizarHora(data.hora || data.hour || data.time || '');
                 const blocked = data.blocked !== false;
-                if (fecha && hora && blocked) {
+                const active = data.active !== false;
+                if (fecha && hora && blocked && active) {
                     map.set(keyBloqueo(fecha, hora), { id: d.id, ...data, fecha, hora });
                 }
             });

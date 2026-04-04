@@ -1130,18 +1130,12 @@ const EXCEPCIONES_HORARIOS = {
     "2026-04-25": { normal: ["17:00"], fraccionado: [] }
 };
 
-const DESBLOQUEOS_MANUALES = {
-    "2026-03-26": ["16:00"],
-    "2026-03-28": ["11:00"],
-    "2026-04-28": ["11:00"]
-};
-
 const HORARIOS_JORNADA_DEFAULT = ["07:30", "08:30", "09:30", "10:30", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
 const SABADOS_BLOQUEADOS = ["2026-03-01", "2026-03-08", "2026-03-15", "2026-03-22", "2026-03-29", "2026-04-04", "2026-04-11", "2026-04-18", "2026-04-25"];
 
 let fechaActual=new Date();
-let fechaSeleccionada=null, horaSeleccionada=null, duracionTurno=60, excepciones={};
+let fechaSeleccionada=null, horaSeleccionada=null, duracionTurno=60, excepciones={}, bloqueosHorarios=new Map();
 const hoy=new Date(); hoy.setHours(0,0,0,0);
 const dniUsuario=localStorage.getItem("clienteDNI");
 const nombreUsuarioSesion=(localStorage.getItem("clienteNombre") || "").trim().toLowerCase();
@@ -1176,6 +1170,25 @@ if (jornadaModo && (!Array.isArray(jornadaAllowedDates) || !jornadaAllowedDates.
 }
 
 const MENSAJE_DIA_NO_DISPONIBLE_JORNADA = "Este dia no tiene horas disponibles para la jornada especial. Elegi la fecha disponible.";
+
+const normalizarHora = (hora) => {
+    const txt = (hora || "").toString().replace(/\s*hs$/i, "").trim();
+    const match = txt.match(/^(\d{1,2})[:.](\d{2})$/);
+    if (!match) return "";
+    const hh = Number(match[1]);
+    const mm = Number(match[2]);
+    if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return "";
+    return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+};
+
+const keyBloqueo = (fecha, hora) => `${fecha}|${hora}`;
+
+const esReservaActiva = (reserva) => {
+    const estados = [reserva?.estado, reserva?.status]
+        .map((valor) => (valor || "").toString().trim().toLowerCase())
+        .filter(Boolean);
+    return !estados.includes("cancelado");
+};
 
 const normalizarMotivoExcepcion = (fecha, motivo) => {
     const texto = (motivo || "").toString().trim();
@@ -1239,6 +1252,26 @@ const esExcepcionBloqueante = (fStr) => {
     return !!excepciones[fStr];
 };
 
+const obtenerHorasNoDisponibles = async (fStr) => {
+    const snapRes = await getDocs(query(collection(db, "reservas"), where("fecha", "==", fStr)));
+    const horas = new Set();
+
+    snapRes.docs.forEach((reservaDoc) => {
+        const data = reservaDoc.data() || {};
+        if (!esReservaActiva(data)) return;
+        const hora = normalizarHora(data.hora || data.hour || data.time || "");
+        if (hora) horas.add(hora);
+    });
+
+    bloqueosHorarios.forEach((bloqueo) => {
+        if ((bloqueo?.fecha || "") !== fStr) return;
+        const hora = normalizarHora(bloqueo.hora || bloqueo.hour || bloqueo.time || "");
+        if (hora) horas.add(hora);
+    });
+
+    return [...horas].sort((a, b) => a.localeCompare(b));
+};
+
 const aplicarModoVisualJornada = () => {
     if (!jornadaModo) return;
 
@@ -1270,9 +1303,30 @@ async function cargarDatos(){
     // CARGAR EXCEPCIONES (JUEVES Y VIERNES SANTO)
     const exSnap=await getDocs(collection(db,"calendarExceptions"));
     excepciones = {};
-    exSnap.forEach(doc => {
-        if(doc.data().active) {
-            excepciones[doc.id] = normalizarMotivoExcepcion(doc.id, doc.data().reason);
+    bloqueosHorarios = new Map();
+    exSnap.forEach(docSnap => {
+        const data = docSnap.data() || {};
+        const idEsFecha = /^\d{4}-\d{2}-\d{2}$/.test(docSnap.id);
+        const fechaExcepcion = ((data.fecha || '') || (idEsFecha ? docSnap.id : '')).toString();
+        const horaExcepcion = normalizarHora(data.hora || data.hour || data.time || '');
+        const activo = data.active !== false;
+        const tipo = (data.type || '').toString().toLowerCase();
+        const esBloqueo = tipo === 'blocked' || data.blocked === true;
+
+        if (!activo || !esBloqueo) return;
+
+        if (fechaExcepcion && horaExcepcion) {
+            bloqueosHorarios.set(keyBloqueo(fechaExcepcion, horaExcepcion), {
+                id: docSnap.id,
+                ...data,
+                fecha: fechaExcepcion,
+                hora: horaExcepcion
+            });
+            return;
+        }
+
+        if (fechaExcepcion) {
+            excepciones[fechaExcepcion] = normalizarMotivoExcepcion(fechaExcepcion, data.reason);
         }
     });
 
@@ -1385,9 +1439,7 @@ async function cargarHorarios(fecha, fStr){
     }
 
     if (jornadaModo) {
-        const snapRes = await getDocs(query(collection(db,"reservas"),where("fecha","==",fStr)));
-        const ocupados = snapRes.docs
-            .map(doc=> (doc.data().hora||"").replace(" hs","").trim());
+        const ocupados = await obtenerHorasNoDisponibles(fStr);
 
         const horariosJornada = jornadaSlots
             .map(h => (h || "").toString().trim())
@@ -1436,11 +1488,7 @@ async function cargarHorarios(fecha, fStr){
     const config = CONFIG_DIAS[nombreDia];
     if(!config) { container.innerHTML="<p>Cerrado</p>"; return; }
 
-    const snapRes=await getDocs(query(collection(db,"reservas"),where("fecha","==",fStr)));
-    const desbloqueados = DESBLOQUEOS_MANUALES[fStr] || [];
-    const ocupados=snapRes.docs
-        .map(doc=> (doc.data().hora||"").replace(" hs","").trim())
-        .filter(h => !desbloqueados.includes(h));
+    const ocupados = await obtenerHorasNoDisponibles(fStr);
     container.innerHTML="";
 
     const todos = [
@@ -1551,12 +1599,8 @@ async function iniciarFlujoFecha() {
 
 iniciarFlujoFecha();
 function renderHorariosPorConfig(config, container, fStr) {
-    return getDocs(query(collection(db, "reservas"), where("fecha", "==", fStr)))
-        .then(snapRes => {
-            const desbloqueados = DESBLOQUEOS_MANUALES[fStr] || [];
-            const ocupados = snapRes.docs
-                .map(doc => (doc.data().hora || "").replace(" hs", "").trim())
-                .filter(h => !desbloqueados.includes(h));
+    return obtenerHorasNoDisponibles(fStr)
+        .then(ocupados => {
             container.innerHTML = "";
 
             const todos = [

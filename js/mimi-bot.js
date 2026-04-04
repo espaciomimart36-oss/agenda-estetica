@@ -481,8 +481,12 @@
     }
     #mimi-send:hover { transform: scale(1.08); filter: brightness(1.1); }
 
-    @media (max-width: 400px) {
-      #mimi-window { right: 10px; bottom: 92px; }
+    @media (max-width: 600px) {
+      #mimi-window {
+        top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+        width: 100% !important; max-height: 100dvh !important; height: 100dvh !important;
+        border-radius: 0 !important;
+      }
       #mimi-bubble { right: 12px; bottom: 16px; width: 60px; height: 60px; }
     }
   `;
@@ -576,6 +580,10 @@
     function toggle() {
       open = !open;
       win.classList.toggle('mimi-hidden', !open);
+      // En móvil: bloquear scroll del fondo para que el contenido de la página no se vea
+      if (window.innerWidth <= 600) {
+        document.body.style.overflow = open ? 'hidden' : '';
+      }
       if (open) {
         badge.style.display = 'none';
         if (firstOpen) { firstOpen = false; greetUser(); }
