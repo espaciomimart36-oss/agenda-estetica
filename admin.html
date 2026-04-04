@@ -275,6 +275,7 @@
                 <button class="btn-nav" id="btn-buscar" onclick="navegar('buscar')">Buscar</button>
                 <button class="btn-nav" id="btn-clientes" onclick="navegar('clientes')">Pacientes</button>
                 <button class="btn-nav" id="btn-export" onclick="navegar('export')">Exportar</button>
+                <button class="btn-nav" onclick="descargarWidget()">⬇ Widget</button>
                 <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
             </div>
             <div class="flow-switch-shortcut">
@@ -2326,8 +2327,18 @@
         initPwaAdminPrompt();
         document.getElementById("userAdmin").value = ADMIN_EMAILS[0];
         iniciarGuardiaAuth();
+
+        function descargarWidget() {
+            const a = document.createElement('a');
+            a.href = '/js/mimi-bot.js';
+            a.download = 'mimi-bot.js';
+            a.click();
+        }
+        window.descargarWidget = descargarWidget;
     </script>
     <script src="/js/shared-footer.js"></script>
+    <script>window.MIMI_CONFIG = { avatar: 'img/logo2.jpg' };</script>
+    <script src="/js/mimi-bot.js"></script>
 </body>
 </html>
 
