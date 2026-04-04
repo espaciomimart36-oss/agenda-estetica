@@ -1475,13 +1475,17 @@ async function cargarHorarios(fecha, fStr){
 
     if(esExcepcionBloqueante(fStr)) { container.innerHTML=`<p style="color:red;">Día cerrado: ${excepciones[fStr]}</p>`; return; }
 
-    // Excepción de horarios puntuales
-    if(EXCEPCIONES_HORARIOS[fStr]){
-        const config = EXCEPCIONES_HORARIOS[fStr];
-        return renderHorariosPorConfig(config, container, fStr);
-    }
-
     const nombreDia=["domingo","lunes","martes","miercoles","jueves","viernes","sabado"][fecha.getDay()];
+
+    // Excepción de horarios puntuales: FUSIONAR con el horario normal del día
+    // para que siempre se vea el grillado completo (no solo el horario de excepción)
+    if(EXCEPCIONES_HORARIOS[fStr]){
+        const exConfig   = EXCEPCIONES_HORARIOS[fStr];
+        const baseConfig = CONFIG_DIAS[nombreDia] || { normal: [], fraccionado: [] };
+        const normalMerged = [...new Set([...baseConfig.normal,      ...exConfig.normal])].sort();
+        const fracMerged   = [...new Set([...baseConfig.fraccionado, ...exConfig.fraccionado])].sort();
+        return renderHorariosPorConfig({ normal: normalMerged, fraccionado: fracMerged }, container, fStr);
+    }
 
     // Sábados: mostrar disponibilidad real según configuración y reservas.
 
