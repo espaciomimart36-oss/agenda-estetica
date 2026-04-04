@@ -329,6 +329,9 @@
                     hora: horaLs,
                     origen: "jornada",
                     turnoAt: Number.isNaN(turnoAt.getTime()) ? null : turnoAt,
+                    status: "confirmado",
+                    estado: "confirmado",
+                    reminderSent: false,
                     recordatorios: {
                         h48: { enviado: false },
                         h24: { enviado: false },
@@ -380,6 +383,7 @@
         btnConfirmar.addEventListener("click", confirmarTurnoJornada);
     </script>
     <script src="/js/shared-footer.js"></script>
+    <script src="/js/mimi-bot.js"></script>
 </body>
 </html>
 

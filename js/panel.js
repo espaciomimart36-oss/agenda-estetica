@@ -308,6 +308,9 @@ async function reservarTurno(fecha,hora){
             fecha,
             hora,
             turnoAt: Number.isNaN(turnoAt.getTime()) ? null : turnoAt,
+            status:"confirmado",
+            estado:"confirmado",
+            reminderSent:false,
             recordatorios: {
                 h48: { enviado: false },
                 h24: { enviado: false },

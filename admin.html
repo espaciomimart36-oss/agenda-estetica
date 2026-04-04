@@ -223,6 +223,18 @@
                 </div>
             </div>
         </div>
+        <div id="confirm-unblock-day-modal" class="modal-overlay" style="display:none;">
+            <div class="modal-card">
+                <h3>Desbloquear día</h3>
+                <p id="confirm-unblock-day-text-1"></p>
+                <p id="confirm-unblock-day-text-2" style="color:#b33a47; font-weight:600;"></p>
+                <p>¿Querés quitar el bloqueo y habilitar este día?</p>
+                <div class="modal-actions">
+                    <button class="btn-mini" onclick="cerrarModalDesbloqueo()">Cancelar</button>
+                    <button class="btn-mini" style="background:#2e7d52;color:#fff;" onclick="confirmarDesbloqueodia()">Sí, desbloquear</button>
+                </div>
+            </div>
+        </div>
         <div id="confirm-delete-modal" class="modal-overlay" style="display:none;">
             <div class="modal-card delicado">
                 <h3>Confirmar borrado</h3>
@@ -1462,7 +1474,7 @@
                 div.innerText = d;
                 div.onclick = () => {
                     if (cierreDia) {
-                        mostrarAviso(formatoFechaISO(fStr), `${cierreDia.reason || 'No disponible'}`);
+                        abrirModalDesbloqueo(fStr, cierreDia);
                         return;
                     }
                     verTurnos(fStr, div);
@@ -1474,6 +1486,43 @@
         window.cerrarModalBloqueo = () => {
             bloqueoPendienteConReserva = null;
             document.getElementById("confirm-block-modal").style.display = "none";
+        };
+
+        let desbloqueodiaPendiente = null;
+
+        const normalizarMotivoDia = (fStr, reason) => {
+            const txt = (reason || '').toString().trim();
+            if (fStr === '2026-04-03' && /jueves santo/i.test(txt))
+                return txt.replace(/jueves santo/ig, 'Viernes Santo');
+            if (fStr === '2026-04-02' && /viernes santo/i.test(txt))
+                return txt.replace(/viernes santo/ig, 'Jueves Santo');
+            return txt;
+        };
+
+        const abrirModalDesbloqueo = (fStr, cierreDia) => {
+            desbloqueodiaPendiente = { fStr, cierreDia };
+            const motivoCorregido = normalizarMotivoDia(fStr, cierreDia.reason) || 'No disponible';
+            document.getElementById('confirm-unblock-day-text-1').textContent = `📅 ${formatoFechaISO(fStr)}`;
+            document.getElementById('confirm-unblock-day-text-2').textContent = `Motivo: ${motivoCorregido}`;
+            document.getElementById('confirm-unblock-day-modal').style.display = 'flex';
+        };
+
+        window.cerrarModalDesbloqueo = () => {
+            desbloqueodiaPendiente = null;
+            document.getElementById('confirm-unblock-day-modal').style.display = 'none';
+        };
+
+        window.confirmarDesbloqueodia = async () => {
+            if (!desbloqueodiaPendiente) return;
+            const { fStr, cierreDia } = desbloqueodiaPendiente;
+            cerrarModalDesbloqueo();
+            try {
+                await deleteDoc(doc(db, 'calendarExceptions', cierreDia.id || fStr));
+                mostrarAviso('Día desbloqueado correctamente');
+                cargarTodo();
+            } catch (err) {
+                mostrarAviso('Error al desbloquear: ' + err.message);
+            }
         };
 
         window.confirmarBloqueoConReserva = async () => {
@@ -1562,6 +1611,7 @@
             try {
                 mostrarLoader(true);
                 await updateDoc(doc(db, "reservas", idReserva), {
+                    status: "cancelado",
                     estado: "cancelado",
                     canceladoPor: "admin_bloqueo_horario",
                     canceladoAt: serverTimestamp()
@@ -1626,7 +1676,9 @@
                     fecha,
                     hora: horaNormalizada,
                     origen: "admin",
-                    estado: "activo",
+                    status: "confirmado",
+                    estado: "confirmado",
+                    reminderSent: false,
                     timestamp: serverTimestamp(),
                     creadoPor: "admin_manual"
                 };
