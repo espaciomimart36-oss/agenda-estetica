@@ -324,7 +324,7 @@
                     <select id="filtroOrigen" class="select-input" onchange="filtrarReservasInput()" title="Origen">
                         <option value="">Todos los orígenes</option>
                         <option value="jornada">Solo jornada</option>
-                        <option value="normal">Solo estética</option>
+                        <option value="normal">Solo normales</option>
                     </select>
                     <input type="date" id="filtroDesde" class="select-input" onchange="filtrarReservasInput()" title="Desde">
                     <input type="date" id="filtroHasta" class="select-input" onchange="filtrarReservasInput()" title="Hasta">
@@ -835,8 +835,8 @@
         };
         const renderTagOrigen = (r = {}) => {
             const origen = resolverOrigenReserva(r);
-            const labels = { jornada: 'Jornada', normal: 'Estética' };
-            return `<span class="tag-origen ${origen}">${labels[origen] || 'Estética'}</span>`;
+            const labels = { jornada: 'Jornada', normal: 'Normal' };
+            return `<span class="tag-origen ${origen}">${labels[origen] || 'Normal'}</span>`;
         };
 
         const asegurarCampoMembresiaEnFirestore = async (docsClientes = []) => {
