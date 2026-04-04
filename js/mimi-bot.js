@@ -9,28 +9,53 @@
   // ── Base de conocimiento de Mimi ──────────────────────────
   const KB = [
 
-    // ── SALUDOS / PRESENTACIÓN ──────────────────────────────
+    // ── IDENTIDAD / PRESENTACIÓN ────────────────────────────
     {
       id: 'saludo',
       keywords: ['hola', 'buenas', 'buen dia', 'buen día', 'buenas tardes', 'buenas noches',
                  'hey', 'hi', 'hello', 'que tal', 'qué tal', 'como estas', 'cómo estás'],
-      answer: '¡Hola! Soy <strong>Mimi</strong> 🌿, la asistente de <strong>Espacio Mimar T</strong>. Podés preguntarme sobre nuestros tratamientos, cómo reservar, si sos nueva paciente o cualquier otra consulta. ¿En qué te puedo ayudar?'
+      answer: '¡Hola! Soy <strong>Mimi</strong> 🌿, la asistente virtual de <strong>Espacio Mimar T</strong>. Estoy radiante y con muchas ganas de ayudarte a reservar tu momento de relax. ¿En qué te puedo ayudar?'
+    },
+    {
+      id: 'quien_es_mimi',
+      keywords: ['quien sos', 'quién sos', 'que sos', 'qué sos', 'quien es mimi', 'quién es mimi',
+                 'sos un bot', 'sos humana', 'sos real', 'que eres', 'qué eres', 'quien habla',
+                 'quién habla', 'sos una persona', 'sos una ia', 'sos inteligencia artificial'],
+      answer: 'Soy <strong>Mimi</strong>, la asistente virtual de Espacio Mimar T. 🤖✨ Nací en abril de 2026, creada por <strong>Braulio V.</strong> — el desarrollador de esta web — para ayudarte a conocer los servicios y reservar tus turnos con Gimena.'
+    },
+    {
+      id: 'quien_hizo',
+      keywords: ['quien te hizo', 'quién te hizo', 'quien te creo', 'quién te creó',
+                 'quien te programo', 'quién te programó', 'braulio', 'desarrollador',
+                 'quien te diseño', 'quién te diseñó'],
+      answer: 'Nací de la mano de <strong>Braulio V.</strong>, el desarrollador de esta web, para ser la asistente digital de Gimena. 💻 Él me programó para que vos puedas consultar y reservar sin complicaciones.'
+    },
+    {
+      id: 'como_estas',
+      keywords: ['como estas', 'cómo estás', 'como te va', 'cómo te va', 'que tal estas',
+                 'qué tal estás', 'todo bien', 'como andas', 'cómo andás'],
+      answer: 'Estoy radiante y con muchas ganas de ayudarte a reservar tu momento de relax. 🌿 ¿En qué te puedo ayudar hoy?'
+    },
+    {
+      id: 'cuadro',
+      keywords: ['cuadro', 'de que cuadro', 'de qué cuadro', 'hincha', 'futbol', 'fútbol',
+                 'boca', 'river', 'de quien sos', 'de quién sos', 'que equipo', 'qué equipo'],
+      answer: 'Soy de <strong>Boca Juniors</strong>, ¡el más grande, obviamente! 💙💛💙 Aunque acá lo importante es tu piel, no el fútbol. ¿Te ayudo a reservar un turno?'
     },
     {
       id: 'que_es',
       keywords: ['que es espacio mimar', 'qué es espacio mimar', 'que es mimar',
                  'formo parte', 'ser paciente', 'unirme', 'quiero ser paciente',
                  'como entro', 'cómo entro', 'como me anoto', 'cómo me anoto',
-                 'como funciona', 'cómo funciona', 'de que trata', 'de qué trata',
-                 'que ofrecen', 'qué ofrecen', 'que hacen', 'qué hacen'],
-      answer: '<strong>Espacio Mimar T</strong> es un espacio de estética avanzada en <strong>Comandante Andresito, Misiones</strong>, atendido por <strong>Gimena Knack</strong> — Farmacéutica (MP 1212) y Dermatocosmiatra (RC 2319). 🌿 Ofrecemos tratamientos faciales y corporales personalizados con respaldo profesional. ¿Querés saber cómo hacerte paciente?'
+                 'como funciona', 'cómo funciona', 'de que trata', 'de qué trata'],
+      answer: '<strong>Espacio Mimar T</strong> es un espacio de estética avanzada en <strong>Comandante Andresito, Misiones</strong>, atendido por <strong>Gimena Knack</strong> — Farmacéutica (MP 1212) y Dermatocosmiatra (RC 2319). 🌿 Contamos con 8 servicios especializados cargados en el sistema. ¿Querés saber cómo hacerte paciente?'
     },
 
     // ── NUEVA PACIENTE / REGISTRO ───────────────────────────
     {
       id: 'nueva_paciente',
       keywords: ['nueva paciente', 'nuevo paciente', 'primera vez', 'primer vez',
-                 'nunca fui', 'nunca fui', 'me doy de alta', 'darme de alta',
+                 'nunca fui', 'me doy de alta', 'darme de alta',
                  'como me registro', 'cómo me registro', 'registrarme',
                  'alta', 'ingresar por primera'],
       answer: 'Si es tu primera vez, escribinos por WhatsApp con el botón <strong>"Quiero ser paciente"</strong> que está en la página principal. 💬 Te acompañamos en el alta y te explicamos todo. Una vez registrada, ya podés reservar turnos desde la web.'
@@ -38,48 +63,79 @@
     {
       id: 'registro_credencial',
       keywords: ['credencial', 'iniciar sesion', 'iniciar sesión', 'loguearse', 'loguearme',
-                 'ingresar', 'entrar al sistema', 'nombre', 'dni', 'acceso',
+                 'ingresar', 'entrar al sistema', 'dni', 'acceso',
                  'como ingreso', 'cómo ingreso', 'login'],
       answer: 'Para ingresar al sistema escribís tu <strong>Nombre + inicial del apellido</strong> (ej: "juan p") y tu <strong>DNI sin puntos</strong>. Eso es todo — sin contraseñas. 🔑 Si no te reconoce, verificá haber quedado registrada con Gimena primero.'
     },
 
     // ── SERVICIOS ───────────────────────────────────────────
     {
-      id: 'led',
-      keywords: ['led', 'facial led', 'regenerativo', 'luz', 'cabina led', 'luminosidad',
-                 'firmeza', 'acne', 'acné', 'rojez', 'rojeces', 'manchas', 'inflamacion',
-                 'inflamación', 'elastina', 'colageno', 'colágeno', 'piel sensible', 'facial'],
-      answer: '✨ <strong>Facial LED Regenerativo</strong> — 30 min. Tratamiento no invasivo con cabina LED profesional que estimula colágeno y elastina para mejorar <strong>firmeza, luminosidad y textura</strong>. También ayuda con acné, inflamación, rojeces y manchas. Sin dolor ni recuperación, ideal para piel sensible. Resultados desde la primera sesión.'
+      id: 'todos_servicios',
+      keywords: ['que servicios', 'qué servicios', 'todos los servicios', 'lista servicios',
+                 'que tratamientos', 'qué tratamientos', 'que ofrecen', 'qué ofrecen',
+                 'servicios disponibles', 'catalogo', 'catálogo', 'cuantos servicios',
+                 'cuántos servicios', 'que tienen', 'qué tienen'],
+      answer: 'En Espacio Mimar T contamos con <strong>8 servicios especializados</strong> cargados en nuestro sistema. 🌿 Te invito a ver la sección de servicios en el inicio para conocer todos los detalles visuales. Acá te doy un resumen rápido:<br><br>1. 📋 <strong>Consulta</strong> — Evaluación y plan estético personalizado<br>2. ✨ <strong>Tratamiento Facial</strong> — Acné, manchas, cicatrices (60 min)<br>3. 🌿 <strong>Tratamientos Corporales</strong> — Celulitis y flacidez (60 min)<br>4. 🖤 <strong>Manchas Corporales</strong> — Unificación del tono (60 min)<br>5. 💪 <strong>MioUp</strong> — Tonificación electromagnética (30 min)<br>6. ❄️ <strong>Lipocell Cryo 360</strong> — Criolipólisis con frío (60 min)<br>7. 💋 <strong>Hidratación de Labios</strong> — Ácido hialurónico (60 min)<br>8. 💡 <strong>Facial LED Regenerativo</strong> — Colágeno y elastina (30 min)'
+    },
+    {
+      id: 'consulta',
+      keywords: ['consulta', 'evaluacion', 'evaluación', 'primera consulta', 'plan estetico',
+                 'plan estético', 'valoracion', 'valoración', 'que necesito', 'qué necesito'],
+      answer: '📋 <strong>Consulta</strong> — Reservá un turno de evaluación profesional donde Gimena diseña tu <strong>plan estético personalizado</strong>. Es el punto de partida ideal si no sabés por dónde empezar. Es el primer servicio del sistema.'
+    },
+    {
+      id: 'facial',
+      keywords: ['facial', 'tratamiento facial', 'acne', 'acné', 'manchas', 'cicatriz',
+                 'cicatrices', 'piel', 'rostro', 'cara'],
+      answer: '✨ <strong>Tratamiento Facial</strong> — 60 min. Mejora la salud de la piel, trabaja <strong>acné, manchas y cicatrices</strong>. Protocolo diseñado por Gimena según el tipo de piel de cada paciente.'
     },
     {
       id: 'corporal',
       keywords: ['corporal', 'zona', 'abdomen', 'flancos', 'gluteos', 'glúteos',
                  'subglutea', 'subglútea', 'celulitis', 'estrias', 'estrías',
                  'retencion', 'retención', 'liquidos', 'líquidos', 'tono muscular',
-                 'sesion corporal', 'sesión corporal', 'reduccion', 'reducción'],
-      answer: '🌿 <strong>Sesión Corporal Combinada por Zona</strong> — 60 min. Combina distintas tecnologías para tratar <strong>flacidez, celulitis, estrías, retención de líquidos y tono muscular</strong>. Cada sesión trabaja <strong>una sola zona</strong> (abdomen, flancos, glúteos o zona subglútea). Se recomiendan <strong>mínimo 6 sesiones por zona</strong> para resultados visibles y duraderos.'
+                 'sesion corporal', 'sesión corporal', 'reduccion', 'reducción',
+                 'tratamiento corporal', 'contorno'],
+      answer: '🌿 <strong>Tratamientos Corporales</strong> — 60 min. Mejoran el <strong>contorno corporal, celulitis y flacidez</strong>. Cada sesión trabaja una zona específica con tecnología combinada y protocolo personalizado.'
     },
     {
-      id: 'brazos',
-      keywords: ['brazo', 'brazos', 'reafirmacion brazo', 'reafirmación brazo',
-                 'flacidez brazo', 'brazo flacido', 'brazo flácido', 'contorno brazo',
-                 'firmeza brazo', 'reafirmacion integral'],
-      answer: '💎 <strong>Reafirmación Integral de Brazos</strong> — 60 min. Protocolo personalizado que trabaja <strong>firmeza, textura y contorno del brazo</strong>. El abordaje se adapta a cada caso: si predomina flacidez, cambios en la piel o variaciones de volumen. Sesiones y frecuencia se definen en la evaluación con Gimena.'
+      id: 'manchas_corporales',
+      keywords: ['manchas corporales', 'manchas en el cuerpo', 'tono corporal', 'tono parejo',
+                 'unificar tono', 'renovacion cutanea', 'renovación cutánea', 'manchas cuerpo'],
+      answer: '🖤 <strong>Tratamiento Manchas Corporales</strong> — 60 min. Unifica el tono de la piel y estimula la <strong>renovación cutánea</strong>. Ideal para zonas con pigmentación irregular o manchas localizadas.'
     },
     {
-      id: 'todos_servicios',
-      keywords: ['que servicios', 'qué servicios', 'todos los servicios', 'lista servicios',
-                 'que tratamientos', 'qué tratamientos', 'que ofrecen', 'qué ofrecen',
-                 'servicios disponibles', 'catalogo', 'catálogo'],
-      answer: 'Estos son nuestros tratamientos actuales:<br><br>✨ <strong>Facial LED Regenerativo</strong> — 30 min<br>🌿 <strong>Sesión Corporal Combinada por Zona</strong> — 60 min<br>💎 <strong>Reafirmación Integral de Brazos</strong> — 60 min<br><br>Todos son personalizados por Gimena según tu tipo de piel y objetivos. ¿Querés info de alguno en particular?'
+      id: 'mioUp',
+      keywords: ['mio', 'mio up', 'mioUp', 'mio-up', 'tonificacion', 'tonificación',
+                 'electromagnetico', 'electromagnético', 'muscular', 'firmeza muscular',
+                 'definicion muscular', 'definición muscular'],
+      answer: '💪 <strong>Tonificación Muscular MioUp</strong> — 30 min. Usa tecnología <strong>electromagnética</strong> para generar contracciones musculares profundas, mejorando firmeza y definición. Sin esfuerzo físico de tu parte.'
     },
-
-    // ── FLACIDEZ / OBJETIVOS ────────────────────────────────
+    {
+      id: 'cryo',
+      keywords: ['cryo', 'lipocell', 'criolipólisis', 'criolipolisis', 'frio', 'frío',
+                 'adiposidad', 'grasa localizada', 'reducir grasa', 'congelar grasa'],
+      answer: '❄️ <strong>Lipocell Cryo 360</strong> — 60 min. Criolipólisis que reduce la <strong>adiposidad localizada mediante frío controlado</strong>. Tecnología no invasiva para zonas donde la dieta y el ejercicio no llegan.'
+    },
+    {
+      id: 'labios',
+      keywords: ['labios', 'labio', 'hialuronico', 'hialurónico', 'hidratacion labios',
+                 'hidratación labios', 'labios secos', 'brillo labios', 'revitalizacion labios',
+                 'revitalización labios'],
+      answer: '💋 <strong>Hidratación y Revitalización de Labios</strong> — 60 min. Combina <strong>ácidos hialurónicos y activos</strong> para tratar labios secos, opacos o sin brillo. Resultado visible desde la primera sesión.'
+    },
+    {
+      id: 'led',
+      keywords: ['led', 'facial led', 'regenerativo', 'luz', 'cabina led', 'luminosidad',
+                 'firmeza', 'rojez', 'rojeces', 'inflamacion', 'inflamación',
+                 'elastina', 'colageno', 'colágeno', 'piel sensible'],
+      answer: '💡 <strong>Facial LED Regenerativo</strong> — 30 min. Tratamiento no invasivo con cabina LED profesional que estimula <strong>colágeno y elastina</strong> para mejorar firmeza, luminosidad y textura. Sin dolor, ideal para piel sensible. Resultados desde la primera sesión.'
+    },
     {
       id: 'flacidez',
       keywords: ['flacidez', 'flácida', 'flacida', 'reafirmar', 'tensar', 'tonicidad',
                  'piel caida', 'piel caída', 'reafirmante'],
-      answer: 'Para flacidez tenemos dos opciones según la zona: 💎 <strong>Reafirmación Integral de Brazos</strong> (para el brazo) y 🌿 <strong>Sesión Corporal por Zona</strong> (para abdomen, glúteos, flancos, etc.). Gimena evalúa cada caso y define el protocolo más adecuado en la primera consulta.'
+      answer: 'Para flacidez tenemos varias opciones según la zona: 💎 <strong>Tratamientos Corporales</strong> para cuerpo, 💪 <strong>MioUp</strong> para tonificar músculo, y protocolos de zona específicos. Gimena evalúa cada caso y define el protocolo en la primera consulta.'
     },
 
     // ── TURNOS / RESERVAS ───────────────────────────────────
@@ -88,15 +144,21 @@
       keywords: ['turno', 'reservar', 'reserva', 'agendar', 'agenda', 'cita', 'sacar turno',
                  'pedir turno', 'disponibilidad', 'fecha', 'horario', 'como reservo',
                  'cómo reservo', 'cuando puedo', 'cuándo puedo'],
-      answer: '📅 Reservás directamente desde la web — el sistema muestra disponibilidad <strong>en tiempo real</strong>. Ingresás, elegís servicio, fecha y horario, y confirmás. El sistema te guía en cada paso.'
+      answer: '📅 Podés agendar acá mismo desde la web — el sistema muestra disponibilidad <strong>en tiempo real</strong>. Una vez que elijas el horario, el sistema de Braulio te manda la confirmación por WhatsApp al toque. ¿Necesitás ayuda para empezar?'
+    },
+    {
+      id: 'sabados',
+      keywords: ['sabado', 'sábado', 'sabados', 'sábados', 'fin de semana', 'atienden sabado',
+                 'abren sabado', 'horario sabado'],
+      answer: '📅 Fijate en el calendario de acá de la web, ahí Gimena tiene cargados los horarios reales que tiene libres cada semana. Los sábados dependen de la disponibilidad de cada fecha en particular.'
     },
     {
       id: 'confirmacion',
       keywords: ['confirmacion', 'confirmación', 'confirmar', 'whatsapp turno',
                  'mensaje confirmacion', 'me llega', 'te llega', 'aviso',
                  'notificacion', 'notificación', 'reservé', 'reserve',
-                 'no me llego', 'no me llegó', 'llego el mensaje', 'llegó el mensaje'],
-      answer: '📩 Una vez que confirmás en la web te llega un <strong>mensaje automático en tu WhatsApp</strong> con todos los detalles del turno. Si no te llegó, verificá que el número cargado en tu ficha sea el correcto.'
+                 'no me llego', 'no me llegó'],
+      answer: '📩 Una vez que confirmás en la web te llega un <strong>mensaje automático en tu WhatsApp</strong> con todos los detalles del turno. Si no te llegó, verificá que el número en tu ficha sea el correcto.'
     },
     {
       id: 'cancelar',
@@ -113,19 +175,21 @@
       answer: 'Podés ver tus próximos turnos en la sección <strong>"Ver mis próximos turnos"</strong> dentro de la página de servicios. Ingresás con tu DNI y te muestra todo ordenado cronológicamente. 📋'
     },
 
-    // ── PRECIOS / MEMBRESÍA ─────────────────────────────────
+    // ── PRECIOS ─────────────────────────────────────────────
     {
       id: 'precios',
-      keywords: ['precio', 'costo', 'cuanto', 'cuánto', 'vale', 'tarifa',
-                 'cobran', 'cobras', 'presupuesto', 'cuanto sale', 'cuánto sale'],
-      answer: 'Los precios se informan en el consultorio, ya que cada protocolo se define según la <strong>evaluación personalizada de Gimena</strong> en la primera visita. Cada caso es diferente y el plan se arma a medida.'
+      keywords: ['precio', 'costo', 'cuanto', 'cuánto', 'vale', 'tarifa', 'caro', 'cara',
+                 'cobran', 'cobras', 'presupuesto', 'cuanto sale', 'cuánto sale', 'es caro'],
+      answer: '💰 Gimena trabaja con protocolos de grado farmacéutico — los precios dependen de lo que tu piel necesite, por eso lo mejor es arrancar con una <strong>Consulta</strong> de evaluación. Así sabés exactamente qué necesitás y cuánto vale tu plan personalizado.'
     },
+
+    // ── PREPARACIÓN ─────────────────────────────────────────
     {
-      id: 'membresia',
-      keywords: ['membresia', 'membresía', 'plan', 'paquete', 'sesiones', 'combo',
-                 'cuantas sesiones', 'cuántas sesiones', 'como funciona el plan',
-                 'cómo funciona el plan'],
-      answer: 'Los tratamientos se trabajan en <strong>planes de sesiones</strong> — por ejemplo, la Sesión Corporal requiere un mínimo de 6 sesiones por zona para resultados visibles. 📋 La cantidad exacta y frecuencia se define con Gimena en la evaluación inicial.'
+      id: 'que_llevar',
+      keywords: ['que llevar', 'qué llevar', 'como ir', 'cómo ir', 'preparacion', 'preparación',
+                 'que necesito llevar', 'tengo que llevar algo', 'como prepararme',
+                 'cómo prepararme', 'requisitos', 'que hago antes', 'qué hago antes'],
+      answer: '🌸 Para los faciales, vení con la cara lavada y muchas ganas de que te mimen. Para los tratamientos corporales, ropa cómoda y holgada. Gimena te indica si hay algo específico según el tratamiento elegido.'
     },
 
     // ── PROFESIONAL ─────────────────────────────────────────
@@ -133,7 +197,7 @@
       id: 'gimena',
       keywords: ['gimena', 'quien atiende', 'quién atiende', 'farmaceutica', 'farmacéutica',
                  'dermocosmiatra', 'cosmiatra', 'profesional', 'matricula', 'matrícula',
-                 'credencial profesional', 'quien es', 'quién es'],
+                 'credencial profesional', 'quien es gimena', 'quién es gimena'],
       answer: '🎓 <strong>Gimena Knack</strong> es Farmacéutica (Matrícula Provincial 1212) y Dermatocosmiatra (Registro Cosmiátrico 2319). Fundadora de Espacio Mimar T, diseña y realiza cada tratamiento de forma personalizada con activos de grado farmacéutico.'
     },
 
@@ -166,9 +230,9 @@
   const FALLBACK = 'No tengo información específica sobre eso. 🌿 Te recomiendo consultarle directamente a <strong>Gimena por WhatsApp</strong> para que te pueda orientar mejor. ¿Te ayudo con algo más?';
 
   const QUICK_REPLIES = [
+    { label: '¿Qué servicios tienen?', id: 'todos_servicios' },
     { label: 'Facial LED Regenerativo', id: 'led' },
-    { label: 'Sesión Corporal por Zona', id: 'corporal' },
-    { label: 'Reafirmación de Brazos', id: 'brazos' },
+    { label: 'MioUp / Corporal', id: 'mioUp' },
     { label: '¿Cómo reservo turno?', id: 'turno' },
     { label: '¿Cómo confirmo mi turno?', id: 'confirmacion' },
     { label: '¿Cuánto sale?', id: 'precios' },
