@@ -890,8 +890,15 @@ POLÍTICA DE TURNOS:
     }
 
     // ── Saludo inicial ──
+    const esAdmin = window.location.pathname.includes('admin');
     async function greetUser() {
-      await addMsg('¡Hola! Soy <strong>Mimi</strong> 🌿, tu asistente de <strong>Espacio Mimar T</strong>. ¿En qué te puedo ayudar hoy?', 'bot', 200);
+      if (esAdmin) {
+        await addMsg('¡Hola <strong>Gime</strong>! 👑✨', 'bot', 200);
+        await showTyping(800);
+        await addMsg('Soy <strong>Mimi</strong>, tu asistente personal. Estoy acá para ayudarte con la administración de tu estética: podés preguntarme por turnos de pacientes, recordatorios, lo que necesites. 🌿', 'bot');
+      } else {
+        await addMsg('¡Hola! Soy <strong>Mimi</strong> 🌿, tu asistente de <strong>Espacio Mimar T</strong>. ¿En qué te puedo ayudar hoy?', 'bot', 200);
+      }
       renderQuickReplies();
     }
 
