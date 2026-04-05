@@ -796,24 +796,28 @@ POLÍTICA DE TURNOS:
     @keyframes mimi-fade-in { from { opacity:0; } to { opacity:1; } }
 
     @media (max-width: 700px) {
-      /* En móvil: modal centrado en pantalla */
+      /* Móvil: modal con insets explícitos — el navegador calcula el alto y el scroll funciona */
       #mimi-window {
         position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        right: auto !important;
-        bottom: auto !important;
-        transform: translate(-50%, -50%) !important;
-        width: calc(100vw - 28px) !important;
-        height: min(82dvh, 640px) !important;
-        max-height: min(82dvh, 640px) !important;
+        top: 10dvh !important;
+        left: 12px !important;
+        right: 12px !important;
+        bottom: 10dvh !important;
+        width: auto !important;
+        height: auto !important;
+        max-height: none !important;
+        transform: none !important;
+        transform-origin: center center !important;
         border-radius: 22px !important;
         z-index: 9998 !important;
       }
       #mimi-window.mimi-hidden {
-        transform: translate(-50%, -50%) scale(.85) !important;
-        opacity: 0;
-        pointer-events: none;
+        transform: scale(.88) !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+      #mimi-messages {
+        -webkit-overflow-scrolling: touch !important;
       }
       /* Burbuja siempre visible en la esquina */
       #mimi-bubble { right: 14px !important; bottom: 18px !important; width: 60px !important; height: 60px !important; opacity: 1 !important; pointer-events: auto !important; }
