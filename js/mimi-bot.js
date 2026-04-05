@@ -799,36 +799,46 @@ POLÍTICA DE TURNOS:
     @keyframes mimi-fade-in { from { opacity:0; } to { opacity:1; } }
 
     @media (max-width: 700px) {
-      /* Móvil: modal limpio con caja fija y scroll interno real */
+      /* Móvil: modal estable con grid para evitar cortes arriba/abajo */
       #mimi-window,
       #mimi-root.mimi-is-admin #mimi-window {
         position: fixed !important;
-        top: 56px !important;
-        left: 12px !important;
-        right: 12px !important;
-        bottom: 18px !important;
+        top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+        left: 10px !important;
+        right: 10px !important;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
         width: auto !important;
         height: auto !important;
         max-height: none !important;
+        display: grid !important;
+        grid-template-rows: auto minmax(0, 1fr) auto auto !important;
         transform: none !important;
         transform-origin: center center !important;
-        border-radius: 22px !important;
+        border-radius: 20px !important;
         z-index: 9998 !important;
         overflow: hidden !important;
       }
       #mimi-window.mimi-hidden,
       #mimi-root.mimi-is-admin #mimi-window.mimi-hidden {
-        transform: scale(.88) !important;
+        transform: scale(.96) translateY(8px) !important;
         opacity: 0 !important;
         pointer-events: none !important;
       }
+      #mimi-header {
+        padding: 12px 14px !important;
+      }
       #mimi-messages {
+        min-height: 0 !important;
+        height: auto !important;
+        overflow-y: auto !important;
+        padding: 14px 12px 10px !important;
         padding-bottom: 14px !important;
+        -webkit-overflow-scrolling: touch !important;
       }
       #mimi-quick {
         overflow-x: auto;
         flex-wrap: nowrap;
-        padding-bottom: 12px;
+        padding: 8px 12px 12px !important;
         scrollbar-width: none;
       }
       #mimi-quick::-webkit-scrollbar {
@@ -838,11 +848,12 @@ POLÍTICA DE TURNOS:
         flex: 0 0 auto;
       }
       #mimi-input-row {
-        padding-bottom: 16px;
+        padding: 10px 12px calc(env(safe-area-inset-bottom, 0px) + 14px) !important;
+        background: #fff;
       }
       #mimi-bubble {
         right: 14px !important;
-        bottom: 18px !important;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 18px) !important;
         width: 60px !important;
         height: 60px !important;
       }
