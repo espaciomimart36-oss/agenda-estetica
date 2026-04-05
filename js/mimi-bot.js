@@ -773,11 +773,23 @@ POLÍTICA DE TURNOS:
     }
     #mimi-send:hover { transform: scale(1.08); filter: brightness(1.1); }
 
+    /* ── Override admin ── */
+    #mimi-root.mimi-is-admin #mimi-window {
+      right: 16px !important;
+      bottom: 96px !important;
+      /* top se setea por JS según el header real */
+      height: auto !important;
+      max-height: none !important;
+    }
+
     @media (max-width: 600px) {
       #mimi-window {
         top: auto !important; left: 8px !important; right: 8px !important; bottom: 80px !important;
         width: calc(100vw - 16px) !important; max-height: 78dvh !important; height: 78dvh !important;
         border-radius: 18px !important;
+      }
+      #mimi-root.mimi-is-admin #mimi-window {
+        bottom: 88px !important;
       }
       #mimi-bubble { right: 12px; bottom: 16px; width: 60px; height: 60px; }
     }
@@ -837,6 +849,23 @@ POLÍTICA DE TURNOS:
     const container = document.createElement('div');
     container.innerHTML = HTML;
     document.body.appendChild(container);
+
+    const root  = document.getElementById('mimi-root');
+
+    // En admin: marcar el root y fijar top dinámicamente bajo el header sticky
+    if (esAdmin) {
+      root.classList.add('mimi-is-admin');
+      const adjustAdminTop = () => {
+        const winEl  = document.getElementById('mimi-window');
+        if (!winEl) return;
+        const header = document.querySelector('.header') || document.querySelector('header');
+        const topOffset = header ? Math.round(header.getBoundingClientRect().bottom + 8) : 90;
+        winEl.style.top = topOffset + 'px';
+      };
+      // Esperar que el header esté renderizado
+      setTimeout(adjustAdminTop, 100);
+      window.addEventListener('resize', adjustAdminTop);
+    }
 
     const bubble  = document.getElementById('mimi-bubble');
     const win     = document.getElementById('mimi-window');
