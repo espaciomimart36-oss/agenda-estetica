@@ -200,6 +200,12 @@
             .replace(/\"/g, "&quot;")
             .replace(/'/g, "&#39;");
 
+        const limpiarNombrePaciente = (value) => String(value ?? "")
+            .replace(/\(.*?dni.*?\)/ig, "")
+            .replace(/dni\s*[:\-]?\s*.*$/ig, "")
+            .replace(/\s+/g, " ")
+            .trim();
+
         const obtenerEstadoTurno = (turno = {}) => {
             const estados = [turno.estado, turno.status]
                 .map((value) => (value || "").toString().trim().toLowerCase())
@@ -239,11 +245,13 @@
         const construirWhatsAppCancelacionUrl = (turno = {}, motivo = "") => {
             const fechaTexto = formatearFechaTexto(turno.fecha || "");
             const horaTexto = (turno.hora || "").toString().trim() || "horario a confirmar";
+            const nombrePaciente = limpiarNombrePaciente(nombreSesion || turno.clienteNombre || turno.nombre || turno.cliente || "paciente");
             const motivoTexto = (motivo || obtenerMotivoCancelacion(turno) || "motivo personal")
                 .toString()
+                .replace(/\*/g, "")
                 .replace(/\s+/g, " ")
                 .trim();
-            const mensaje = `Hola Gime, tuve que cancelar mi turno por ${motivoTexto}. Era para el ${fechaTexto} a las ${horaTexto}.`;
+            const mensaje = `Hola Gime, soy ${nombrePaciente || "paciente"}. Tuve que cancelar mi turno por *${motivoTexto}*. Era para el ${fechaTexto} a las ${horaTexto}.`;
             return `https://wa.me/${WHATSAPP_GIMENA_NUMERO}?text=${encodeURIComponent(mensaje)}`;
         };
 
