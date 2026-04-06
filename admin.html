@@ -885,6 +885,27 @@
             return `<span class="tag-origen ${origen}">${labels[origen] || 'Normal'}</span>`;
         };
 
+        const esReservaBloqueoAdmin = (r = {}) => {
+            const textos = [
+                r.nombreLimpio,
+                r.clienteNombre,
+                r.nombre,
+                r.cliente,
+                r.displayName,
+                r.title,
+                r.servicio
+            ].map((value) => (value || '').toString().trim().toLowerCase()).filter(Boolean);
+
+            const phone = normalizarTelefono(r.phone ?? r.telefono ?? '');
+            const dni = normalizarDNI(r.dni ?? r.clienteDni ?? r.documento ?? r.document ?? '');
+            const mencionaBloqueo = textos.some((texto) => /bloquead[oa].*admin|admin.*bloquead[oa]/i.test(texto));
+            const servicioNoDisponible = textos.includes('no disponible');
+
+            return mencionaBloqueo || (servicioNoDisponible && !phone && !dni);
+        };
+
+        const esReservaPacienteExportable = (r = {}) => esReservaActiva(r) && !esReservaBloqueoAdmin(r);
+
         const asegurarCampoMembresiaEnFirestore = async (docsClientes = []) => {
             const pendientes = [];
             docsClientes.forEach((d) => {
@@ -1529,11 +1550,13 @@
             if (!tools) return;
 
             const { jsPDF, runAutoTable } = tools;
-            const reservasOrdenadas = [...todasLasReservas].sort((a, b) => {
+            const reservasOrdenadas = todasLasReservas
+                .filter((reserva) => esReservaPacienteExportable(reserva))
+                .sort((a, b) => {
                 const porFecha = (a.fecha || '').localeCompare(b.fecha || '');
                 if (porFecha !== 0) return porFecha;
                 return (a.hora || '').localeCompare(b.hora || '');
-            });
+                });
 
             const docPdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
             docPdf.setTextColor(47, 90, 71);
