@@ -21,14 +21,14 @@
       keywords: ['quien sos', 'quién sos', 'que sos', 'qué sos', 'quien es mimi', 'quién es mimi',
                  'sos un bot', 'sos humana', 'sos real', 'que eres', 'qué eres', 'quien habla',
                  'quién habla', 'sos una persona', 'sos una ia', 'sos inteligencia artificial'],
-      answer: 'Soy <strong>Mimi</strong>, la asistente virtual de Espacio Mimar T. 🤖✨ Nací en abril de 2026, creada por <strong>Braulio V.</strong> — el desarrollador de esta web — para ayudarte a conocer los servicios y reservar tus turnos con Gimena.<br><br>Si te gustaría crear una web así, <a href="https://wa.me/5493757671229?text=Hola%20Braulio%2C%20me%20gustar%C3%ADa%20crear%20una%20web%20as%C3%AD" target="_blank" rel="noopener noreferrer"><strong>hablá con Braulio por WhatsApp</strong></a>.'
+        answer: 'Soy <strong>Mimi</strong>, la asistente virtual de Espacio Mimar T. 🤖✨ Nací en abril de 2026, creada por <strong>Braulio V.</strong> — el desarrollador de esta web — para ayudarte a conocer los servicios y reservar tus turnos con Gimena.<br><br><a href="https://wa.me/5493757671229?text=Hola%20Braulio%2C%20me%20gustar%C3%ADa%20crear%20una%20web%20as%C3%AD" target="_blank" rel="noopener noreferrer"><strong>¿Querés una web así para tu negocio? Hablá con Braulio</strong></a>.'
     },
     {
       id: 'quien_hizo',
       keywords: ['quien te hizo', 'quién te hizo', 'quien te creo', 'quién te creó',
                  'quien te programo', 'quién te programó', 'braulio', 'desarrollador',
                  'quien te diseño', 'quién te diseñó'],
-      answer: 'Nací de la mano de <strong>Braulio V.</strong>, el desarrollador de esta web, para ser la asistente digital de Gimena. 💻 Él me programó para que vos puedas consultar y reservar sin complicaciones.<br><br>¿Te gustaría crear una web así? <a href="https://wa.me/5493757671229?text=Hola%20Braulio%2C%20me%20gustar%C3%ADa%20crear%20una%20web%20as%C3%AD" target="_blank" rel="noopener noreferrer"><strong>Escribile por WhatsApp</strong></a>.'
+        answer: 'Nací de la mano de <strong>Braulio V.</strong>, el desarrollador de esta web, para ser la asistente digital de Gimena. 💻 Él me programó para que vos puedas consultar y reservar sin complicaciones.<br><br><a href="https://wa.me/5493757671229?text=Hola%20Braulio%2C%20me%20gustar%C3%ADa%20crear%20una%20web%20as%C3%AD" target="_blank" rel="noopener noreferrer"><strong>¿Querés una web así para tu negocio? Hablá con Braulio</strong></a>.'
     },
     {
       id: 'como_estas',
