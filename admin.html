@@ -1289,12 +1289,12 @@
                     <div id="ne-${r.id}" style="display:none">
                         <textarea id="n-${r.id}" style="width:100%; box-sizing:border-box; margin-top:6px">${escapeHtml(r.detalleSesion)}</textarea>
                         <div style="display:flex; gap:6px; margin-top:4px">
-                            <button class="btn-save" onclick="guardarN('${r.id}','${r.fecha}','${r.phone || ''}','${r.nombreLimpio}','${r.hora}','${r.servicio || ''}')">Guardar</button>
+                            <button class="btn-save" onclick="guardarN('${r.id}')">Guardar</button>
                             <button onclick="cancelarEdicionAdmin('${r.id}')" style="border:1px solid #ccc; background:#f9f9f9; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:12px">Cancelar</button>
                         </div>
                     </div>` : `
                     <textarea id="n-${r.id}" placeholder="Detalle de la sesión..." style="width:100%; box-sizing:border-box; margin-top:6px"></textarea>
-                    <button id="btnN-${r.id}" class="btn-save" onclick="guardarN('${r.id}','${r.fecha}','${r.phone || ''}','${r.nombreLimpio}','${r.hora}','${r.servicio || ''}')">Guardar nota</button>`;
+                    <button id="btnN-${r.id}" class="btn-save" onclick="guardarN('${r.id}')">Guardar nota</button>`;
                 return `
                 <div class="detalle-dia-card">
                     ${renderTagOrigen(r)}<br>
@@ -1924,13 +1924,21 @@
                     displayEl.style.display = "block";
                     document.getElementById(`ne-${id}`).style.display = "none";
                 } else {
+                    // Primera vez: crear nd- (display) + ne- (edición) y eliminar el textarea original
                     const d = document.createElement("div");
                     d.id = `nd-${id}`;
                     d.style.cssText = "margin-top:8px; background:#f3faf6; border:1px solid #b6dfc9; border-radius:10px; padding:10px 34px 10px 10px; font-size:13px; color:#2f5a47; white-space:pre-wrap; position:relative";
                     d.innerHTML = `${escapeHtml(nota)}<button title="Editar nota" onclick="activarEdicionNotaAdmin('${id}')" style="position:absolute; top:6px; right:8px; background:none; border:none; cursor:pointer; font-size:12px">Editar</button>`;
-                    el.replaceWith(d);
+
+                    const ne = document.createElement("div");
+                    ne.id = `ne-${id}`;
+                    ne.style.display = "none";
+                    ne.innerHTML = `<textarea id="n-${id}" style="width:100%; box-sizing:border-box; margin-top:6px">${escapeHtml(nota)}</textarea><div style="display:flex; gap:6px; margin-top:4px"><button class="btn-save" onclick="guardarN('${id}')">Guardar</button><button onclick="cancelarEdicionAdmin('${id}')" style="border:1px solid #ccc; background:#f9f9f9; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:12px">Cancelar</button></div>`;
+
                     const btnGuardar = document.getElementById(`btnN-${id}`);
                     if (btnGuardar) btnGuardar.remove();
+                    el.replaceWith(d);
+                    d.insertAdjacentElement("afterend", ne);
                 }
                 // Mostrar botón enviar resumen si no existe ya
                 if (!document.getElementById(`btnEnviarResumen-${id}`)) {
