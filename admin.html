@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -227,20 +227,12 @@
         </div>
         <div class="header">
             <h2 style="font-family:'Playfair Display'; margin:0; color:var(--verde-oscuro)">Gimena Knack | Panel</h2>
-            <div id="installWidgetAdmin" class="install-widget-admin" aria-live="polite">
-                <div class="install-inner">
-                    <p class="install-title">Instalar Panel Admin</p>
-                    <p id="installTextAdmin" class="install-text">Instalá el panel para abrirlo más rápido desde tu inicio.</p>
-                    <div class="install-actions">
-                        <button id="btnInstallAdminApp" class="btn-install" type="button">Instalar app</button>
-                        <button id="btnDismissAdminInstall" class="btn-dismiss" type="button">Ahora no</button>
-                    </div>
-                </div>
-            </div>
+            <!-- Widget de instalación oculto para evitar confusión con APK/descarga -->
+            <div id="installWidgetAdmin" class="install-widget-admin" aria-live="polite" style="display:none !important; visibility:hidden !important; height:0; overflow:hidden;"></div>
             <div class="menu-nav">
                 <button class="btn-nav active" id="btn-agenda" onclick="navegar('agenda')">📅 Agenda</button>
                 <button class="btn-nav" id="btn-historias" onclick="navegar('historias')">📁 Historias</button>
-                <button class="btn-nav" id="btn-buscar" onclick="navegar('buscar')">🔍 Buscar</button>
+                <button class="btn-nav" id="btn-buscar" onclick="navegar('buscar')">🔍 Buscar sesiones</button>
                 <button class="btn-nav" id="btn-clientes" onclick="navegar('clientes')">🧾 Pacientes</button>
                 <button class="btn-nav" id="btn-export" onclick="navegar('export')">📄 Exportar</button>
                 <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
@@ -280,7 +272,7 @@
             </div>
 
             <div id="sec-buscar" class="section">
-                <input type="text" class="busc-input" id="inpBusReservas" placeholder="Nombre del paciente..." oninput="filtrarReservasInput()">
+                <input type="text" class="busc-input" id="inpBusReservas" placeholder="Nombre del paciente..." oninput="filtrarReservasInput()" autocomplete="off">
                 <div class="filtros-advanced">
                     <select id="filtroServicio" class="select-input" onchange="filtrarReservasInput()">
                         <option value="">Todos los servicios</option>
@@ -356,6 +348,7 @@
         </div>
     </div>
 
+    <!-- El código JS está correctamente referenciado y no debe ser visible en la UI. Si ves código aquí, hubo un error de edición previa. -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
