@@ -1460,6 +1460,38 @@
         };
 
         window.filtrarReservasInput = debounce(() => window.filtrarReservas(), 200);
+
+        // Buscador de sesiones con nota
+        window.buscarSesionesPorNombreInput = debounce(() => {
+            const txt = document.getElementById('inpBuscadorSesiones').value.trim().toLowerCase();
+            const contenedor = document.getElementById('contenedorSesionesBuscadas');
+            if (txt.length < 2) {
+                contenedor.innerHTML = '<div class="empty-state">Escribi al menos 2 letras del nombre.</div>';
+                return;
+            }
+            const resultados = todasLasReservas.filter(r => {
+                const nombre = (r.nombreLimpio || '').toLowerCase();
+                const tieneNota = !!(r.detalleSesion && r.detalleSesion.trim());
+                return tieneNota && nombre.includes(txt);
+            });
+            if (!resultados.length) {
+                contenedor.innerHTML = '<div class="empty-state">No se encontraron sesiones con nota para ese nombre.</div>';
+                return;
+            }
+            contenedor.innerHTML = resultados.map(r => `
+                <div class="detalle-dia-card" style="border-top:5px solid var(--azul); border-radius:18px; margin-bottom:14px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px; flex-wrap:wrap;">
+                        <span class="tag-fecha" style="background:#eaf3ff; color:#3571b8; font-weight:800;">${formatoFechaISO(r.fecha)}</span>
+                        <span style="font-size:13px; color:#4a90e2; font-weight:700;">${escapeHtml(r.hora || '--:--')} hs</span>
+                    </div>
+                    <div style="font-size:1.13em; font-weight:700; color:#2f5a47; margin-bottom:2px;">${escapeHtml(r.nombreLimpio)}</div>
+                    <div style="font-size:13px; color:#3571b8; margin-bottom:6px;">${escapeHtml(r.servicio || 'Servicio')}</div>
+                    <div style="font-size:12px; color:#6a8e7f; margin-bottom:7px;">${escapeHtml((r.phone || 'Sin telefono').toString())}</div>
+                    <div style="margin-top:4px; background:#f5faff; border:1px solid #b7d6f7; border-radius:10px; padding:10px 12px; font-size:14px; color:#2f5a47; white-space:pre-wrap;">${escapeHtml(r.detalleSesion)}</div>
+                </div>
+            `).join('');
+        }, 200);
+
         window.limpiarFiltrosBusqueda = () => {
             document.getElementById("inpBusReservas").value = "";
             document.getElementById("filtroServicio").value = "";
