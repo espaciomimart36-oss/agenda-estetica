@@ -1461,18 +1461,25 @@
 
         window.filtrarReservasInput = debounce(() => window.filtrarReservas(), 200);
 
-        // Buscador de sesiones con nota
+
+        // Buscador de sesiones con nota, ordenadas por fecha descendente
         window.buscarSesionesPorNombreInput = debounce(() => {
             const txt = document.getElementById('inpBuscadorSesiones').value.trim().toLowerCase();
             const contenedor = document.getElementById('contenedorSesionesBuscadas');
             if (txt.length < 2) {
-                contenedor.innerHTML = '<div class="empty-state">Escribi al menos 2 letras del nombre.</div>';
+                contenedor.innerHTML = '<div class="empty-state">Escribí al menos 2 letras del nombre.</div>';
                 return;
             }
-            const resultados = todasLasReservas.filter(r => {
+            let resultados = todasLasReservas.filter(r => {
                 const nombre = (r.nombreLimpio || '').toLowerCase();
                 const tieneNota = !!(r.detalleSesion && r.detalleSesion.trim());
                 return tieneNota && nombre.includes(txt);
+            });
+            // Ordenar por fecha descendente (más recientes primero)
+            resultados = resultados.sort((a, b) => {
+                const fechaA = new Date(a.fecha + 'T' + (a.hora || '00:00'));
+                const fechaB = new Date(b.fecha + 'T' + (b.hora || '00:00'));
+                return fechaB - fechaA;
             });
             if (!resultados.length) {
                 contenedor.innerHTML = '<div class="empty-state">No se encontraron sesiones con nota para ese nombre.</div>';
