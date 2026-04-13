@@ -1082,27 +1082,48 @@
                         (function() {
                             const container = document.getElementById('mimi-3d-container');
                             if (!container) return;
+                            // Ajustar tamaño del canvas para que el personaje entre bien
+                            const width = 140;
+                            const height = 140;
                             const scene = new THREE.Scene();
-                            const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 1000);
-                            camera.position.set(0, 1.2, 2.2);
+                            const camera = new THREE.PerspectiveCamera(32, width/height, 0.1, 1000);
+                            camera.position.set(0, 1.1, 2.1);
                             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                            renderer.setSize(120, 120);
+                            renderer.setSize(width, height);
                             renderer.setClearColor(0x000000, 0);
+                            container.innerHTML = '';
                             container.appendChild(renderer.domElement);
-                            const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
-                            scene.add(light);
-                            // Cargar modelo cartoon (puedes cambiar la URL por otro glTF si prefieres)
+                            // Luz ambiente y direccional para mejor visibilidad
+                            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.25);
+                            scene.add(hemiLight);
+                            const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
+                            dirLight.position.set(2, 4, 2);
+                            scene.add(dirLight);
+                            // Modelo cartoon notorio (Fox de Google Poly, dominio público)
                             const loader = new THREE.GLTFLoader();
-                            loader.load('https://models.babylonjs.com/CornellBox/glTF/CornellBox.gltf', function(gltf) {
+                            loader.load('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF/Fox.gltf', function(gltf) {
                                 const model = gltf.scene;
-                                model.scale.set(0.5,0.5,0.5);
+                                model.scale.set(0.055, 0.055, 0.055); // Escala para que entre perfecto
                                 model.position.y = -0.7;
+                                model.position.x = 0;
+                                model.rotation.y = Math.PI/2;
                                 scene.add(model);
+                                animate();
+                            }, undefined, function(error) {
+                                // fallback: cubo simpático
+                                const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+                                const material = new THREE.MeshStandardMaterial({ color: 0xffc97a });
+                                const cube = new THREE.Mesh(geometry, material);
+                                scene.add(cube);
                                 animate();
                             });
                             function animate() {
                                 requestAnimationFrame(animate);
-                                scene.rotation.y += 0.01;
+                                scene.traverse(obj => {
+                                    if (obj.isMesh || obj.isGroup) {
+                                        obj.rotation.y += 0.012;
+                                    }
+                                });
                                 renderer.render(scene, camera);
                             }
                         })();
