@@ -11,54 +11,28 @@
     <style>
         :root { --fondo: #f4fbf7; --texto: #2f5a47; --accento: #4ea37f; --accento-oscuro: #2f7c5d; --verde: #72bd99; --verde-oscuro: #3f8f6f; --azul: #4a90e2; --rojo: #e05252; --whatsapp: #25D366; --suave: #dff3ea; --suave-oscuro: #bfe6d5; --nude: #f7fffb; }
         body { font-family: 'Montserrat', sans-serif; background: linear-gradient(180deg, #f8fdfb 0%, #edf8f3 100%); margin: 0; color: var(--texto); padding-bottom: 50px; font-size: 15px; line-height: 1.45; }
-        
-        /* LOGIN */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f7f6; z-index: 99999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; }
         .login-box h2 { font-family: 'Playfair Display', serif; color: var(--accento-oscuro); margin-bottom: 25px; }
         .login-box input { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #d5eadf; border-radius: 12px; box-sizing: border-box; font-size: 16px; outline: none; }
         .btn-entrar { width: 100%; padding: 15px; background: var(--accento); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 16px; }
-
-        /* NAVEGACIÓN */
         .header { background: #fff; padding: 14px 16px; text-align: center; border-bottom: 1px solid #dceee5; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 18px rgba(0,0,0,0.06); }
-        .header h2 { color: var(--accento); font-size: clamp(1.2rem, 2.2vw, 1.7rem); }
         .menu-nav { margin-top: 10px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
         .btn-nav { padding: 10px 18px; min-height: 40px; border: 1px solid #cfe9dd; background: #fff; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.3s; color: var(--texto); }
-        .btn-nav:hover { background: var(--suave); border-color: var(--suave-oscuro); }
         .btn-nav.active { background: #e9f7f0; color: var(--accento-oscuro); border-color: #a9d9c3; }
-        
         .container { max-width: 1024px; margin: 18px auto; padding: 0 16px; }
         .section { display: none; }
         .section.active { display: block; }
         #admin-content { display: none; }
-
-        /* KPI & DASHBOARD */
         .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
         .kpi-card { background: #fff; border: 1px solid #d9eee4; border-radius: 14px; padding: 12px; box-shadow: 0 6px 14px rgba(72,133,106,0.08); }
-        .kpi-label { font-size: 11px; color: #6a8e7f; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
-        .kpi-value { font-size: clamp(1.2rem, 2.2vw, 1.6rem); font-weight: 700; color: var(--verde-oscuro); margin-top: 4px; }
-        .quick-actions { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-        .btn-mini { border: 1px solid #b7dfcc; background: #ffffff; color: var(--verde-oscuro); border-radius: 999px; padding: 9px 13px; min-height: 38px; cursor: pointer; font-weight: 700; font-size: 12px; }
-
-        /* CALENDARIO */
+        .kpi-label { font-size: 11px; color: #6a8e7f; font-weight: 700; text-transform: uppercase; }
+        .kpi-value { font-size: 1.5rem; font-weight: 700; color: var(--verde-oscuro); }
         .calendar-container { background: #fff; border-radius: 22px; padding: 18px; box-shadow: 0 10px 25px rgba(63,143,111,0.12); border: 1px solid #d7ebe2; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; text-align: center; margin-top: 15px; }
-        .day { padding: 10px 4px; min-height: 42px; border-radius: 12px; font-size: 13px; cursor: pointer; border: 1px solid #dbeee6; background: #ffffff; display: flex; align-items: center; justify-content: center; }
-        .day.has-reserva { background: #e6f6ee; border: 1.5px solid var(--verde-oscuro); color: #1f6548; font-weight: 700; }
-        .day.selected { background: var(--verde) !important; color: white !important; }
-
-        /* FORMS & INPUTS */
-        .select-input { width: 100%; min-height: 40px; padding: 10px 12px; border-radius: 12px; border: 1px solid #d1e7dc; box-sizing: border-box; outline: none; background: #fff; }
-        .busc-input { width: 100%; min-height: 42px; padding: 10px 12px; border-radius: 12px; border: 1px solid #cfe2d9; margin-bottom: 10px; box-sizing: border-box; }
-        
-        /* MODALES */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(20, 35, 29, 0.45); display: flex; align-items: center; justify-content: center; z-index: 100000; padding: 16px; }
-        .modal-card { width: 100%; max-width: 430px; background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 14px 40px rgba(0,0,0,0.2); }
-
-        @media (max-width: 760px) {
-            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-            .quick-actions { display: grid; grid-template-columns: 1fr 1fr; }
-        }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; margin-top: 15px; }
+        .day { padding: 10px 4px; border-radius: 12px; font-size: 13px; cursor: pointer; border: 1px solid #dbeee6; background: #fff; }
+        .select-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #d1e7dc; }
+        @media (max-width: 760px) { .kpi-grid { grid-template-columns: 1fr 1fr; } }
     </style>
 </head>
 <body>
@@ -74,57 +48,42 @@
     </div>
 
     <div id="admin-content">
-        <div id="global-loader" class="loader-overlay" style="display:none;">
-            <div class="loader-box"><span>Cargando datos...</span></div>
-        </div>
-
         <div class="header">
             <h2 style="font-family:'Playfair Display'; margin:0; color:var(--verde-oscuro)">Gimena Knack | Panel</h2>
             <div class="menu-nav">
                 <button class="btn-nav active" id="btn-agenda" onclick="navegar('agenda')">📅 Agenda</button>
                 <button class="btn-nav" id="btn-historias" onclick="navegar('historias')">📁 Historias</button>
                 <button class="btn-nav" id="btn-clientes" onclick="navegar('clientes')">🧾 Pacientes</button>
-                <button class="btn-nav" id="btn-export" onclick="navegar('export')">📄 Exportar</button>
                 <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
             </div>
         </div>
 
         <div class="container">
             <div id="sec-agenda" class="section active">
-                <div class="kpi-grid" id="kpiGrid">
-                    <div class="kpi-card"><div class="kpi-label">Reservas totales</div><div class="kpi-value" id="kpi-total">0</div></div>
+                <div class="kpi-grid">
+                    <div class="kpi-card"><div class="kpi-label">Reservas</div><div class="kpi-value" id="kpi-total">0</div></div>
                     <div class="kpi-card"><div class="kpi-label">Turnos hoy</div><div class="kpi-value" id="kpi-hoy">0</div></div>
-                    <div class="kpi-card"><div class="kpi-label">Este mes</div><div class="kpi-value" id="kpi-mes">0</div></div>
-                    <div class="kpi-card"><div class="kpi-label">Historias</div><div class="kpi-value" id="kpi-historias">0</div></div>
                 </div>
                 <div class="calendar-container">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <button onclick="cambiarMes(-1)">◀</button>
-                        <h3 id="monthTitle" style="font-family:'Playfair Display'; text-transform: capitalize;"></h3>
+                        <h3 id="monthTitle" style="text-transform: capitalize;"></h3>
                         <button onclick="cambiarMes(1)">▶</button>
                     </div>
                     <div class="calendar-grid" id="calendarGrid"></div>
                 </div>
-                <div id="panelDetalleDia"></div>
             </div>
 
             <div id="sec-historias" class="section">
-                <input type="text" class="busc-input" id="inpBusHistorias" placeholder="Buscar paciente...">
+                <h3>Historias Clínicas</h3>
                 <div id="contenedorHistorias"></div>
             </div>
 
             <div id="sec-clientes" class="section">
-                <div class="detalle-dia-card">
-                    <h3>Gestión de Pacientes</h3>
-                    <input id="cliFullName" class="select-input" type="text" placeholder="Nombre y apellido">
-                    <input id="cliDni" class="select-input" type="text" placeholder="DNI">
-                    <button class="btn-mini" style="width:100%; margin-top:10px" onclick="guardarCliente()">Guardar paciente</button>
-                </div>
-                <div id="contenedorClientes" style="margin-top:20px"></div>
-            </div>
-
-            <div id="sec-export" class="section">
-                <button class="btn-export-main" onclick="exportarCSV()" style="background:var(--verde-oscuro); color:white; padding:20px; border-radius:15px; width:100%; border:none; cursor:pointer">📥 Descargar Reservas (.csv)</button>
+                <h3>Nuevo Paciente</h3>
+                <input id="cliFullName" class="select-input" type="text" placeholder="Nombre completo">
+                <input id="cliDni" class="select-input" type="text" placeholder="DNI">
+                <button class="btn-entrar" onclick="guardarCliente()">Guardar</button>
             </div>
         </div>
     </div>
@@ -132,7 +91,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBc5435tsDnJ_yJqO1ppwSjxSpCIhpjgew",
@@ -144,15 +103,32 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Lógica de Navegación
+        // --- FUNCIONES GLOBALES (Asignadas a window para que los botones las vean) ---
         window.navegar = (sectionId) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
             document.getElementById(`sec-${sectionId}`).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if (event) event.currentTarget.classList.add('active');
         };
 
-        // Autenticación
+        window.cerrarSesion = () => signOut(auth);
+
+        window.cambiarMes = (v) => {
+            fechaVisual.setMonth(fechaVisual.getMonth() + v);
+            renderCalendario();
+        };
+
+        window.guardarCliente = async () => {
+            const dni = document.getElementById('cliDni').value;
+            const nombre = document.getElementById('cliFullName').value;
+            if(!dni || !nombre) return alert("Completa los campos");
+            try {
+                await setDoc(doc(db, "clients", dni), { fullName: nombre, dni: dni, activo: true });
+                alert("Paciente guardado con éxito");
+            } catch(e) { alert("Error al guardar"); }
+        };
+
+        // --- LÓGICA DE LOGIN ---
         document.getElementById('btnEntrarSeguro').onclick = async () => {
             const email = document.getElementById('userAdmin').value;
             const pass = document.getElementById('passAdmin').value;
@@ -164,28 +140,23 @@
         };
 
         onAuthStateChanged(auth, (user) => {
-            if (user && ["espaciomimart36@gmail.com"].includes(user.email)) {
+            const adminEmail = "espaciomimart36@gmail.com";
+            if (user && user.email === adminEmail) {
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'block';
-                inicializarApp();
+                renderCalendario();
             } else {
                 document.getElementById('login-overlay').style.display = 'flex';
                 document.getElementById('admin-content').style.display = 'none';
             }
         });
 
-        window.cerrarSesion = () => signOut(auth);
-
-        async function inicializarApp() {
-            renderCalendario();
-            actualizarKPIs();
-        }
-
-        // Calendario Simple
+        // --- CALENDARIO ---
         let fechaVisual = new Date();
         function renderCalendario() {
             const grid = document.getElementById('calendarGrid');
             const title = document.getElementById('monthTitle');
+            if(!grid) return;
             grid.innerHTML = '';
             
             const year = fechaVisual.getFullYear();
@@ -203,33 +174,9 @@
                 const dayEl = document.createElement('div');
                 dayEl.className = 'day';
                 dayEl.innerText = d;
-                dayEl.onclick = () => console.log(`Día seleccionado: ${d}`);
                 grid.appendChild(dayEl);
             }
         }
-
-        window.cambiarMes = (v) => {
-            fechaVisual.setMonth(fechaVisual.getMonth() + v);
-            renderCalendario();
-        };
-
-        async function actualizarKPIs() {
-            // Aquí irían las consultas a Firestore para contar documentos
-            document.getElementById('kpi-total').innerText = "Cargando...";
-        }
-
-        window.guardarCliente = async () => {
-            const dni = document.getElementById('cliDni').value;
-            const nombre = document.getElementById('cliFullName').value;
-            if(!dni || !nombre) return alert("Completa los campos");
-            
-            await setDoc(doc(db, "clients", dni), {
-                fullName: nombre,
-                dni: dni,
-                activo: true
-            });
-            alert("Paciente guardado");
-        };
     </script>
 </body>
 </html>
