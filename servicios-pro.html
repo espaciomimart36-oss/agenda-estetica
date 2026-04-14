@@ -181,6 +181,24 @@
             transition: transform var(--trans), box-shadow var(--trans), border-color var(--trans);
         }
 
+        .servicio-media {
+            margin: -4px -2px 18px;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 16 / 10;
+            background: linear-gradient(135deg, #eef6f0 0%, #f8fbf8 100%);
+            box-shadow: 0 16px 28px rgba(30, 48, 37, 0.14);
+            position: relative;
+            z-index: 1;
+        }
+
+        .servicio-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
         .servicio::after {
             content: "";
             position: absolute;
@@ -615,6 +633,7 @@
             }
             .logo { width: clamp(176px, 52vw, 238px); }
             .servicio h3 { font-size: 24px; }
+            .servicio-media { margin: -2px 0 16px; border-radius: 16px; }
             .section { margin-top: 20px; }
             .servicios { grid-template-columns: 1fr; }
             .modal-overlay {
@@ -870,6 +889,14 @@
             return (nombre || "").replace(/^(\s|[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9])+/, "").trim();
         }
 
+        function obtenerImagenServicio(nombre) {
+            const normalizado = (nombre || "").toLowerCase();
+            if (normalizado.includes("led") || normalizado.includes("facial")) return "/img/facial.jpg";
+            if (normalizado.includes("corporal") || normalizado.includes("crio") || normalizado.includes("zona")) return "/img/Criolipólisis.jpg";
+            if (normalizado.includes("brazo") || normalizado.includes("reafirm")) return "/img/mioup.jpg";
+            return "/img/Tratamientofacial.jpg";
+        }
+
         async function ejecutarConsulta(dni) {
             modalBusqueda.style.display = "none";
             dniConsultaActual = (dni || "").trim();
@@ -1087,8 +1114,12 @@
                     const descFormateada = (s.descripcion || "").replace(/\n/g, "<br>");
                     const tituloLimpio = limpiarTituloServicio(s.nombre);
                     const emoji = obtenerEmojiServicio(s.nombre);
+                    const imagenServicio = obtenerImagenServicio(s.nombre);
                     div.innerHTML = `
                         <div>
+                            <div class="servicio-media">
+                                <img src="${imagenServicio}" alt="${tituloLimpio}">
+                            </div>
                             <div class="servicio-head">
                                 <div class="servicio-icono" aria-hidden="true">${emoji}</div>
                                 <div>
