@@ -891,10 +891,10 @@
 
         function obtenerImagenServicio(nombre) {
             const normalizado = (nombre || "").toLowerCase();
-            if (normalizado.includes("led") || normalizado.includes("facial")) return "/img/facial.jpg";
-            if (normalizado.includes("corporal") || normalizado.includes("crio") || normalizado.includes("zona")) return "/img/Criolipólisis.jpg";
+            if (normalizado.includes("led")) return "/img/facial.jpg";
+            if (normalizado.includes("corporal") || normalizado.includes("crio")) return "/img/Criolipólisis.jpg";
             if (normalizado.includes("brazo") || normalizado.includes("reafirm")) return "/img/mioup.jpg";
-            return "/img/Tratamientofacial.jpg";
+            return "";
         }
 
         async function ejecutarConsulta(dni) {
@@ -1115,11 +1115,14 @@
                     const tituloLimpio = limpiarTituloServicio(s.nombre);
                     const emoji = obtenerEmojiServicio(s.nombre);
                     const imagenServicio = obtenerImagenServicio(s.nombre);
-                    div.innerHTML = `
-                        <div>
+                    const bloqueImagen = imagenServicio ? `
                             <div class="servicio-media">
                                 <img src="${imagenServicio}" alt="${tituloLimpio}">
                             </div>
+                    ` : "";
+                    div.innerHTML = `
+                        <div>
+                            ${bloqueImagen}
                             <div class="servicio-head">
                                 <div class="servicio-icono" aria-hidden="true">${emoji}</div>
                                 <div>

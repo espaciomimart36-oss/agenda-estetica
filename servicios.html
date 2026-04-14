@@ -386,10 +386,10 @@
 
         function obtenerImagenServicio(nombre) {
             const normalizado = (nombre || "").toLowerCase();
-            if (normalizado.includes("led") || normalizado.includes("facial")) return "img/facial.jpg";
-            if (normalizado.includes("corporal") || normalizado.includes("crio") || normalizado.includes("zona")) return "img/Criolipólisis.jpg";
+            if (normalizado.includes("led")) return "img/facial.jpg";
+            if (normalizado.includes("corporal") || normalizado.includes("crio")) return "img/Criolipólisis.jpg";
             if (normalizado.includes("brazo") || normalizado.includes("reafirm")) return "img/mioup.jpg";
-            return "img/Tratamientofacial.jpg";
+            return "";
         }
 
 
@@ -615,7 +615,8 @@
                     const tituloLimpio = limpiarTituloServicio(s.nombre);
                     const emoji = obtenerEmojiServicio(s.nombre);
                     const imagenServicio = obtenerImagenServicio(s.nombre);
-                    div.innerHTML = `<div><div class="servicio-media"><img src="${imagenServicio}" alt="${tituloLimpio}"></div><div class="servicio-head"><div class="servicio-icono" aria-hidden="true">${emoji}</div><div><h3>${tituloLimpio}</h3><div class="duracion">${s.duracion} min</div></div></div><p style="line-height:1.7">${descFormateada}</p></div><button class="btn-reservar" data-nombre="${s.nombre}">Reservar Turno</button>`;
+                    const bloqueImagen = imagenServicio ? `<div class="servicio-media"><img src="${imagenServicio}" alt="${tituloLimpio}"></div>` : "";
+                    div.innerHTML = `<div>${bloqueImagen}<div class="servicio-head"><div class="servicio-icono" aria-hidden="true">${emoji}</div><div><h3>${tituloLimpio}</h3><div class="duracion">${s.duracion} min</div></div></div><p style="line-height:1.7">${descFormateada}</p></div><button class="btn-reservar" data-nombre="${s.nombre}">Reservar Turno</button>`;
                     contenedor.appendChild(div);
                 });
                 document.querySelectorAll('.btn-reservar').forEach(btn => {
