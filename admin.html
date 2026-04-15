@@ -243,6 +243,7 @@
                 <button class="btn-nav" id="btn-sesiones" onclick="navegar('sesiones')">📁 Buscador de sesiones</button>
                 <button class="btn-nav" id="btn-clientes" onclick="navegar('clientes')">🧾 Pacientes</button>
                 <button class="btn-nav" id="btn-export" onclick="navegar('export')">📄 Exportar</button>
+                <button class="btn-nav" id="btn-pedidoskit" onclick="navegar('pedidoskit')">📦 Pedidos Kit</button>
                 <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
             </div>
         </div>
@@ -374,6 +375,15 @@
                     <h3 style="margin-top:0">Reporte de Clientes</h3>
                     <p style="font-size:14px; color:#666">Exporta todos los clientes con estado de membresía y datos de contacto.</p>
                     <button class="btn-export-main" onclick="exportarClientesCSV()">📥 Descargar Clientes (.csv)</button>
+                </div>
+            </div>
+
+            <div id="sec-pedidoskit" class="section">
+                <div class="detalle-dia-card">
+                    <h3 style="margin-top:0">📦 Pedidos de Kit Facial</h3>
+                    <p style="font-size:13px; color:#557b6b; margin:0 0 12px 0;">Visualizá y gestioná los pedidos de kits faciales domiciliarios.</p>
+                    <button class="btn-mini" onclick="cargarPedidosKit()" style="margin-bottom:12px;">🔄 Recargar pedidos</button>
+                    <div id="contenedorPedidosKit" style="display:grid; gap:12px;"></div>
                 </div>
             </div>
         </div>
@@ -1125,6 +1135,107 @@
                 mostrarLoader(false);
             }
         }
+
+        let todosLosPedidosKit = [];
+
+        window.cargarPedidosKit = async () => {
+            try {
+                mostrarLoader(true);
+                const snapshot = await getDocs(collection(db, "pedidosKit"));
+                todosLosPedidosKit = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderPedidosKit();
+            } catch (error) {
+                console.error("Error cargando pedidos:", error);
+                mostrarAviso("❌ Error al cargar pedidos de kit");
+            } finally {
+                mostrarLoader(false);
+            }
+        };
+
+        const renderPedidosKit = () => {
+            const contenedor = document.getElementById("contenedorPedidosKit");
+            if (!contenedor) return;
+
+            if (todosLosPedidosKit.length === 0) {
+                contenedor.innerHTML = "<p style='color:#88948f; text-align:center; padding:20px;'>No hay pedidos de kit registrados.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = todosLosPedidosKit.map(pedido => {
+                const fechaFormateada = pedido.fecha ? new Date(pedido.fecha).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" }) : "Sin fecha";
+                const productosHtml = Array.isArray(pedido.productos) 
+                    ? pedido.productos.map(p => `<span class="pill disponible">${escapeHtml(p)}</span>`).join(" ")
+                    : "Sin productos";
+                const estado = (pedido.estado || "pendiente").toLowerCase();
+                const estadoClass = estado === "confirmado" ? "confirmado" : "disponible";
+
+                return `
+                    <div class="detalle-dia-card" style="border-left: 6px solid ${estado === 'confirmado' ? '#79c6a1' : '#e8a870'};">
+                        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                            <div>
+                                <b style="font-size:16px; color:#2f5a47;">${escapeHtml(pedido.nombrePaciente || "Paciente")}</b>
+                                <div style="font-size:12px; color:#6a8e7f; margin-top:4px;">📅 ${fechaFormateada}</div>
+                                <div style="font-size:12px; color:#6a8e7f;">📱 ${escapeHtml(pedido.telefono || "Sin teléfono")}</div>
+                                <div style="font-size:12px; color:#6a8e7f;">🆔 DNI: ${escapeHtml(pedido.dni || "Sin DNI")}</div>
+                            </div>
+                            <span class="pill ${estadoClass}" style="text-transform:capitalize;">${estado}</span>
+                        </div>
+                        <div style="margin:12px 0;">
+                            <div style="font-size:12px; font-weight:700; color:#2f5a47; margin-bottom:6px;">Productos solicitados:</div>
+                            <div style="display:flex; flex-wrap:wrap; gap:6px;">${productosHtml}</div>
+                        </div>
+                        ${pedido.descripcionPiel ? `
+                            <div style="margin:12px 0; padding:10px; background:#f8fdfb; border-radius:8px;">
+                                <div style="font-size:12px; font-weight:700; color:#2f5a47; margin-bottom:4px;">Estado de la piel:</div>
+                                <p style="margin:0; font-size:13px; color:#4a6f5f; line-height:1.4;">${escapeHtml(pedido.descripcionPiel)}</p>
+                            </div>
+                        ` : ''}
+                        <div class="grid-acciones" style="margin-top:12px;">
+                            ${estado !== 'confirmado' ? `
+                                <button class="btn-mini" style="background:#72bd99; color:white;" onclick="confirmarPedidoKit('${pedido.id}')">✅ Confirmar pedido</button>
+                            ` : ''}
+                            <button class="btn-mini" style="background:#25D366; color:white;" onclick="whatsappPedidoKit('${pedido.id}')">📱 WhatsApp al cliente</button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        };
+
+        window.confirmarPedidoKit = async (pedidoId) => {
+            try {
+                await updateDoc(doc(db, "pedidosKit", pedidoId), {
+                    estado: "confirmado"
+                });
+                mostrarAviso("✅ Pedido confirmado");
+                window.cargarPedidosKit();
+            } catch (error) {
+                console.error("Error confirmando pedido:", error);
+                mostrarAviso("❌ Error al confirmar pedido");
+            }
+        };
+
+        window.whatsappPedidoKit = (pedidoId) => {
+            const pedido = todosLosPedidosKit.find(p => p.id === pedidoId);
+            if (!pedido) return;
+            
+            const telefono = (pedido.telefono || "").toString().trim();
+            if (!telefono) {
+                mostrarAviso("⚠️ Sin teléfono registrado");
+                return;
+            }
+            
+            let telefonoLimpio = telefono.replace(/\D/g, "");
+            if (!telefonoLimpio.startsWith("54")) {
+                telefonoLimpio = "54" + telefonoLimpio;
+            }
+            
+            const nombre = pedido.nombrePaciente || "paciente";
+            const productos = Array.isArray(pedido.productos) ? pedido.productos.join(", ") : "productos";
+            const mensaje = `Hola ${nombre}! 👋\n\nTe contactamos de Espacio Mimar T.\n\nRecibimos tu pedido de kit facial con los siguientes productos: ${productos}.\n\n${pedido.estado === 'confirmado' ? 'Tu pedido ya está confirmado y pronto te enviaremos los detalles.' : 'Estamos preparando tu pedido. Te avisaremos cuando esté listo.'}\n\n¡Gracias por confiar en nosotros! 😊`;
+            
+            const url = `https://wa.me/${telefonoLimpio}?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, "_blank");
+        };
 
         const WA_TOKEN = "";
         const WA_PHONE_ID = "";
@@ -2054,6 +2165,9 @@
             if (s === 'sesiones') {
                 filtrarSesionesInput();
             }
+            if (s === 'pedidoskit') {
+                cargarPedidosKit();
+            }
         };
 
         window.filtrarSesionesInput = debounce(() => {
@@ -2062,26 +2176,29 @@
             const cont = document.getElementById("contenedorSesiones");
 
             const filtradas = todasLasHistorias.filter((h) => {
-                if (!txt) return true;
-                return (h.nombre || "").toLowerCase().includes(txt);
+                const detalle = h.detalle || h.detalleSesion || "";
+                if (!detalle.trim()) return false;
+                if (txt && !((h.nombre || "").toLowerCase().includes(txt))) return false;
+                return true;
             }).sort((a, b) => {
-                // Newest first, including time if available
                 const dateA = new Date(`${a.fecha || '0000-00-00'} ${a.hora || '00:00'}`);
                 const dateB = new Date(`${b.fecha || '0000-00-00'} ${b.hora || '00:00'}`);
                 return dateB - dateA;
             });
 
             if (resumen) {
-                resumen.textContent = `${filtradas.length} sesión(es) encontrada(s)`;
+                resumen.textContent = `${filtradas.length} sesión(es) con detalle`;
             }
 
             if (!cont) return;
             if (!filtradas.length) {
-                cont.innerHTML = '<div class="empty-state">No hay sesiones para este paciente.</div>';
+                cont.innerHTML = '<div class="empty-state">No hay sesiones con detalle.</div>';
                 return;
             }
 
-            cont.innerHTML = filtradas.map((h) => `
+            cont.innerHTML = filtradas.map((h) => {
+                const detalle = h.detalle || h.detalleSesion || "";
+                return `
                 <div class="detalle-dia-card" style="margin-top:0;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
                         <span class="tag-fecha">${formatoFechaISO(h.fecha)} ${h.hora ? ` ${h.hora}` : ''}</span>
@@ -2091,13 +2208,10 @@
                         <strong>${escapeHtml(h.servicio || 'Servicio no especificado')}</strong>
                     </div>
                     <div style="margin-top:8px; background:#f3faf6; border:1px solid #b6dfc9; border-radius:10px; padding:10px; font-size:13px; color:#2f5a47; white-space:pre-wrap;">
-                        ${Object.entries(h).filter(([k,v]) => 
-                            !['id','timestamp','updatedAt'].includes(k) && v && typeof v !== 'object'
-                        ).map(([k,v]) => `<div><strong>${k}</strong>: ${escapeHtml(v)}</div>`).join('')}
-                        ${h.notas ? `<hr style="margin:8px 0; border:0; border-top:1px solid #b6dfc9;"><div>${escapeHtml(h.notas)}</div>` : ''}
+                        ${escapeHtml(detalle)}
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }, 150);
 
         window.limpiarFiltrosSesiones = () => {
