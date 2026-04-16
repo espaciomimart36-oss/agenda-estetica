@@ -4,60 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6f8a6d">
-    
     <title>Admin Mimar T | Gestión Total</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
         :root { --fondo: #f4fbf7; --texto: #2f5a47; --accento: #4ea37f; --accento-oscuro: #2f7c5d; --verde: #72bd99; --verde-oscuro: #3f8f6f; --azul: #4a90e2; --rojo: #e05252; --whatsapp: #25D366; --suave: #dff3ea; --suave-oscuro: #bfe6d5; --nude: #f7fffb; }
         body { font-family: 'Montserrat', sans-serif; background: linear-gradient(180deg, #f8fdfb 0%, #edf8f3 100%); margin: 0; color: var(--texto); padding-bottom: 50px; font-size: 15px; line-height: 1.45; }
-        
-        /* LOGIN */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f7f6; z-index: 99999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; }
         .login-box h2 { font-family: 'Playfair Display', serif; color: var(--accento-oscuro); margin-bottom: 25px; }
         .login-box input { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #d5eadf; border-radius: 12px; box-sizing: border-box; font-size: 16px; outline: none; }
         .btn-entrar { width: 100%; padding: 15px; background: var(--accento); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 16px; }
-
-        /* NAVEGACIÓN */
         .header { background: #fff; padding: 14px 16px; text-align: center; border-bottom: 1px solid #dceee5; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 18px rgba(0,0,0,0.06); }
         .header h2 { color: var(--accento); font-size: clamp(1.2rem, 2.2vw, 1.7rem); }
         .menu-nav { margin-top: 10px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
         .btn-nav { padding: 10px 18px; min-height: 40px; border: 1px solid #cfe9dd; background: #fff; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.3s; color: var(--texto); }
         .btn-nav:hover { background: var(--suave); border-color: var(--suave-oscuro); }
         .btn-nav.active { background: #e9f7f0; color: var(--accento-oscuro); border-color: #a9d9c3; }
-
-        /* CONTENEDORES Y SECCIONES */
         .container { max-width: 1024px; margin: 18px auto; padding: 0 16px; }
         .section { display: none; }
         .section.active { display: block; }
         #admin-content { display: none; }
-
-        /* KPI */
         .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
         .kpi-card { background: #fff; border: 1px solid #d9eee4; border-radius: 14px; padding: 12px; box-shadow: 0 6px 14px rgba(72,133,106,0.08); }
         .kpi-label { font-size: 11px; color: #6a8e7f; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
         .kpi-value { font-size: clamp(1.2rem, 2.2vw, 1.6rem); font-weight: 700; color: var(--verde-oscuro); margin-top: 4px; }
-
-        /* CALENDARIO */
         .calendar-container { background: #fff; border-radius: 22px; padding: 18px; box-shadow: 0 10px 25px rgba(63,143,111,0.12); border: 1px solid #d7ebe2; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; text-align: center; margin-top: 15px; }
         .day { padding: 10px 4px; min-height: 42px; border-radius: 12px; font-size: 13px; cursor: pointer; border: 1px solid #dbeee6; background: #ffffff; transition: 0.2s; color: #496b5d; display: flex; align-items: center; justify-content: center; }
         .day.dia-hoy { outline: 2px solid var(--verde-oscuro); outline-offset: 1px; font-weight: 700; background: #f0faf5; }
         .day.has-reserva { background: #e6f6ee; border: 1.5px solid var(--verde-oscuro); color: #1f6548; font-weight: 700; }
         .day.selected { background: var(--verde) !important; color: white !important; }
-
-        /* COMPONENTES */
         .btn-mini { border: 1px solid #b7dfcc; background: #ffffff; color: var(--verde-oscuro); border-radius: 999px; padding: 9px 13px; min-height: 38px; cursor: pointer; font-weight: 700; font-size: 12px; }
-        .btn-ws { border: none; padding: 10px 6px; min-height: 38px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 12px; color: white; text-align: center; transition: 0.3s; }
         .wa-status-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
         .wa-status-badge.sent { background: #dcfce7; color: #166534; }
         .wa-status-badge.failed { background: #fee2e2; color: #991b1b; }
-
-        /* TOAST */
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 999999; pointer-events: none; }
         .toast { color: white; padding: 12px 25px; border-radius: 12px; font-weight: 600; opacity: 0; transition: 0.4s; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .toast.show { opacity: 1; }
-
         @media (max-width: 760px) {
             .kpi-grid { grid-template-columns: repeat(2, 1fr); }
             .menu-nav { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; }
@@ -65,7 +48,6 @@
     </style>
 </head>
 <body>
-
     <div id="login-overlay">
         <div class="login-box">
             <h2>Acceso Mimar T</h2>
@@ -75,7 +57,6 @@
             <p id="error-login" style="color:red; font-size:13px; margin-top:10px; display:none;">No autorizado</p>
         </div>
     </div>
-
     <div id="admin-content">
         <div id="toast-container"></div>
         <div class="header">
@@ -88,7 +69,6 @@
                 <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
             </div>
         </div>
-
         <div class="container">
             <div id="sec-agenda" class="section active">
                 <div class="kpi-grid">
@@ -100,7 +80,6 @@
                 </div>
                 <div id="panelDetalleDia"></div>
             </div>
-
             <div id="sec-export" class="section">
                 <div class="kpi-card">
                     <h3>⚡ Control Jornada Especial</h3>
@@ -116,28 +95,85 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         // ============================================================
-        // CONSTANTES WHATSAPP - FIX TDZ (Declaradas al tope)
+        // 1. CONFIGURACIÓN DE FIREBASE
         // ============================================================
-        const WA_TOKEN = "EAAMzA3ngIUkBRMpXw5ZBCCzVCFZAum3yF3dcHlgOPZAigiAIXERNfxpGfq21VCEgiByPN5xhm9mZBUyJ0WWqTl0xoB8ZBEs8EEh2FVC82aDHizTv0bKvMrcH7mkO99svZCMymZAi07nnmnBZCeHlI8XdnMBfJI1pnjVFWQZCdCIOBZA8fDa71OuvkVZCJu5bTR91wZDZD";
-        const WA_PHONE_ID = "995248997010108";
-        const WA_BASE_URL = `https://graph.facebook.com/v18.0/${WA_PHONE_ID}/messages`;
+        // ¡IMPORTANTE! Debes reemplazar esto con la configuración de tu propio proyecto de Firebase.
+        // La encuentras en tu consola de Firebase > Configuración del proyecto.
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_AUTH_DOMAIN",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_STORAGE_BUCKET",
+            messagingSenderId: "TU_MESSAGING_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
 
-        const firebaseConfig = { /* Tu config aquí */ };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
         // ============================================================
-        // UI HELPERS
+        // 2. LÓGICA DE WHATSAPP (MODIFICADA Y SEGURA)
         // ============================================================
-        window.mostrarAviso = (m, tipo = "info") => {
+        // Esta función ahora llama a TU PROPIO backend, no directamente a Facebook.
+        // Debes crear un endpoint (una URL en tu servidor) que reciba los datos y envíe el mensaje.
+        window.enviarW = async (tipo, cel, fecha, hora, nombre, event) => {
+            const btn = event?.currentTarget;
+            if (btn) {
+                btn.disabled = true;
+                btn.style.opacity = "0.6";
+            }
+
+            try {
+                // Preparamos los datos que enviaremos a nuestro backend.
+                const datosParaEnviar = {
+                    template: tipo,       // Nombre de la plantilla de WhatsApp
+                    telefono: cel,        // Número del destinatario
+                    // Puedes añadir más datos que tu plantilla necesite (nombre, fecha, etc.)
+                    // por ejemplo: nombre: nombre, fecha: fecha, hora: hora 
+                };
+
+                // AHORA: Hacemos la llamada a nuestro propio servidor/backend.
+                // Reemplaza '/api/enviar-whatsapp' por la URL de tu endpoint.
+                const resp = await fetch('/api/enviar-whatsapp', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(datosParaEnviar)
+                });
+                
+                // La respuesta que esperamos de nuestro backend debe ser un éxito o un error.
+                if (resp.ok) {
+                    mostrarAviso("✅ Mensaje enviado");
+                    if (btn) btn.insertAdjacentHTML('afterend', '<span class="wa-status-badge sent">✅</span>');
+                } else {
+                    // Si nuestro backend dice que hubo un error, lo mostramos.
+                    const errorData = await resp.json();
+                    throw new Error(errorData.message || 'Error en el servidor');
+                }
+            } catch (e) {
+                console.error("Error al enviar WhatsApp:", e);
+                mostrarAviso(`❌ Error al enviar: ${e.message}`);
+                if (btn) btn.insertAdjacentHTML('afterend', '<span class="wa-status-badge failed">❌</span>');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                }
+            }
+        };
+
+        // ============================================================
+        // UI HELPERS (Sin cambios)
+        // ============================================================
+        window.mostrarAviso = (m) => {
             const colores = {
                 ok: "rgba(72, 187, 120, 0.95)",
                 error: "rgba(229, 62, 62, 0.95)",
                 warn: "rgba(236, 153, 75, 0.95)",
                 info: "rgba(114, 189, 153, 0.95)"
             };
-            const color = m.startsWith("✅") ? colores.ok : m.startsWith("❌") ? colores.error : m.startsWith("⚠️") ? colores.warn : colores.info;
+            const tipo = m.startsWith("✅") ? 'ok' : m.startsWith("❌") ? 'error' : m.startsWith("⚠️") ? 'warn' : 'info';
+            const color = colores[tipo];
             
             const c = document.getElementById("toast-container");
             const t = document.createElement("div");
@@ -149,42 +185,7 @@
         };
 
         // ============================================================
-        // WHATSAPP LOGIC
-        // ============================================================
-        window.enviarW = async (tipo, cel, fecha, hora, nombre, event) => {
-            const btn = event?.currentTarget;
-            if (btn) { btn.disabled = true; btn.style.opacity = "0.6"; }
-
-            try {
-                const body = {
-                    messaging_product: "whatsapp",
-                    to: cel,
-                    type: "template",
-                    template: { name: tipo, language: { code: "es_AR" } }
-                };
-
-                const resp = await fetch(WA_BASE_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${WA_TOKEN}` },
-                    body: JSON.stringify(body)
-                });
-
-                if (resp.ok) {
-                    mostrarAviso("✅ Mensaje enviado");
-                    if (btn) btn.insertAdjacentHTML('afterend', '<span class="wa-status-badge sent">✅</span>');
-                } else {
-                    throw new Error();
-                }
-            } catch (e) {
-                mostrarAviso("❌ Error al enviar");
-                if (btn) btn.insertAdjacentHTML('afterend', '<span class="wa-status-badge failed">❌</span>');
-            } finally {
-                if (btn) { btn.disabled = false; btn.style.opacity = "1"; }
-            }
-        };
-
-        // ============================================================
-        // JORNADA ESPECIAL - FIX ReferenceError
+        // JORNADA ESPECIAL (Sin cambios)
         // ============================================================
         window.toggleJornadaEspecial = async () => {
             const btn = document.getElementById("btnJornadaToggle");
@@ -206,6 +207,7 @@
                     mostrarAviso(nuevoEstado ? "✅ Jornada activada!" : "❌ Jornada desactivada!");
                 }
             } catch (err) {
+                console.error("Error en Jornada Especial:", err);
                 mostrarAviso("❌ Error al cambiar estado");
             } finally {
                 btn.disabled = false;
@@ -213,13 +215,13 @@
         };
 
         // ============================================================
-        // CALENDARIO - Mejora Visual Hoy
+        // CALENDARIO Y AUTENTICACIÓN (Lógica original)
         // ============================================================
         const renderCalendario = () => {
             const grid = document.getElementById("calendarGrid");
+            if (!grid) return;
             grid.innerHTML = "";
             const hoy = new Date().toISOString().split('T')[0];
-
             for (let i = 1; i <= 30; i++) {
                 const fStr = `2026-04-${String(i).padStart(2, '0')}`;
                 const div = document.createElement("div");
@@ -230,15 +232,36 @@
             }
         };
 
-        // ... Resto de la lógica (Auth, Navegación, Historias) ...
+        // ... Aquí iría el resto de tu lógica (navegar, cerrarSesion, etc.) que no incluiste en el snippet original ...
+        // Por ejemplo:
+        window.navegar = (seccion) => console.log(`Navegando a ${seccion}`);
+        window.cerrarSesion = () => signOut(auth).then(() => window.location.reload());
 
+
+        // Listener de autenticación
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById("login-overlay").style.display = "none";
                 document.getElementById("admin-content").style.display = "block";
                 renderCalendario();
+            } else {
+                document.getElementById("login-overlay").style.display = "flex";
+                document.getElementById("admin-content").style.display = "none";
             }
         });
+        
+        // Listener del botón de login
+        document.getElementById("btnEntrarSeguro").addEventListener('click', () => {
+            const email = document.getElementById("userAdmin").value;
+            const pass = document.getElementById("passAdmin").value;
+            const errorEl = document.getElementById("error-login");
+            signInWithEmailAndPassword(auth, email, pass)
+                .catch(err => {
+                    console.error("Error de login:", err);
+                    errorEl.style.display = 'block';
+                });
+        });
+
     </script>
 </body>
 </html>
