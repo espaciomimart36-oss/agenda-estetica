@@ -265,6 +265,46 @@ window.cambiarMes = (n) => {
 };
 
 
+// --- BUSCADOR DE SESIONES POR PACIENTE ---
+window.buscarSesionesPorNombreInput = function() {
+    const input = document.getElementById('inpBuscadorSesiones');
+    const cont = document.getElementById('contenedorSesionesBuscadas');
+    const filtro = (input.value || '').toLowerCase().trim();
+    if (filtro.length < 2) {
+        cont.innerHTML = '<div class="empty-state">Escribí al menos 2 letras del nombre...</div>';
+        return;
+    }
+    const lista = reservas.filter(r => {
+        const nombre = (r.nombreFinal || '').toLowerCase();
+        return nombre.includes(filtro);
+    }).sort((a,b) => parsearFecha(b.fecha) - parsearFecha(a.fecha));
+
+    if (!lista.length) {
+        cont.innerHTML = '<div class="empty-state">No se encontraron sesiones para ese nombre.</div>';
+        return;
+    }
+    cont.innerHTML = lista.map(r => {
+        const fechaObj = parsearFecha(r.fecha);
+        const tieneNota = !!(r.detalleSesion && r.detalleSesion.trim());
+        const esPendiente = !tieneNota;
+        const tagEstado = esPendiente ? 
+            '<span class="tag-fecha" style="background:#fff3cd; color:#856404;">⏳ PENDIENTE</span>' : 
+            '<span class="tag-fecha" style="background:#d4edda; color:#155724;">✅ COMPLETADA</span>';
+            
+        return `
+        <div class="detalle-dia-card" style="margin-bottom:10px; ${esPendiente ? 'border-left:4px solid #ffc107;' : 'border-left:4px solid #28a745;'}">
+            <b>${escapeHtml(r.nombreFinal)}</b> 
+            <span class="tag-fecha">${escapeHtml(r.fecha)} ${escapeHtml(r.hora || '')}</span>
+            ${tagEstado}<br>
+            <span style="color:#4a7c6a; font-weight:600">${escapeHtml(r.servicio || 'Tratamiento')}</span>
+            <div style="margin-top:7px;">
+                <b>Nota:</b> <span>${escapeHtml(r.detalleSesion || '(sin nota)')}</span>
+            </div>
+        </div>
+    `}).join('');
+};
+// --- FIN BUSCADOR DE SESIONES ---
+
 // --- BUSCADOR DE SERVICIOS REALIZADOS (solo fechas pasadas) ---
 window.buscarServiciosRealizadosInput = function() {
     const input = document.getElementById('inpBuscadorRealizados');
