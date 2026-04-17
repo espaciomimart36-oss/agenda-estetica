@@ -316,9 +316,7 @@
             text-shadow: 0 10px 24px rgba(31, 44, 36, 0.14);
         }
         .hero-title::after {
-            content: " ✦";
-            color: var(--rojo-acento);
-            text-shadow: 0 0 18px rgba(255, 59, 48, 0.36);
+            display: none;
         }
         .hero-copy {
             margin: 16px auto 0;
@@ -393,10 +391,10 @@
         .hero-primary,
         .primary-submit {
             color: #fff;
-            background: linear-gradient(135deg, #ff5a43 0%, #d62020 52%, #7d0f16 100%);
+            background: linear-gradient(135deg, #7ba891 0%, #4a6e5c 100%);
             box-shadow:
-                0 20px 36px rgba(173, 23, 23, 0.34),
-                inset 0 1px 0 rgba(255, 214, 214, 0.34);
+                0 20px 36px rgba(74, 110, 92, 0.32),
+                inset 0 1px 0 rgba(200, 230, 215, 0.24);
         }
         .hero-secondary {
             color: #31463b;
@@ -427,8 +425,8 @@
         .hero-primary:hover,
         .primary-submit:hover {
             box-shadow:
-                0 24px 42px rgba(173, 23, 23, 0.4),
-                inset 0 1px 0 rgba(255, 224, 224, 0.38);
+                0 24px 42px rgba(74, 110, 92, 0.38),
+                inset 0 1px 0 rgba(200, 230, 215, 0.28);
         }
         .trust-strip {
             width: min(960px, calc(100% - 28px));
@@ -502,14 +500,7 @@
             pointer-events: none;
         }
         .showcase-block::after {
-            content: "✦";
-            position: absolute;
-            top: 22px;
-            right: 28px;
-            font-size: 18px;
-            color: rgba(255, 59, 48, 0.7);
-            text-shadow: 0 0 18px rgba(255, 59, 48, 0.22);
-            pointer-events: none;
+            display: none;
         }
         .block-kicker {
             margin: 0;
@@ -693,12 +684,7 @@
             box-shadow: 0 16px 28px rgba(39, 57, 44, 0.08);
         }
         .faq-item::after {
-            content: "✦";
-            position: absolute;
-            top: 14px;
-            right: 16px;
-            color: rgba(255, 59, 48, 0.5);
-            font-size: 14px;
+            display: none;
         }
         .faq-item strong {
             display: block;
@@ -735,9 +721,9 @@
         }
         .showcase-button.primary {
             border: none;
-            background: linear-gradient(135deg, #ff5a43 0%, #d62020 52%, #7d0f16 100%);
+            background: linear-gradient(135deg, #7ba891 0%, #4a6e5c 100%);
             color: #ffffff;
-            box-shadow: 0 20px 36px rgba(173, 23, 23, 0.28);
+            box-shadow: 0 20px 36px rgba(74, 110, 92, 0.28);
         }
         .trust-item {
             padding: 16px;
@@ -791,13 +777,7 @@
             border: 1px solid rgba(255, 255, 255, 0.76);
         }
         .login-copy::after {
-            content: "✨";
-            position: absolute;
-            top: 20px;
-            right: 24px;
-            font-size: 22px;
-            transform: rotate(10deg);
-            text-shadow: 0 0 22px rgba(255, 59, 48, 0.2);
+            display: none;
         }
         .login-copy-kicker,
         .form-topline {
@@ -838,18 +818,17 @@
             line-height: 1.5;
         }
         .feature-point::before {
-            content: "✦";
-            width: 18px;
-            height: 18px;
+            content: "";
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            background: linear-gradient(135deg, #ff5a43 0%, #ca1f1f 100%);
+            background: var(--verde-principal);
             flex-shrink: 0;
-            box-shadow: 0 10px 18px rgba(173, 23, 23, 0.24);
-            font-size: 10px;
+            box-shadow: 0 0 0 4px rgba(134, 164, 134, 0.18);
+            margin-top: 2px;
         }
         .login-card {
             position: relative;
@@ -952,7 +931,7 @@
         .install-actions .btn-install {
             border: none;
             color: #fff;
-            background: linear-gradient(135deg, #ff5a43 0%, #d62020 52%, #7d0f16 100%);
+            background: linear-gradient(135deg, #7ba891 0%, #4a6e5c 100%);
         }
         .install-actions .btn-dismiss {
             border: 1px solid #d6e3d9;
@@ -1417,7 +1396,7 @@
                 </div>
                 <div class="showcase-cta">
                     <a class="showcase-button primary" href="#loginAccess">Reservar ahora</a>
-                    <a class="showcase-button" href="/kit-facial.html">🧴 Kit Facial</a>
+                    <a class="showcase-button" href="/kit-facial.html">Kit Facial</a>
                     <a class="showcase-button" href="/servicios-pro.html">Ver todos los servicios</a>
                 </div>
             </article>

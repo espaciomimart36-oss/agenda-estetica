@@ -156,27 +156,49 @@
 
         .btn-confirmar {
             width: 100%;
-            background: linear-gradient(135deg, #77c39f 0%, #4e9f7b 100%);
+            background: linear-gradient(135deg, #7ba891 0%, #4a6e5c 100%);
             color: white;
             border: none;
-            padding: 16px;
-            border-radius: 14px;
-            font-size: 1rem;
+            padding: 17px;
+            border-radius: 16px;
+            font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 12px 24px rgba(63,143,111,0.28);
-            transition: transform .18s ease, box-shadow .18s ease;
-            letter-spacing: .3px;
+            box-shadow: 0 12px 26px rgba(74,110,92,0.28);
+            transition: transform .2s ease, box-shadow .2s ease;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .btn-confirmar:hover  { transform: translateY(-1px); }
+        .btn-confirmar:not(:disabled):hover  { transform: translateY(-2px); box-shadow: 0 16px 30px rgba(74,110,92,0.34); }
         .btn-confirmar:active { transform: translateY(0); }
         .btn-confirmar:disabled {
-            background: #c9d2cd;
+            background: linear-gradient(135deg, #b8c8c2 0%, #96aba4 100%);
             box-shadow: none;
             cursor: not-allowed;
             transform: none;
+            opacity: 0.7;
         }
+
+        .btn-confirmar .spinner-btn {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.38);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spinBtn 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+
+        .btn-confirmar.loading .spinner-btn { display: block; }
+        .btn-confirmar.loading .btn-label   { opacity: 0.72; }
+
+        @keyframes spinBtn { to { transform: rotate(360deg); } }
 
         #statusMsg {
             margin-top: 14px;
@@ -270,7 +292,10 @@
         </div>
     </div>
 
-    <button id="btnEjecutar" class="btn-confirmar" disabled>Confirmar Reserva</button>
+    <button id="btnEjecutar" class="btn-confirmar" disabled>
+        <span class="btn-label">Confirmar Reserva</span>
+        <span class="spinner-btn"></span>
+    </button>
     <div id="statusMsg"></div>
 </div>
 
@@ -389,6 +414,7 @@ async function enviarConfirmacionWhatsApp({ telefono, nombrePaciente, dniPacient
 // ── Confirmar reserva ─────────────────────────────────────────────────────────
 btn.addEventListener("click", async () => {
     btn.disabled = true;
+    btn.classList.add("loading");
     status.className = "";
     status.textContent = "Verificando disponibilidad...";
 
@@ -467,6 +493,7 @@ btn.addEventListener("click", async () => {
             status.textContent = "Hubo un error al guardar la reserva. Intentalo de nuevo.";
         }
         btn.disabled = false;
+        btn.classList.remove("loading");
     }
 });
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -6,141 +6,245 @@
     <title>Gimena Knack | Beneficio de membresía</title>
     <link rel="stylesheet" href="mobile-fixes.css">
     <link rel="stylesheet" href="/pro-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f4f7f6;
+        :root {
+            --sage: #6b9080;
+            --sage-dark: #4a6e5c;
+            --ink: #1e2f28;
+            --muted: #607268;
+            --border: rgba(140, 170, 155, 0.28);
+            --gold: #c4a46b;
+            --radius: 32px;
+            --font-display: 'Cormorant Garamond', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --shadow: 0 16px 48px rgba(16, 28, 22, 0.1);
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
             margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: var(--font-body);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background: linear-gradient(160deg, #f4f8f4 0%, #e8f0e9 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            padding: 20px 0;
+            padding: 40px 20px 56px;
         }
 
-        .logo-container {
-            margin-bottom: 20px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .logo-container img {
-            max-width: 200px;
-            height: auto;
+        .logo {
+            width: clamp(80px, 18vw, 108px);
             display: block;
-            margin: 0 auto;
+            margin: 0 auto 32px;
+            opacity: 0.88;
+            filter: drop-shadow(0 6px 16px rgba(30, 50, 38, 0.1));
+            animation: fadeUp 0.4s ease both;
         }
 
         .card {
-            background: white;
-            padding: 35px;
-            border-radius: 16px;
-            max-width: 520px;
-            width: 90%;
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 44px 38px 38px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
             text-align: center;
-            box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+            animation: fadeUp 0.5s ease 0.06s both;
+        }
+
+        .benefit-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 999px;
+            background: rgba(196, 164, 107, 0.1);
+            border: 1px solid rgba(196, 164, 107, 0.3);
+            color: #7a5f2c;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
         }
 
         h2 {
-            color: #72bd99;
-            margin-bottom: 20px;
-            font-weight: 600;
+            font-family: var(--font-display);
+            font-size: clamp(26px, 5vw, 36px);
+            font-style: italic;
+            color: var(--ink);
+            margin: 0 0 18px;
+            line-height: 1.15;
+        }
+
+        .divider {
+            width: 44px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 0 auto 26px;
         }
 
         p {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 12px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.78;
+            margin: 0 0 14px;
+            font-weight: 400;
+        }
+
+        .profesional-name {
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .note {
+            font-size: 12px;
+            color: #96aaa0;
+            margin-top: 8px;
+            font-style: italic;
         }
 
         .botones {
-            margin-top: 25px;
+            margin-top: 34px;
             display: flex;
-            justify-content: center;
-            gap: 15px;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .btn-si {
-            background: #72bd99;
-            color: white;
+            padding: 17px 24px;
+            border-radius: 16px;
             border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
+            background: linear-gradient(135deg, #7ba891 0%, #4a6e5c 100%);
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: background 0.3s;
+            box-shadow: 0 12px 28px rgba(74, 110, 92, 0.22);
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .btn-si:hover {
-            background: #5ea685;
+        .btn-si:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(74, 110, 92, 0.3);
         }
+
+        .btn-si:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-si .spinner {
+            display: none;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.38);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+
+        .btn-si.loading .spinner { display: block; }
+        .btn-si.loading .btn-text { opacity: 0.72; }
 
         .btn-no {
-            background: white;
-            border: 1px solid #ddd;
-            padding: 12px 24px;
-            border-radius: 25px;
+            padding: 15px 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
             cursor: pointer;
-            font-size: 14px;
-            color: #999;
-            transition: all 0.3s;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
 
-        .btn-no:hover {
-            background: #f9f9f9;
-            border-color: #ccc;
+        .btn-no:not(:disabled):hover {
+            background: rgba(107, 144, 128, 0.06);
+            color: var(--ink);
+            border-color: rgba(107, 144, 128, 0.4);
+        }
+
+        .btn-no:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 480px) {
+            .card { padding: 34px 22px 30px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="logo-container">
-        <img src="img/logo.png" alt="Espacio Mimar T">
-    </div>
+    <img src="img/logo.png" class="logo" alt="Espacio Mimar T">
 
     <div class="card">
+        <span class="benefit-badge">Beneficio de membresía</span>
         <h2>Consulta nutricional incluida</h2>
-        <p>Queremos consultarles si desean aceptar o no la consulta nutricional mensual, incluida dentro de su membresía totalmente gratis.</p>
-        <p>Esta consulta se realiza con la <strong>Lic. en Nutrición Anael Werbrich</strong> e incluye un plan de alimentación personalizado.</p>
-        <p>Es un beneficio opcional, pensado para acompañar el proceso y potenciar los resultados de los tratamientos.</p>
-        <p>Más allá de que sus tratamientos sean faciales o corporales, sabemos que los hábitos y la alimentación influyen directamente en la calidad de la piel, el metabolismo y en los resultados estéticos.</p>
-        <p>Si desean aprovechar este beneficio dentro de su membresía, pueden solicitar su consulta mensual.</p>
-        <p style="font-size:14px;color:#777;">Y si prefieren no hacerlo, la membresía se mantiene exactamente igual.</p>
-
+        <div class="divider"></div>
+        <p>Como parte de tu membresía, tenés acceso a una consulta nutricional mensual sin costo adicional, a cargo de la <span class="profesional-name">Lic. en Nutrición Anael Werbrich</span>.</p>
+        <p>Incluye un plan de alimentación personalizado, pensado para potenciar los resultados de tus tratamientos estéticos desde adentro.</p>
+        <p>Los hábitos alimentarios influyen directamente en la calidad de la piel, la respuesta al tratamiento y el bienestar general. Este beneficio existe para acompañar ese proceso de forma integral.</p>
+        <p class="note">Si preferís no utilizarlo, tu membresía permanece exactamente igual.</p>
         <div class="botones">
-            <button id="btnSi" class="btn-si">Sí, me gustaría</button>
-            <button id="btnNo" class="btn-no">No por ahora</button>
+            <button id="btnSi" class="btn-si">
+                <span class="btn-text">Me gustaría aprovechar este beneficio</span>
+                <span class="spinner"></span>
+            </button>
+            <button id="btnNo" class="btn-no">Por ahora no, gracias</button>
         </div>
     </div>
 
     <script type="module">
         import { db, doc, updateDoc } from "/js/firebase-web.js";
-
         const usuarioDni = localStorage.getItem("clienteDNI");
+        if (!usuarioDni) window.location.href = "index.html";
 
-        if(!usuarioDni){
-            window.location.href = "index.html";
-        }
+        const btnSi = document.getElementById("btnSi");
+        const btnNo = document.getElementById("btnNo");
 
         async function registrarRespuesta(acepta) {
+            btnSi.disabled = true;
+            btnNo.disabled = true;
+            if (acepta) btnSi.classList.add('loading');
             try {
-                const userRef = doc(db, "clients", usuarioDni);
-                await updateDoc(userRef, {
+                await updateDoc(doc(db, "clients", usuarioDni), {
                     consultaNutricional: acepta,
                     consultaNutricionalRespondida: true
                 });
-                // Redirección a historia tras responder
-                window.location.href = "historia.html"; 
+                window.location.href = "historia.html";
             } catch (e) {
                 console.error("Error:", e);
+                btnSi.disabled = false;
+                btnNo.disabled = false;
+                btnSi.classList.remove('loading');
                 alert("Hubo un problema al guardar tu respuesta. Por favor, reintentá.");
             }
         }
 
-        document.getElementById("btnSi").onclick = () => registrarRespuesta(true);
-        document.getElementById("btnNo").onclick = () => registrarRespuesta(false);
+        btnSi.onclick = () => registrarRespuesta(true);
+        btnNo.onclick = () => registrarRespuesta(false);
     </script>
 
     <script src="/js/shared-footer.js"></script>

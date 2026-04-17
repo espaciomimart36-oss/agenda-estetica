@@ -284,23 +284,45 @@
         }
 
         .btn-reservar {
-            margin-top: 16px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+            margin-top: 18px;
+            background: linear-gradient(135deg, #7ba891 0%, #4a6e5c 100%);
             color: white;
             border: none;
-            padding: 14px 15px;
-            border-radius: 13px;
+            padding: 15px;
+            border-radius: 14px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
             transition: transform var(--trans), box-shadow var(--trans);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 8px 20px rgba(74,110,92,0.22);
         }
 
-        .btn-reservar:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(114, 189, 153, 0.34);
+        .btn-reservar:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(74,110,92,0.3);
         }
+
+        .btn-reservar:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .btn-reservar .spinner-r {
+            display: none;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.36);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spinR 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+        .btn-reservar.loading .spinner-r { display: block; }
+        .btn-reservar.loading .btn-r-label { opacity: 0.72; }
+
+        @keyframes spinR { to { transform: rotate(360deg); } }
 
         .reveal {
             opacity: 0;
@@ -463,8 +485,36 @@
         }
 
         .estado-tag.cancelado {
-            background: #fdecef;
-            color: #a64b58;
+            background: #f5f0f0;
+            color: #9a6868;
+        }
+
+        .estado-tag.proximo {
+            background: linear-gradient(135deg, #d8f0e6, #c8e8d8);
+            color: #2d6b4f;
+            border: 1px solid rgba(72,160,112,0.28);
+        }
+
+        .estado-tag.finalizado {
+            background: rgba(200,210,205,0.3);
+            color: #7a8e85;
+            border: 1px solid rgba(160,180,170,0.3);
+        }
+
+        .turnos-section-header {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #8a9e95;
+            margin: 16px 0 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(200,215,208,0.5);
+        }
+
+        .turno-item.turno-proximo {
+            border-color: rgba(100,180,140,0.32);
+            background: linear-gradient(165deg, #fefffe 0%, #f4fbf7 100%);
         }
 
         .turno-meta {
@@ -602,7 +652,11 @@
             border: 1px solid rgba(210, 160, 90, 0.35);
             display: grid;
             place-items: center;
-            font-size: 28px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #a07840;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
             flex-shrink: 0;
         }
 
@@ -867,7 +921,7 @@
     </section>
 
     <div class="kit-featured reveal" id="kitFeaturedSection">
-        <div class="kit-featured-icon">🧴</div>
+        <div class="kit-featured-icon">K</div>
         <div class="kit-featured-text">
             <h3>Kit Facial Domiciliario</h3>
             <p>Leche de limpieza, tónico calmante, crema regeneradora y más. Cuidado de tu piel en casa, recomendado por Gimena.</p>
@@ -936,8 +990,8 @@
 
     <div id="modalCitasCliente" class="modal-overlay">
         <div class="modal-card">
-            <h2>Tus Turnos</h2>
-            <p style="font-size:13px;color:#7b8680;margin:0 0 16px;">Agenda en Espacio Mimar T</p>
+            <h2>Mis Turnos</h2>
+            <p style="font-size:13px;color:#7b8680;margin:0 0 16px;">Proximos y sesiones pasadas en Espacio Mimar T</p>
             <div id="turnosFeedback" class="turnos-feedback" aria-live="polite"></div>
             <div id="listaResultadosCitas" style="max-height:min(52dvh, 450px);overflow-y:auto;padding-right:4px;"></div>
             <button id="btnCerrarMisCitas" class="btn-cerrar">Cerrar</button>
@@ -1057,16 +1111,22 @@
         const puedeCancelarTurno = (turno = {}) => {
             if (!haySesionCliente || !dniSesion) return false;
             if ((dniConsultaActual || "") !== dniSesion) return false;
-            return obtenerEstadoTurno(turno) === "confirmado";
+            if (obtenerEstadoTurno(turno) !== "confirmado") return false;
+            const hoy = new Date().toISOString().split("T")[0];
+            return (turno.fecha || "") >= hoy;
         };
 
         function renderTurnosConsultados() {
             if (!turnosConsultados.length) {
-                listaResultados.innerHTML = "<p style='color:#88948f; padding: 28px;'>No tenés turnos próximos agendados.</p>";
+                listaResultados.innerHTML = "<p style='color:#88948f; padding: 28px;'>No tenés turnos registrados.</p>";
                 return;
             }
 
-            listaResultados.innerHTML = turnosConsultados.map((turno) => {
+            const hoy = new Date().toISOString().split("T")[0];
+            const proximos = turnosConsultados.filter(t => (t.fecha || "") >= hoy);
+            const pasados  = turnosConsultados.filter(t => (t.fecha || "") < hoy);
+
+            const renderItem = (turno, esFuturo) => {
                 const estado = obtenerEstadoTurno(turno);
                 const estaAbierto = cancelacionTurnoActivaId === turno.id;
                 const estaCancelando = cancelandoReservaId === turno.id;
@@ -1101,10 +1161,13 @@
                     `
                     : "";
 
+                const badgeClass = estado === "cancelado" ? "cancelado" : (esFuturo ? "proximo" : "finalizado");
+                const badgeLabel = estado === "cancelado" ? "Cancelado" : (esFuturo ? "Proximo" : "Finalizado");
+
                 return `
-                    <div class="turno-item ${estado === "cancelado" ? "turno-cancelado" : ""}">
+                    <div class="turno-item ${estado === "cancelado" ? "turno-cancelado" : ""} ${esFuturo && estado !== "cancelado" ? "turno-proximo" : ""}">
                         <div class="turno-headline">
-                            <span class="estado-tag ${estado}">${estado === "cancelado" ? "Cancelado" : "Confirmado"}</span>
+                            <span class="estado-tag ${badgeClass}">${badgeLabel}</span>
                         </div>
                         <b>${escapeHtml(turno.servicio || "Servicio")}</b>
                         ${formatearFechaPro(turno.fecha)}
@@ -1114,7 +1177,18 @@
                         ${botonNotificar}
                     </div>
                 `;
-            }).join("");
+            };
+
+            const partes = [];
+            if (proximos.length) {
+                partes.push(`<div class="turnos-section-header">Proximos turnos</div>`);
+                partes.push(...proximos.map(t => renderItem(t, true)));
+            }
+            if (pasados.length) {
+                partes.push(`<div class="turnos-section-header">Historial de sesiones</div>`);
+                partes.push(...pasados.map(t => renderItem(t, false)));
+            }
+            listaResultados.innerHTML = partes.join("");
         }
 
         const SERVICIO_LED_NOMBRE = "Facial LED Regenerativo";
@@ -1128,12 +1202,12 @@
 
         function obtenerEmojiServicio(nombre) {
             const normalizado = (nombre || "").toLowerCase();
-            if (normalizado.includes("led") || normalizado.includes("facial")) return "✨";
-            if (normalizado.includes("corporal") || normalizado.includes("zona")) return "🌿";
-            if (normalizado.includes("brazo")) return "💎";
-            if (normalizado.includes("limpieza")) return "🫧";
-            if (normalizado.includes("antiage") || normalizado.includes("rejuven")) return "🌸";
-            return "🤍";
+            if (normalizado.includes("led") || normalizado.includes("facial")) return "F";
+            if (normalizado.includes("corporal") || normalizado.includes("zona")) return "C";
+            if (normalizado.includes("brazo")) return "B";
+            if (normalizado.includes("limpieza")) return "L";
+            if (normalizado.includes("antiage") || normalizado.includes("rejuven")) return "A";
+            return "S";
         }
 
         function limpiarTituloServicio(nombre) {
@@ -1159,25 +1233,25 @@
                     listaResultados.innerHTML = "<p style='color:#88948f; padding: 28px;'>No hay turnos registrados con este DNI.</p>";
                 } else {
                     const hoy = new Date().toISOString().split("T")[0];
-                    const turnos = [];
+                    const proximos = [];
+                    const pasados  = [];
 
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
-                        if (data.fecha >= hoy) turnos.push({ id: doc.id, ...data });
+                        const item = { id: doc.id, ...data };
+                        if ((data.fecha || "") >= hoy) proximos.push(item);
+                        else pasados.push(item);
                     });
 
-                    turnos.sort((a, b) => {
-                        if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha);
-                        return a.hora.localeCompare(b.hora);
-                    });
+                    proximos.sort((a, b) => a.fecha !== b.fecha ? a.fecha.localeCompare(b.fecha) : a.hora.localeCompare(b.hora));
+                    pasados.sort((a, b)  => b.fecha !== a.fecha ? b.fecha.localeCompare(a.fecha) : b.hora.localeCompare(a.hora));
 
-                    if (turnos.length === 0) {
-                        turnosConsultados = [];
-                        listaResultados.innerHTML = "<p style='color:#88948f; padding: 28px;'>No tenes turnos proximos agendados.</p>";
+                    turnosConsultados = [...proximos, ...pasados];
+
+                    if (!turnosConsultados.length) {
+                        listaResultados.innerHTML = "<p style='color:#88948f; padding: 28px;'>No hay turnos registrados.</p>";
                         return;
                     }
-
-                    turnosConsultados = turnos;
                     renderTurnosConsultados();
                 }
             } catch (e) {
@@ -1360,7 +1434,7 @@
                     div.innerHTML = `
                         <div>
                             <div class="servicio-head">
-                                <div class="servicio-icono" aria-hidden="true">${emoji}</div>
+                                <div class="servicio-icono" aria-hidden="true" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;font-weight:700;color:#4a6e5c">${emoji}</div>
                                 <div>
                                     <h3>${tituloLimpio}</h3>
                                     <div class="duracion">${s.duracion} min</div>
@@ -1368,13 +1442,18 @@
                             </div>
                             <p class="desc">${descFormateada}</p>
                         </div>
-                        <button class="btn-reservar" data-nombre="${s.nombre}">Reservar turno</button>
+                        <button class="btn-reservar" data-nombre="${s.nombre}">
+                            <span class="btn-r-label">Reservar turno</span>
+                            <span class="spinner-r"></span>
+                        </button>
                     `;
                     contenedor.appendChild(div);
                 });
 
                 document.querySelectorAll(".btn-reservar").forEach((btn) => {
                     btn.addEventListener("click", () => {
+                        btn.classList.add("loading");
+                        btn.disabled = true;
                         localStorage.setItem("jornadaModo", "0");
                         localStorage.removeItem("jornadaSource");
                         localStorage.setItem("servicioSeleccionado", btn.getAttribute("data-nombre"));
