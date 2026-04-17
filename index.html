@@ -82,8 +82,8 @@
             --verde-suave: #eef4ef;
             --verde-tinta: #213128;
             --borde-suave: rgba(216, 227, 218, 0.72);
-            --rojo-acento: #ff3b30;
-            --rojo-acento-oscuro: #b71818;
+            --rojo-acento: #d4a55a;
+            --rojo-acento-oscuro: #b8833a;
             --marfil-profundo: #fff9f4;
             --sombra-card: 0 26px 60px rgba(16, 23, 19, 0.18);
             --font-display: 'Cormorant Garamond', serif;
@@ -108,7 +108,6 @@
             font-family: var(--font-body);
             color: var(--verde-tinta);
             background:
-                radial-gradient(1000px 520px at 12% -8%, rgba(255, 75, 65, 0.13), transparent 60%),
                 radial-gradient(760px 420px at 100% 14%, rgba(163, 194, 167, 0.18), transparent 58%),
                 radial-gradient(900px 460px at 84% 100%, rgba(108, 138, 112, 0.14), transparent 62%),
                 linear-gradient(180deg, #f9fbf7 0%, #eff5ef 44%, #e7efe8 100%);
@@ -133,7 +132,7 @@
             right: -82px;
             width: 260px;
             height: 260px;
-            background: radial-gradient(circle, rgba(255, 59, 48, 0.24) 0%, rgba(255, 59, 48, 0) 70%);
+            background: radial-gradient(circle, rgba(212, 165, 90, 0.18) 0%, rgba(212, 165, 90, 0) 70%);
         }
 
         body::after {
@@ -190,8 +189,8 @@
             left: max(18px, calc(50% - 540px));
             width: 110px;
             height: 110px;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.1) 38%, rgba(255, 59, 48, 0.18) 72%, rgba(255, 59, 48, 0) 100%);
-            box-shadow: 0 24px 50px rgba(255, 59, 48, 0.18);
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.1) 38%, rgba(212, 165, 90, 0.14) 72%, rgba(212, 165, 90, 0) 100%);
+            box-shadow: 0 24px 50px rgba(212, 165, 90, 0.14);
             animation: floatOrb 8s ease-in-out infinite;
         }
 
@@ -201,8 +200,8 @@
             width: 170px;
             height: 170px;
             background:
-                radial-gradient(circle at 50% 50%, rgba(255, 240, 225, 0.26) 0%, rgba(255, 59, 48, 0.2) 38%, rgba(255, 59, 48, 0) 74%),
-                conic-gradient(from 130deg, rgba(255, 255, 255, 0.55), rgba(255, 59, 48, 0.14), rgba(255, 255, 255, 0.4), rgba(255, 59, 48, 0.08), rgba(255, 255, 255, 0.55));
+                radial-gradient(circle at 50% 50%, rgba(255, 248, 225, 0.2) 0%, rgba(212, 165, 90, 0.14) 38%, rgba(212, 165, 90, 0) 74%),
+                conic-gradient(from 130deg, rgba(255, 255, 255, 0.55), rgba(212, 165, 90, 0.1), rgba(255, 255, 255, 0.4), rgba(212, 165, 90, 0.06), rgba(255, 255, 255, 0.55));
             opacity: 0.85;
             animation: rotateHalo 16s linear infinite;
         }
@@ -237,8 +236,8 @@
                 linear-gradient(145deg, rgba(255, 253, 250, 0.96) 0%, rgba(255, 248, 242, 0.93) 42%, rgba(242, 248, 243, 0.92) 100%);
             border: 1px solid rgba(255, 255, 255, 0.78);
             box-shadow:
-                0 38px 78px rgba(18, 25, 22, 0.28),
-                0 10px 24px rgba(255, 59, 48, 0.14),
+                0 38px 78px rgba(18, 25, 22, 0.22),
+                0 10px 24px rgba(29, 51, 42, 0.08),
                 inset 0 1px 0 rgba(255, 255, 255, 0.95);
             animation: fadeUp 0.55s ease both;
             transform: rotateX(2.5deg) translateZ(0);
@@ -258,7 +257,7 @@
         .hero-content::before {
             background:
                 radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0) 24%),
-                radial-gradient(circle at 82% 12%, rgba(255, 59, 48, 0.16), rgba(255, 59, 48, 0) 28%),
+                radial-gradient(circle at 82% 12%, rgba(114, 189, 153, 0.12), rgba(114, 189, 153, 0) 28%),
                 linear-gradient(120deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
             opacity: 0.96;
         }
@@ -289,8 +288,8 @@
                 linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 243, 238, 0.95) 100%);
             border: 1px solid rgba(255, 255, 255, 0.84);
             box-shadow:
-                0 18px 34px rgba(28, 37, 32, 0.14),
-                0 8px 18px rgba(255, 59, 48, 0.08),
+                0 18px 34px rgba(28, 37, 32, 0.12),
+                0 8px 18px rgba(29, 51, 42, 0.06),
                 inset 0 1px 0 rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(8px);
         }
