@@ -841,7 +841,8 @@
         let dniClienteCargado = "";
         let horariosDisponibles = [];
         let bloqueosHorarios = new Map();
-        let cierresPorFecha = new Map();
+        let duoHorarios      = new Map(); // key: fecha|hora -> docId en calendarExceptions
+        let cierresPorFecha  = new Map();
         let bloqueoPendienteConReserva = null;
         let resolverModalBorrado = null;
         let membresiaNormalizadaSesion = false;
@@ -1031,6 +1032,73 @@
             }
         };
         
+        // Guarda nota del segundo paciente en sesion Duo
+        window.guardarN2 = async function(id) {
+            const el = document.getElementById('n2-' + id);
+            if (!el) return;
+            const nota = el.value.trim();
+            try {
+                await updateDoc(doc(db, 'reservas', id), { detalleSesion2: nota });
+                mostrarAviso('Nota paciente 2 guardada');
+                await cargarTodo();
+                if (fechaSeleccionada) verTurnos(fechaSeleccionada, document.querySelector('.day.selected'));
+            } catch(e) { mostrarAviso('Error al guardar'); }
+        };
+
+        window.activarEdicionNota2Admin = function(id) {
+            const nd = document.getElementById('nd2-' + id);
+            const ne = document.getElementById('ne2-' + id);
+            if (nd) nd.style.display = 'none';
+            if (ne) ne.style.display = 'block';
+        };
+
+        window.cancelarEdicion2Admin = function(id) {
+            const nd = document.getElementById('nd2-' + id);
+            const ne = document.getElementById('ne2-' + id);
+            if (nd) nd.style.display = 'block';
+            if (ne) ne.style.display = 'none';
+        };
+
+        // Envia resumen de sesion al segundo paciente de una reserva Duo
+        window.enviarDetalleManual2 = async function(id) {
+            var r = todasLasReservas.find(function(x) { return x.id === id; });
+            if (!r) return;
+            var nota = (r.detalleSesion2 || "").trim();
+            if (!nota) { mostrarAviso("Guarda primero la nota del paciente 2"); return; }
+            var dni2 = r.duoDni2 || "";
+            var nombre2 = r.duoNombre2 || "Paciente 2";
+            var telefonoDest = "";
+            if (dni2) {
+                try {
+                    var snap2 = await getDoc(doc(db, 'clients', dni2));
+                    if (snap2.exists()) {
+                        var cd = snap2.data();
+                        telefonoDest = cd.phone || cd.telefono || cd.whatsapp || "";
+                    }
+                } catch(_) {}
+            }
+            if (!telefonoDest) { mostrarAviso("Sin telefono registrado para " + nombre2); return; }
+            mostrarAviso("Enviando resumen a " + nombre2 + "...");
+            try {
+                var resp = await fetch('https://us-central1-estetica-8d067.cloudfunctions.net/enviarResumenSesion', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tel:     telefonoDest,
+                        nombre:  nombre2,
+                        fecha:   r.fecha,
+                        sesiones:[{ hora: r.hora || '', servicio: r.servicio || 'Tratamiento', detalle: nota }]
+                    })
+                });
+                var result = await resp.json().catch(function() { return {}; });
+                if (!resp.ok) throw new Error(result.error || 'Error del servidor');
+                mostrarAviso('Resumen enviado a ' + nombre2);
+            } catch(e) {
+                console.error(e);
+                mostrarAviso('No se pudo enviar: ' + (e.message || 'intenta de nuevo'));
+            }
+        };
+
         const extraerHorariosDesdeFirebase = (snapHorarios) => {
             const horas = new Set();
             (snapHorarios?.docs || []).forEach((d) => {
@@ -1044,23 +1112,35 @@
                     .forEach((h) => horas.add(h));
             });
             if (!horas.size) {
-                ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'].forEach(h => horas.add(h));
+                // Esquema unificado: manana normal | fraccionado mediodia | tarde normal | fraccionado noche
+                ['07:00','08:00','09:00','10:00','11:00',
+                 '12:00','12:30',
+                 '15:00','16:00','17:00','18:00','19:00',
+                 '20:00','20:30'].forEach(h => horas.add(h));
             }
             return [...horas].sort((a, b) => a.localeCompare(b));
         };
         
         const extraerBloqueosDesdeFirebase = (snapBloqueos) => {
-            const map = new Map();
+            const map    = new Map();
+            const mapDuo = new Map();
             (snapBloqueos?.docs || []).forEach((d) => {
-                const data = d.data() || {};
-                const fecha = (data.fecha || '').toString();
-                const hora = normalizarHora(data.hora || data.hour || data.time || '');
-                const blocked = data.blocked !== false;
+                const data   = d.data() || {};
+                const fecha  = (data.fecha || '').toString();
+                const hora   = normalizarHora(data.hora || data.hour || data.time || '');
                 const active = data.active !== false;
-                if (fecha && hora && blocked && active) {
+                if (!fecha || !hora || !active) return;
+
+                // Bloqueos
+                if (data.blocked === true) {
                     map.set(keyBloqueo(fecha, hora), { id: d.id, ...data, fecha, hora });
                 }
+                // Duo slots
+                if (data.duo === true) {
+                    mapDuo.set(keyBloqueo(fecha, hora), d.id);
+                }
             });
+            duoHorarios = mapDuo;
             return map;
         };
         
@@ -1307,9 +1387,18 @@
             ` : "";
             const filtrados = todasLasReservas.filter(r => esReservaActiva(r) && r.fecha === f).sort((a,b) => a.hora.localeCompare(b.hora));
             const reservasHTML = filtrados.length ? filtrados.map(r => {
+                const esDuo     = r.duo === true;
                 const tieneNota = !!(r.detalleSesion && r.detalleSesion.trim());
-                const notaDisplay = tieneNota ? `
-                    <div id="nd-${r.id}" style="margin-top:8px; background:#f3faf6; border:1px solid #b6dfc9; border-radius:10px; padding:10px 34px 10px 10px; font-size:13px; color:#2f5a47; white-space:pre-wrap; position:relative">${escapeHtml(r.detalleSesion)}<button title="Editar nota" onclick="activarEdicionNotaAdmin('${r.id}')" style="position:absolute; top:6px; right:8px; background:none; border:none; cursor:pointer; font-size:12px">Editar</button></div>
+                const tieneNota2= !!(r.detalleSesion2 && r.detalleSesion2.trim());
+
+                // Badge Duo
+                const duoBadge = esDuo
+                    ? `<span style="display:inline-block;background:#eef5ff;color:#2e61b1;border:1px solid #c6daf8;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:800;margin-left:8px;">Duo</span>`
+                    : '';
+
+                // Nota para paciente 1 (o unico)
+                const notaDisplay1 = tieneNota ? `
+                    <div id="nd-${r.id}" style="margin-top:8px; background:#f3faf6; border:1px solid #b6dfc9; border-radius:10px; padding:10px 34px 10px 10px; font-size:13px; color:#2f5a47; white-space:pre-wrap; position:relative">${escapeHtml(r.detalleSesion)}<button title="Editar" onclick="activarEdicionNotaAdmin('${r.id}')" style="position:absolute; top:6px; right:8px; background:none; border:none; cursor:pointer; font-size:12px">Editar</button></div>
                     <div id="ne-${r.id}" style="display:none">
                         <textarea id="n-${r.id}" style="width:100%; box-sizing:border-box; margin-top:6px">${escapeHtml(r.detalleSesion)}</textarea>
                         <div style="display:flex; gap:6px; margin-top:4px">
@@ -1317,21 +1406,52 @@
                             <button onclick="cancelarEdicionAdmin('${r.id}')" style="border:1px solid #ccc; background:#f9f9f9; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:12px">Cancelar</button>
                         </div>
                     </div>` : `
-                    <textarea id="n-${r.id}" placeholder="Detalle de la sesión..." style="width:100%; box-sizing:border-box; margin-top:6px"></textarea>
+                    <textarea id="n-${r.id}" placeholder="${esDuo ? 'Nota paciente 1...' : 'Detalle de la sesion...'}" style="width:100%; box-sizing:border-box; margin-top:6px"></textarea>
                     <button id="btnN-${r.id}" class="btn-save" onclick="guardarN('${r.id}')">Guardar nota</button>`;
+
+                // Nota para paciente 2 (solo en Duo)
+                const notaDisplay2 = esDuo ? (tieneNota2 ? `
+                    <div style="font-size:11px;font-weight:700;color:#2e61b1;text-transform:uppercase;letter-spacing:.06em;margin-top:12px;">Nota paciente 2 — ${escapeHtml(r.duoNombre2 || 'Paciente 2')}</div>
+                    <div id="nd2-${r.id}" style="margin-top:6px; background:#f0f5ff; border:1px solid #c6daf8; border-radius:10px; padding:10px 34px 10px 10px; font-size:13px; color:#2a3d5a; white-space:pre-wrap; position:relative">${escapeHtml(r.detalleSesion2)}<button title="Editar" onclick="activarEdicionNota2Admin('${r.id}')" style="position:absolute; top:6px; right:8px; background:none; border:none; cursor:pointer; font-size:12px">Editar</button></div>
+                    <div id="ne2-${r.id}" style="display:none">
+                        <textarea id="n2-${r.id}" style="width:100%; box-sizing:border-box; margin-top:6px">${escapeHtml(r.detalleSesion2)}</textarea>
+                        <div style="display:flex; gap:6px; margin-top:4px">
+                            <button class="btn-save" onclick="guardarN2('${r.id}')">Guardar</button>
+                            <button onclick="cancelarEdicion2Admin('${r.id}')" style="border:1px solid #ccc; background:#f9f9f9; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:12px">Cancelar</button>
+                        </div>
+                    </div>` : `
+                    <div style="font-size:11px;font-weight:700;color:#2e61b1;text-transform:uppercase;letter-spacing:.06em;margin-top:12px;">Nota paciente 2 — ${escapeHtml(r.duoNombre2 || 'Paciente 2')}</div>
+                    <textarea id="n2-${r.id}" placeholder="Nota paciente 2..." style="width:100%; box-sizing:border-box; margin-top:6px"></textarea>
+                    <button class="btn-save" onclick="guardarN2('${r.id}')">Guardar nota paciente 2</button>`)
+                    : '';
+
+                // Botones de envio
+                const btnEnviar1 = tieneNota
+                    ? `<button onclick="enviarDetalleManual('${r.id}')" style="width:100%; margin-top:8px; padding:10px; border-radius:10px; border:none; background:#25d366; color:white; font-weight:700; cursor:pointer; font-size:13px">Enviar resumen${esDuo ? ' — Paciente 1' : ''}</button>`
+                    : '';
+                const btnEnviar2 = esDuo && tieneNota2
+                    ? `<button onclick="enviarDetalleManual2('${r.id}')" style="width:100%; margin-top:6px; padding:10px; border-radius:10px; border:none; background:#128c7e; color:white; font-weight:700; cursor:pointer; font-size:13px">Enviar resumen — Paciente 2</button>`
+                    : '';
+
+                // Header del paciente
+                const pac1label = esDuo
+                    ? `<div style="font-size:11px;font-weight:700;color:#2f7c5d;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Paciente 1</div>`
+                    : '';
+
                 return `
                 <div class="detalle-dia-card">
-                    ${renderTagOrigen(r)}<br>
-                    <b>${escapeHtml(r.nombreLimpio || 'Sin nombre')}</b> - ${escapeHtml(r.hora || '--:--')} hs<br>
+                    ${renderTagOrigen(r)}${duoBadge}<br>
+                    ${pac1label}<b>${escapeHtml(r.nombreLimpio || 'Sin nombre')}</b> - ${escapeHtml(r.hora || '--:--')} hs<br>
                     <small>${escapeHtml(r.servicio || 'Servicio')}</small>
-                    ${notaDisplay}
+                    ${notaDisplay1}
+                    ${notaDisplay2}
                     <div class="grid-acciones">
-                        <button class="btn-ws btn-confirmar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','confirmar')">Confirmo</button>
+                        <button class="btn-ws btn-confirmar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','confirmar')">Confirmar</button>
                         <button class="btn-ws btn-recordar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','recordar')">Recordar</button>
                         <button class="btn-ws btn-cancelar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','cancelar')">Cancelar</button>
                     </div>
                     <button class="btn-delete-reserva" onclick="borrarReserva('${r.id}')">Borrar reserva</button>
-                    ${tieneNota ? `<button id="btnEnviarResumen-${r.id}" onclick="enviarDetalleManual('${r.id}')" style="width:100%; margin-top:8px; padding:10px; border-radius:10px; border:none; background:#25d366; color:white; font-weight:700; cursor:pointer; font-size:13px">Enviar resumen de sesión</button>` : ''}
+                    ${btnEnviar1}${btnEnviar2}
                 </div>`;
             }).join('') : '<p style="text-align:center; opacity:0.5">Sin turnos.</p>';
             
@@ -1348,6 +1468,12 @@
                 const accionBloqueo = bloqueo
                     ? `<button class="btn-mini" onclick="toggleBloqueoHorario('${f}','${hora}')">Desbloquear</button>`
                     : `<button class="btn-mini alerta" onclick="toggleBloqueoHorario('${f}','${hora}')">Bloquear</button>`;
+                const esDuoSlot = duoHorarios.has(keyBloqueo(f, hora));
+                const accionDuo = !bloqueo
+                    ? (esDuoSlot
+                        ? `<button class="btn-mini" style="border-color:#b5cce8;color:#2e61b1;background:#eef5ff" onclick="toggleDuoHorario('${f}','${hora}')">Quitar Duo</button>`
+                        : `<button class="btn-mini" style="border-color:#b5cce8;color:#2e61b1;background:#f3f8ff" onclick="toggleDuoHorario('${f}','${hora}')">Sesion Duo</button>`)
+                    : '';
                 const botonRegistrar = (!bloqueo && !reserva)
                     ? `<button class="btn-mini" onclick="registrarReservaManual('${f}','${hora}')">Registrar</button>`
                     : '';
@@ -1358,7 +1484,7 @@
                     <div class="hora-row">
                         <div class="hora-label">${hora}</div>
                         <div class="hora-status">${estado} · ${label}</div>
-                        <div class="hora-actions">${accionBloqueo}${botonRegistrar}${botonCancelar}</div>
+                        <div class="hora-actions">${accionBloqueo}${accionDuo}${botonRegistrar}${botonCancelar}</div>
                     </div>
                 `;
             }).join('');
@@ -1749,10 +1875,28 @@
                 updatedAt: serverTimestamp()
             }, { merge: true });
             bloqueosHorarios.set(key, { id: idDoc, fecha, hora, blocked: true });
+            await registrarAuditoria("bloqueo", fecha, hora,
+                reserva ? `Bloqueado con reserva activa de ${reserva.nombreLimpio || "Paciente"}` : "Horario bloqueado por admin"
+            );
             mostrarAviso(reserva ? "Horario bloqueado. Ya podés cancelar y notificar." : "Horario bloqueado");
             verTurnos(fecha, document.querySelector('.day.selected'));
         };
         
+        // Registra una accion de auditoria en la coleccion historias
+        const registrarAuditoria = async (tipo_accion, fecha, hora, detalle = "") => {
+            try {
+                await addDoc(collection(db, "historias"), {
+                    fecha_accion:     new Date().toISOString(),
+                    tipo_accion,
+                    horario_afectado: `${fecha} ${hora}`,
+                    detalle,
+                    registradoPor:    "admin"
+                });
+            } catch (e) {
+                console.warn("registrarAuditoria:", e);
+            }
+        };
+
         window.toggleBloqueoHorario = async (fecha, hora) => {
             const key = keyBloqueo(fecha, hora);
             const bloqueado = bloqueosHorarios.get(key);
@@ -1761,6 +1905,7 @@
                 if (bloqueado) {
                     await deleteDoc(doc(db, "calendarExceptions", bloqueado.id || docIdBloqueo(fecha, hora)));
                     bloqueosHorarios.delete(key);
+                    await registrarAuditoria("desbloqueo", fecha, hora, "Horario habilitado por admin");
                     mostrarAviso("Horario desbloqueado");
                 } else {
                     await bloquearHorario(fecha, hora, false);
@@ -1768,6 +1913,41 @@
             } catch (error) {
                 console.error(error);
                 mostrarAviso("No se pudo actualizar el horario");
+            } finally {
+                mostrarLoader(false);
+            }
+            verTurnos(fecha, document.querySelector('.day.selected'));
+        };
+
+        // Habilita o deshabilita el modo Sesion Duo para un slot
+        window.toggleDuoHorario = async (fecha, hora) => {
+            const key = keyBloqueo(fecha, hora);
+            const duoDocId = duoHorarios.get(key);
+            try {
+                mostrarLoader(true);
+                if (duoDocId) {
+                    // Quitar flag duo del documento existente
+                    await setDoc(doc(db, "calendarExceptions", duoDocId), { duo: false }, { merge: true });
+                    duoHorarios.delete(key);
+                    await registrarAuditoria("duo_desactivado", fecha, hora, "Sesion Duo desactivada");
+                    mostrarAviso("Sesion Duo desactivada");
+                } else {
+                    // Crear o actualizar doc en calendarExceptions con duo:true
+                    const idDoc = `${fecha}_${hora.replace(":", "-")}_duo`;
+                    await setDoc(doc(db, "calendarExceptions", idDoc), {
+                        fecha,
+                        hora,
+                        duo:       true,
+                        blocked:   false,
+                        updatedAt: serverTimestamp()
+                    }, { merge: true });
+                    duoHorarios.set(key, idDoc);
+                    await registrarAuditoria("duo_activado", fecha, hora, "Sesion Duo activada por admin");
+                    mostrarAviso("Sesion Duo activada para " + hora);
+                }
+            } catch (error) {
+                console.error(error);
+                mostrarAviso("No se pudo cambiar el modo Duo");
             } finally {
                 mostrarLoader(false);
             }

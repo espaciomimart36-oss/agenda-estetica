@@ -713,16 +713,27 @@
 <script type="module">
 import { db, doc, getDoc, collection, query, where, getDocs } from "/js/firebase-web.js";
 
+// Esquema unificado Lun-Sab
+// Normal (60 min):      07-11 manana | 15-19 tarde
+// Fraccionado (30 min): 12:00/12:30 | 20:00/20:30
+const BLOQUE_NORMAL_MANANA  = ["07:00","08:00","09:00","10:00","11:00"];
+const BLOQUE_FRACCIONADO_M  = ["12:00","12:30"];
+const BLOQUE_NORMAL_TARDE   = ["15:00","16:00","17:00","18:00","19:00"];
+const BLOQUE_FRACCIONADO_N  = ["20:00","20:30"];
+
+const CONFIG_BASE = {
+    normal:      [...BLOQUE_NORMAL_MANANA, ...BLOQUE_NORMAL_TARDE],
+    fraccionado: [...BLOQUE_FRACCIONADO_M, ...BLOQUE_FRACCIONADO_N]
+};
+
+// Misma config para todos los dias laborables (excepciones se manejan por EXCEPCIONES_HORARIOS)
 const CONFIG_DIAS = {
-    "lunes": { normal: ["16:00", "17:00", "18:00", "19:00"], fraccionado: ["20:00", "20:30"] },
-    "martes": {
-        normal: ["07:00", "08:00", "09:00", "10:00", "11:00", "16:00", "17:00", "18:00", "19:00"],
-        fraccionado: ["12:00", "12:30", "20:00", "20:30"]
-    },
-    "miercoles": { normal: ["15:00", "16:00", "17:00", "18:00", "19:00"], fraccionado: ["20:00", "20:30"] },
-    "jueves": { normal: ["08:00", "09:00", "10:00", "11:00"], fraccionado: ["12:00", "12:30"] },
-    "viernes": { normal: ["15:00", "16:00", "17:00", "18:00", "19:00"], fraccionado: [] },
-    "sabado": { normal: ["08:00", "09:00", "10:00", "11:00"], fraccionado: ["12:00", "12:30"] }
+    "lunes":    CONFIG_BASE,
+    "martes":   CONFIG_BASE,
+    "miercoles":CONFIG_BASE,
+    "jueves":   CONFIG_BASE,
+    "viernes":  CONFIG_BASE,
+    "sabado":   CONFIG_BASE
 };
 
 const EXCEPCIONES_HORARIOS = {

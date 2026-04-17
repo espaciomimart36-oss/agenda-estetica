@@ -1,226 +1,461 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmar Turno | Espacio Mimar T</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --red-700: #9f1024;
-            --red-600: #cf1d35;
-            --red-500: #ff5a5f;
-            --red-100: #fff0f1;
-            --ink: #331f22;
+            --verde:     #72bd99;
+            --verde-osc: #4f9777;
+            --fondo:     #f2f6f4;
+            --ink:       #273630;
+            --muted:     #67736e;
+            --border:    #d9e5de;
+            --card-sh:   0 16px 38px rgba(29,51,42,0.11);
+            --radius:    22px;
+            --gold:      rgba(208,174,115,0.34);
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            margin: 0;
             min-height: 100vh;
             display: flex;
-            align-items: center; /* Centrado vertical */
-            justify-content: center; /* Centrado horizontal */
-            background: linear-gradient(135deg, #fff9fa 0%, #ffe8ea 100%);
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(circle at 8% 15%, rgba(114,189,153,0.18), transparent 38%),
+                radial-gradient(circle at 90% 8%,  rgba(114,189,153,0.12), transparent 32%),
+                var(--fondo);
             font-family: 'Montserrat', sans-serif;
             color: var(--ink);
-            padding: 16px;
+            padding: 24px 16px;
         }
 
         .card {
             width: 100%;
-            max-width: 400px; /* Tamaño ideal para celu */
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(159, 16, 36, 0.1);
-            padding: 30px;
+            max-width: 440px;
+            background: linear-gradient(165deg, #fffdf9 0%, #f6fbf7 52%, #eef5ef 100%);
+            border-radius: var(--radius);
+            box-shadow: var(--card-sh);
+            border: 1px solid rgba(208,174,115,0.38);
+            padding: 32px 28px;
             text-align: center;
-            border: 1px solid rgba(207, 29, 53, 0.1);
+            animation: fadeUp .38s ease both;
         }
 
-        .logo-placeholder {
-            color: var(--red-700);
-            font-weight: 700;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-logo {
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 18px;
+            display: block;
+            border: 1px solid rgba(90,144,119,0.18);
+            box-shadow: 0 10px 22px rgba(41,66,56,0.12);
         }
 
         h1 {
-            font-size: 1.4rem;
-            color: var(--red-700);
-            margin: 0 0 20px;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: clamp(1.4rem, 3.5vw, 1.75rem);
+            color: #2a4338;
+            margin-bottom: 20px;
+            line-height: 1.1;
         }
 
         .details-box {
-            background: var(--red-100);
+            background: rgba(255,255,255,0.85);
+            border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
+            padding: 18px 20px;
+            margin-bottom: 22px;
             text-align: left;
         }
 
         .details-box p {
-            margin: 8px 0;
-            font-size: 0.95rem;
-            border-bottom: 1px solid rgba(159, 16, 36, 0.05);
-            padding-bottom: 4px;
+            margin: 0 0 10px;
+            font-size: 0.9rem;
+            color: var(--muted);
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(217,229,222,0.7);
         }
 
+        .details-box p:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+
         .details-box strong {
-            color: var(--red-700);
             display: block;
-            font-size: 1.05rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-top: 2px;
         }
+
+        /* Sección dúo */
+        #duoSection {
+            display: none;
+            background: linear-gradient(135deg, #f5f9f6 0%, #ebf5ef 100%);
+            border: 1.5px solid rgba(114,189,153,0.45);
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-bottom: 22px;
+            text-align: left;
+        }
+
+        #duoSection .duo-header {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #2a4338;
+            margin-bottom: 6px;
+        }
+
+        #duoSection .duo-sub {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .duo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .duo-grid label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--verde-osc);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .duo-grid input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--ink);
+            background: #fff;
+            outline: none;
+            transition: border-color .18s;
+        }
+
+        .duo-grid input:focus { border-color: var(--verde); }
+
+        .duo-grid input.error { border-color: #d9534f; }
 
         .btn-confirmar {
             width: 100%;
-            background: linear-gradient(135deg, var(--red-500), var(--red-600));
+            background: linear-gradient(135deg, #77c39f 0%, #4e9f7b 100%);
             color: white;
             border: none;
             padding: 16px;
-            border-radius: 50px;
+            border-radius: 14px;
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(207, 29, 53, 0.3);
-            transition: transform 0.2s;
+            box-shadow: 0 12px 24px rgba(63,143,111,0.28);
+            transition: transform .18s ease, box-shadow .18s ease;
+            letter-spacing: .3px;
         }
 
-        .btn-confirmar:active {
-            transform: scale(0.98);
-        }
-
-        .btn-confirmar:disabled {
-            background: #ccc;
-            box-shadow: none;
-        }
+        .btn-confirmar:hover { transform: translateY(-1px); }
+        .btn-confirmar:active { transform: translateY(0); }
+        .btn-confirmar:disabled { background: #c9d2cd; box-shadow: none; cursor: not-allowed; transform: none; }
 
         #statusMsg {
-            margin-top: 15px;
-            font-size: 0.85rem;
-            color: var(--red-600);
+            margin-top: 14px;
+            font-size: 0.82rem;
+            color: var(--verde-osc);
             min-height: 1.2rem;
+            font-weight: 600;
+            line-height: 1.5;
         }
 
-        /* Modal de éxito */
+        #statusMsg.error { color: #c0392b; }
+
+        /* Modal éxito */
         #modalOk {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(15,22,19,0.55);
             display: none;
             align-items: center;
             justify-content: center;
             padding: 20px;
             z-index: 100;
+            backdrop-filter: blur(4px);
         }
 
         .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
+            background: linear-gradient(165deg, #fffdf9 0%, #f6fbf7 100%);
+            border: 1px solid rgba(208,174,115,0.38);
+            padding: 32px 28px;
+            border-radius: var(--radius);
             text-align: center;
-            max-width: 320px;
+            max-width: 340px;
+            width: 100%;
+            box-shadow: 0 24px 50px rgba(15,22,19,0.22);
+            animation: fadeUp .28s ease both;
+        }
+
+        .modal-content h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.6rem;
+            color: var(--verde-osc);
+            margin-bottom: 12px;
+        }
+
+        .modal-content p {
+            font-size: 0.88rem;
+            color: var(--muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 420px) {
+            .card { padding: 24px 18px; }
+            .duo-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <div class="logo-placeholder">MIMAR T</div>
-        <h1>Confirmar Reserva</h1>
-        
-        <div class="details-box">
-            <p>Servicio: <strong id="lblServicio">-</strong></p>
-            <p>Fecha: <strong id="lblFecha">-</strong></p>
-            <p>Hora: <strong id="lblHora">-</strong></p>
-        </div>
+<div class="card">
+    <img src="img/logo.png" alt="Espacio Mimar T" class="card-logo">
+    <h1>Confirmar Reserva</h1>
 
-        <button id="btnEjecutar" class="btn-confirmar">Confirmar y Notificar</button>
-        <div id="statusMsg"></div>
+    <div class="details-box">
+        <p>Servicio <strong id="lblServicio">-</strong></p>
+        <p>Fecha <strong id="lblFecha">-</strong></p>
+        <p>Hora <strong id="lblHora">-</strong></p>
     </div>
 
-    <div id="modalOk">
-        <div class="modal-content">
-            <h2 style="color: var(--red-700)">¡Listo!</h2>
-            <p>Tu turno ha sido confirmado y el aviso enviado.</p>
-            <button class="btn-confirmar" onclick="window.location.href='index.html'">Finalizar</button>
+    <!-- Aparece solo si el turno fue marcado como Duo por el admin -->
+    <div id="duoSection">
+        <div class="duo-header">Sesion Duo</div>
+        <div class="duo-sub">Este horario esta configurado para dos pacientes. Ingresa los datos de ambos para continuar.</div>
+        <div class="duo-grid">
+            <div>
+                <label>Nombre paciente 1</label>
+                <input type="text" id="duoNombre1" placeholder="Nombre completo" oninput="validarDuo()">
+            </div>
+            <div>
+                <label>DNI paciente 1</label>
+                <input type="text" id="duoDni1" placeholder="12345678" oninput="validarDuo()">
+            </div>
+            <div>
+                <label>Nombre paciente 2</label>
+                <input type="text" id="duoNombre2" placeholder="Nombre completo" oninput="validarDuo()">
+            </div>
+            <div>
+                <label>DNI paciente 2</label>
+                <input type="text" id="duoDni2" placeholder="12345678" oninput="validarDuo()">
+            </div>
         </div>
     </div>
 
-    <script type="module">
-        import { db, doc, getDoc, collection, addDoc } from "/js/firebase-web.js";
+    <button id="btnEjecutar" class="btn-confirmar" disabled>Confirmar Reserva</button>
+    <div id="statusMsg"></div>
+</div>
 
-        const btn = document.getElementById("btnEjecutar");
-        const status = document.getElementById("statusMsg");
+<div id="modalOk">
+    <div class="modal-content">
+        <h2>Reserva confirmada</h2>
+        <p>Tu turno fue registrado exitosamente. Te esperamos.</p>
+        <button class="btn-confirmar" onclick="window.location.href='index.html'">Finalizar</button>
+    </div>
+</div>
 
-        // Datos del turno
-        const nombre = localStorage.getItem("clienteNombre") || "Cliente";
-        const dni = localStorage.getItem("clienteDNI") || "";
-        const servicio = localStorage.getItem("servicioSeleccionado") || "Tratamiento";
-        const fecha = localStorage.getItem("fechaSeleccionada") || "-";
-        const hora = localStorage.getItem("horaSeleccionada") || "-";
+<script type="module">
+import {
+    db, doc, getDoc, collection, query, where, getDocs,
+    runTransaction, serverTimestamp, addDoc
+} from "/js/firebase-web.js";
 
-        document.getElementById("lblServicio").innerText = servicio;
-        document.getElementById("lblFecha").innerText = fecha;
-        document.getElementById("lblHora").innerText = hora + " hs";
+const btn    = document.getElementById("btnEjecutar");
+const status = document.getElementById("statusMsg");
+const duoSec = document.getElementById("duoSection");
 
-        async function enviarNotificacionMeta(telefono) {
-            const urlMeta = "https://us-central1-estetica-8d067.cloudfunctions.net/enviarWhatsAppReserva"; 
-            try {
-                await fetch(urlMeta, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        telefono: telefono,
-                        nombre: nombre,
-                        servicio: servicio,
-                        fecha: fecha,
-                        hora: hora
-                    })
-                });
-            } catch (e) { console.error("Error Meta API", e); }
+const nombre   = localStorage.getItem("clienteNombre") || "Cliente";
+const dni      = localStorage.getItem("clienteDNI")    || "";
+const servicio = localStorage.getItem("servicioSeleccionado") || "Tratamiento";
+const fecha    = localStorage.getItem("fechaSeleccionada")    || "-";
+const hora     = localStorage.getItem("horaSeleccionada")     || "-";
+
+document.getElementById("lblServicio").textContent = servicio;
+document.getElementById("lblFecha").textContent    = fecha;
+document.getElementById("lblHora").textContent     = hora + " hs";
+
+let esDuo        = false;
+let slotDuoDocId = null;
+
+// Verifica si el horario fue marcado Duo por el admin
+async function verificarModoDuo() {
+    if (!fecha || !hora || hora === "-") return;
+    try {
+        const idDoc = `${fecha}_${hora.replace(":", "-")}_bloqueo`;
+        // Busca en calendarExceptions el doc que tenga la fecha+hora exacta con duo:true
+        const snap = await getDocs(
+            query(
+                collection(db, "calendarExceptions"),
+                where("fecha", "==", fecha),
+                where("hora",  "==", hora),
+                where("duo",   "==", true)
+            )
+        );
+        if (!snap.empty) {
+            esDuo        = true;
+            slotDuoDocId = snap.docs[0].id;
+            duoSec.style.display  = "block";
+            btn.disabled          = true; // requiere completar los campos
+        } else {
+            esDuo = false;
+            btn.disabled = false;
+        }
+    } catch (e) {
+        console.warn("verificarModoDuo:", e);
+        btn.disabled = false;
+    }
+}
+
+window.validarDuo = function () {
+    if (!esDuo) return;
+    const n1 = document.getElementById("duoNombre1").value.trim();
+    const d1 = document.getElementById("duoDni1").value.trim();
+    const n2 = document.getElementById("duoNombre2").value.trim();
+    const d2 = document.getElementById("duoDni2").value.trim();
+    btn.disabled = !(n1 && d1 && n2 && d2);
+};
+
+// Notificacion via Meta Graph API (Cloud Function existente)
+async function enviarNotificacion(telefono, nombrePaciente) {
+    try {
+        await fetch("https://us-central1-estetica-8d067.cloudfunctions.net/enviarWhatsAppReserva", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ telefono, nombre: nombrePaciente, servicio, fecha, hora })
+        });
+    } catch (e) { console.warn("enviarNotificacion:", e); }
+}
+
+// Obtiene el telefono de un cliente por DNI
+async function obtenerTelefono(dniCliente) {
+    if (!dniCliente) return "";
+    try {
+        const snap = await getDoc(doc(db, "clients", dniCliente));
+        if (snap.exists()) {
+            const d = snap.data();
+            return d.phone || d.telefono || d.whatsapp || "";
+        }
+    } catch (_) {}
+    return "";
+}
+
+btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    status.className = "";
+    status.textContent = "Verificando disponibilidad...";
+
+    try {
+        // Obtener telefono del paciente principal
+        let telefonoPrincipal = localStorage.getItem("clientePhoneIngresado") || "";
+        if (!telefonoPrincipal) telefonoPrincipal = await obtenerTelefono(dni);
+
+        // Campos base del documento
+        const camposBase = {
+            clienteNombre: nombre,
+            dni:           dni,
+            servicio:      servicio,
+            fecha:         fecha,
+            hora:          hora,
+            phone:         telefonoPrincipal,
+            estado:        "confirmado",
+            timestamp:     serverTimestamp(),
+            origen:        "paciente"
+        };
+
+        if (esDuo) {
+            camposBase.duo       = true;
+            camposBase.duoDni1   = document.getElementById("duoDni1").value.trim();
+            camposBase.duoNombre1= document.getElementById("duoNombre1").value.trim();
+            camposBase.duoDni2   = document.getElementById("duoDni2").value.trim();
+            camposBase.duoNombre2= document.getElementById("duoNombre2").value.trim();
         }
 
-        btn.addEventListener("click", async () => {
-            btn.disabled = true;
-            status.innerText = "Procesando tu reserva...";
+        // Referencia al "slot" para la transaccion atomica
+        const slotRef = doc(db, "reservas_slots", `${fecha}_${hora.replace(":", "-")}`);
 
-            try {
-                // 1. Obtener teléfono (invisible al usuario)
-                let telefonoFinal = localStorage.getItem("clientePhoneIngresado") || "";
-                if (dni) {
-                    const snap = await getDoc(doc(db, "clients", dni));
-                    if (snap.exists()) {
-                        telefonoFinal = snap.data().phone || snap.data().whatsapp || telefonoFinal;
-                    }
-                }
+        await runTransaction(db, async (tx) => {
+            const slotSnap = await tx.get(slotRef);
 
-                // 2. Guardar en Firestore
-                await addDoc(collection(db, "reservas"), {
-                    cliente: nombre,
-                    dni: dni,
-                    servicio: servicio,
-                    fecha: fecha,
-                    hora: hora,
-                    timestamp: new Date(),
-                    estado: "confirmado"
-                });
-
-                // 3. Notificar vía Meta
-                if (telefonoFinal) {
-                    await enviarNotificacionMeta(telefonoFinal);
-                }
-
-                document.getElementById("modalOk").style.display = "flex";
-            } catch (e) {
-                status.innerText = "Hubo un error. Intentá de nuevo.";
-                btn.disabled = false;
+            // Verificar si el slot ya esta ocupado
+            if (slotSnap.exists() && slotSnap.data()?.ocupado === true && !esDuo) {
+                throw new Error("SLOT_OCUPADO");
             }
+
+            // Si es duo, permitir hasta 2 ocupantes
+            if (esDuo && slotSnap.exists()) {
+                const ocupantes = slotSnap.data()?.ocupantes || 0;
+                if (ocupantes >= 2) throw new Error("SLOT_OCUPADO");
+            }
+
+            // Crear el nuevo documento de reserva dentro de la transaccion
+            const nuevaRef = doc(collection(db, "reservas"));
+            tx.set(nuevaRef, camposBase);
+
+            // Marcar el slot como ocupado
+            const ocupantes = (slotSnap.data()?.ocupantes || 0) + 1;
+            tx.set(slotRef, {
+                fecha,
+                hora,
+                ocupado:   !esDuo || ocupantes >= 2,
+                ocupantes: ocupantes,
+                updatedAt: serverTimestamp()
+            }, { merge: true });
         });
-    </script>
+
+        status.textContent = "Enviando confirmacion...";
+
+        // Notificaciones WhatsApp
+        if (telefonoPrincipal) await enviarNotificacion(telefonoPrincipal, nombre);
+
+        if (esDuo) {
+            const tel2 = await obtenerTelefono(camposBase.duoDni2);
+            if (tel2) await enviarNotificacion(tel2, camposBase.duoNombre2);
+        }
+
+        document.getElementById("modalOk").style.display = "flex";
+
+    } catch (e) {
+        if (e.message === "SLOT_OCUPADO") {
+            status.className  = "error";
+            status.textContent = "Este horario acaba de ser ocupado por otro paciente. Por favor, selecciona otro.";
+        } else {
+            console.error(e);
+            status.className  = "error";
+            status.textContent = "Hubo un error al guardar. Intentalo de nuevo.";
+        }
+        btn.disabled = false;
+    }
+});
+
+// Inicializar
+verificarModoDuo();
+</script>
 </body>
 </html>
