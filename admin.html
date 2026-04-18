@@ -10,7 +10,7 @@
     <title>Gimena Knack | Admin Mimar T</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
-        :root { --fondo: #f4fbf7; --texto: #2f5a47; --accento: #4ea37f; --accento-oscuro: #2f7c5d; --verde: #72bd99; --verde-oscuro: #3f8f6f; --azul: #4a90e2; --rojo: #c4a46b; --whatsapp: #25D366; --suave: #dff3ea; --suave-oscuro: #bfe6d5; --nude: #f7fffb; --ambar: #c4a46b; --ambar-claro: #fdf3e3; }
+        :root { --fondo: #f4fbf7; --texto: #06402B; --accento: #4ea37f; --accento-oscuro: #06402B; --verde: #72bd99; --verde-oscuro: #06402B; --azul: #4a90e2; --rojo: #D4AF37; --whatsapp: #25D366; --suave: #dff3ea; --suave-oscuro: #bfe6d5; --nude: #f7fffb; --ambar: #D4AF37; --ambar-claro: #fdf8e8; --gold: #D4AF37; --gold-claro: #fdf8e8; --deep-green: #06402B; }
         body { font-family: 'Montserrat', sans-serif; background: linear-gradient(180deg, #f8fdfb 0%, #edf8f3 100%); margin: 0; color: var(--texto); padding-bottom: 50px; font-size: 15px; line-height: 1.45; }
         
         /* LOGIN */
@@ -71,9 +71,10 @@
         .pill { border-radius: 999px; padding: 4px 8px; font-size: 11px; font-weight: 700; }
         .pill.disponible { background: #e8f8ef; color: #1f7c55; }
         .pill.reservado { background: #eef5ff; color: #2e61b1; }
-        .pill.bloqueado { background: #fdf3e3; color: #9a6820; }
-        .btn-mini.alerta { border-color: #e8d5a3; color: #9a6820; background: #fdf9ee; }
-        .btn-mini.alerta:hover { background: #faf0d8; }
+        .pill.bloqueado { background: #fdf8e8; color: #8a6c00; border: 1px solid #e8d9a0; }
+        .btn-mini.alerta { border-color: #D4AF37; color: #7a5e00; background: #fdf8e8; }
+        .btn-mini.alerta:hover { background: #faf0cc; }
+        .btn-mini.alerta:active { background: #f5e8b0; }
         .modal-overlay { position: fixed; inset: 0; background: rgba(20, 35, 29, 0.45); display: flex; align-items: center; justify-content: center; z-index: 100000; padding: 16px; }
         .modal-card { width: 100%; max-width: 430px; background: #fff; border-radius: 16px; box-shadow: 0 14px 40px rgba(0,0,0,0.2); border: 1px solid #dceee5; padding: 16px; }
         .modal-card h3 { margin: 0 0 8px 0; color: var(--accento-oscuro); font-size: 18px; }
@@ -120,9 +121,9 @@
         .btn-ws { border: none; padding: 10px 6px; min-height: 38px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 12px; color: white; text-align: center; }
         .btn-confirmar { background: var(--whatsapp); }
         .btn-recordar { background: var(--azul); }
-        .btn-cancelar { background: linear-gradient(135deg, #c4a46b, #a07a3c); }
-        .btn-delete-reserva { width: 100%; margin-top: 8px; border: 1px solid #e8d5a3; background: #fdf9ee; color: #9a6820; padding: 10px; min-height: 38px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px; }
-        .btn-delete-reserva:hover { background: #faf0d8; }
+        .btn-cancelar { background: linear-gradient(135deg, #D4AF37, #b8940a); color: #2a1f00; }
+        .btn-delete-reserva { width: 100%; margin-top: 8px; border: 1px solid #D4AF37; background: #fdf8e8; color: #7a5e00; padding: 10px; min-height: 38px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px; }
+        .btn-delete-reserva:hover { background: #faf0cc; }
         .busc-input { width: 100%; min-height: 42px; padding: 10px 12px; border-radius: 12px; border: 1px solid #cfe2d9; margin-bottom: 10px; box-sizing: border-box; outline: none; }
         .tag-fecha { display: inline-block; background: #eef7f2; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #466a5b; line-height: 1.35; white-space: normal; max-width: 100%; margin-bottom: 6px; }
         .tag-origen { display:inline-flex; align-items:center; gap:6px; padding:3px 8px; border-radius:999px; font-size:11px; font-weight:800; letter-spacing:0.03em; text-transform:uppercase; }
@@ -201,7 +202,7 @@
             <input type="text" id="userAdmin" placeholder="Email admin">
             <input type="password" id="passAdmin" placeholder="Contraseña">
             <button class="btn-entrar" id="btnEntrarSeguro">Ingresar</button>
-            <p id="error-login" style="color:red; font-size:13px; margin-top:10px; display:none;">No autorizado</p>
+            <p id="error-login" style="color:#D4AF37; font-size:13px; margin-top:10px; display:none;">No autorizado</p>
         </div>
     </div>
     <div id="admin-content">
@@ -222,7 +223,7 @@
             <div class="modal-card">
                 <h3>Desbloquear día</h3>
                 <p id="confirm-unblock-day-text-1"></p>
-                <p id="confirm-unblock-day-text-2" style="color:#b33a47; font-weight:600;"></p>
+                <p id="confirm-unblock-day-text-2" style="color:#D4AF37; font-weight:600;"></p>
                 <p>¿Querés quitar el bloqueo y habilitar este día?</p>
                 <div class="modal-actions">
                     <button class="btn-mini" onclick="cerrarModalDesbloqueo()">Cancelar</button>
@@ -1997,8 +1998,8 @@
             const nombre2 = (document.getElementById('duo-nombre2-input')?.value || '').trim();
             const dni2    = (document.getElementById('duo-dni2-input')?.value || '').trim();
             if (!nombre2 || !dni2) {
-                document.getElementById('duo-nombre2-input').style.borderColor = nombre2 ? '#d5eadf' : '#e05252';
-                document.getElementById('duo-dni2-input').style.borderColor    = dni2    ? '#d5eadf' : '#e05252';
+                document.getElementById('duo-nombre2-input').style.borderColor = nombre2 ? '#d5eadf' : '#D4AF37';
+                document.getElementById('duo-dni2-input').style.borderColor    = dni2    ? '#d5eadf' : '#D4AF37';
                 return;
             }
             try {
@@ -2763,7 +2764,7 @@
                 }
                 const activa = config.active === true;
                 const flowMode = config.flowMode === "jornada" ? "jornada" : "normal";
-                const color = activa ? "#72bd99" : "#e05252";
+                const color = activa ? "#06402B" : "#D4AF37";
                 const label = activa ? "Desactivar" : "Activar";
                 btn.textContent = label;
                 btn.style.background = color;
