@@ -685,7 +685,7 @@ PROHIBIDO: mencionar turnos, servicios, agenda o estado de sesión anterior en e
     #mimi-bubble {
       position: fixed;
       bottom: 24px;
-      right: 20px;
+      left: 20px;
       width: 70px;
       height: 70px;
       border-radius: 50%;
@@ -777,7 +777,7 @@ PROHIBIDO: mencionar turnos, servicios, agenda o estado de sesión anterior en e
 
     #mimi-restore {
       position: fixed;
-      right: 18px;
+      left: 18px;
       bottom: 22px;
       display: none;
       align-items: center;
@@ -813,7 +813,7 @@ PROHIBIDO: mencionar turnos, servicios, agenda o estado de sesión anterior en e
     /* ── Ventana chat ── */
     #mimi-window {
       position: fixed;
-      right: 18px;
+      left: 18px;
       bottom: 106px;
       width: min(360px, calc(100vw - 28px));
       max-width: calc(100vw - 28px);
@@ -826,7 +826,7 @@ PROHIBIDO: mencionar turnos, servicios, agenda o estado de sesión anterior en e
       display: flex; flex-direction: column;
       z-index: 9998;
       overflow: hidden;
-      transform-origin: bottom right;
+      transform-origin: bottom left;
       transition: transform .28s cubic-bezier(.34,1.56,.64,1), opacity .22s;
       will-change: transform, opacity;
     }

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservar turno | Espacio Mimar T</title>
+    <link rel="stylesheet" href="mobile-fixes.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --verde:#72bd99;
+            --verde-oscuro:#4f9777;
+            --verde-fondo:#f2f6f4;
+            --crema:#fffdf9;
+            --ink:#273630;
+            --muted:#67736e;
+            --border:#d9e5de;
+            --gold:#D4AF37;
+            --gold-claro:#fdf8e8;
+            --card-shadow:0 16px 38px rgba(29,51,42,0.11);
+            --radius-xl:24px;
+        }
+
+        *{ box-sizing:border-box; margin:0; padding:0; }
+
+        body{
+            background:
+                radial-gradient(circle at 8% 15%, rgba(114,189,153,0.14), transparent 38%),
+                radial-gradient(circle at 90% 8%, rgba(114,189,153,0.10), transparent 32%),
+                var(--verde-fondo);
+            font-family:'Montserrat',sans-serif;
+            color:var(--ink);
+            overflow-x:hidden;
+            min-height:100vh;
+            line-height:1.42;
+            -webkit-font-smoothing:antialiased;
+        }
+
+        /* ── HERO ── */
+        .hero{
+            position:relative;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:flex-end;
+            padding:0 16px 36px;
+            min-height:clamp(220px, 36vh, 300px);
+            overflow:hidden;
+        }
+        .hero-img-bg{
+            position:absolute;
+            inset:0;
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            object-position:center 50%;
+            transform:scale(1.04);
+            filter:saturate(1.1) brightness(0.78);
+            transition:transform 8s ease-out;
+        }
+        .hero-img-bg.loaded{ transform:scale(1.0); }
+        .hero-overlay{
+            position:absolute;
+            inset:0;
+            background:linear-gradient(180deg, rgba(18,38,28,0.30) 0%, rgba(22,46,35,0.58) 55%, rgba(14,32,24,0.84) 100%);
+        }
+        .hero-content{
+            position:relative;
+            z-index:2;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            text-align:center;
+            width:100%;
+        }
+        .logo-shell{
+            width:clamp(80px,18vw,100px);
+            height:clamp(80px,18vw,100px);
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:rgba(255,255,255,0.16);
+            border:2px solid rgba(255,255,255,0.5);
+            box-shadow:0 10px 30px rgba(0,0,0,0.28);
+            backdrop-filter:blur(8px);
+            margin-bottom:12px;
+        }
+        .logo{
+            width:68%;
+            height:68%;
+            display:block;
+            object-fit:cover;
+            border-radius:50%;
+        }
+        .hero-title{
+            color:#fff;
+            font-family:'Cormorant Garamond',serif;
+            font-size:clamp(22px,4vw,32px);
+            font-style:italic;
+            margin:0 0 6px;
+            text-shadow:0 4px 16px rgba(0,0,0,0.3);
+        }
+        .hero-sub{
+            color:rgba(255,255,255,0.70);
+            font-size:11px;
+            font-weight:700;
+            letter-spacing:.18em;
+            text-transform:uppercase;
+        }
+
+        /* ── Banners de membresía ── */
+        .upsell-banner{
+            margin:20px auto 0;
+            max-width:680px;
+            padding:16px 20px;
+            background:linear-gradient(135deg, #fdf8e8 0%, #fef5d3 100%);
+            border:1px solid rgba(212,175,55,0.45);
+            border-radius:18px;
+            display:flex;
+            gap:14px;
+            align-items:flex-start;
+            box-shadow:0 8px 22px rgba(180,148,10,0.10);
+        }
+        .upsell-icon{
+            font-size:22px;
+            flex-shrink:0;
+            margin-top:2px;
+        }
+        .upsell-copy{
+            flex:1;
+        }
+        .upsell-copy strong{
+            display:block;
+            font-size:13px;
+            color:#7a5e00;
+            margin-bottom:4px;
+        }
+        .upsell-copy p{
+            font-size:12px;
+            color:#8a7020;
+            line-height:1.5;
+            margin:0 0 10px;
+        }
+        .upsell-cta{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            background:linear-gradient(135deg,#e8c54d 0%,#c49e10 100%);
+            color:#3a2c00;
+            font-size:11px;
+            font-weight:800;
+            letter-spacing:.06em;
+            text-transform:uppercase;
+            text-decoration:none;
+            padding:9px 16px;
+            border-radius:999px;
+            box-shadow:0 6px 16px rgba(180,148,10,0.28);
+            transition:transform .18s, box-shadow .18s;
+        }
+        .upsell-cta:hover{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(180,148,10,0.35); }
+
+        /* ── Container ── */
+        .container{
+            max-width:1050px;
+            margin:auto;
+            padding:24px 20px;
+            text-align:center;
+            position:relative;
+        }
+
+        .container > *{ animation:fadeUp .42s ease both; }
+        .container > *:nth-child(2){ animation-delay:.05s; }
+        .container > *:nth-child(3){ animation-delay:.10s; }
+        .container > *:nth-child(4){ animation-delay:.15s; }
+
+        @keyframes fadeUp{
+            from{ opacity:0; transform:translateY(14px); }
+            to{ opacity:1; transform:translateY(0); }
+        }
+
+        /* ── Status ── */
+        #saldoStatus{
+            font-weight:700;
+            color:var(--verde-oscuro);
+            background:linear-gradient(135deg,#edf7f2 0%,#e3f2ea 100%);
+            display:table;
+            padding:11px 22px;
+            border-radius:30px;
+            margin:0 auto 20px;
+            border:1px solid rgba(114,189,153,0.6);
+            font-size:13px;
+            letter-spacing:.2px;
+            text-align:center;
+        }
+
+        /* ── Step pill ── */
+        .step-pill{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            padding:8px 14px;
+            border-radius:999px;
+            background:linear-gradient(135deg,#eff8f3 0%,#e5f2ea 100%);
+            border:1px solid rgba(114,189,153,0.5);
+            color:var(--verde-oscuro);
+            font-size:11px;
+            font-weight:800;
+            letter-spacing:.12em;
+            text-transform:uppercase;
+            margin-bottom:12px;
+        }
+        .selection-title{
+            margin:0 0 10px;
+            font-family:'Cormorant Garamond',serif;
+            font-size:clamp(24px,3.2vw,32px);
+            line-height:1.08;
+            color:#2a4338;
+        }
+
+        /* ── Calendario ── */
+        .calendario{
+            background:rgba(255,255,255,0.86);
+            border-radius:var(--radius-xl);
+            border:1px solid rgba(90,144,119,0.16);
+            box-shadow:var(--card-shadow);
+            backdrop-filter:blur(10px);
+            padding:22px;
+            margin-bottom:24px;
+        }
+        .mes{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:20px;
+            font-weight:600;
+        }
+        #mes{
+            font-weight:700;
+            letter-spacing:.4px;
+            color:#2e4a3f;
+            text-transform:capitalize;
+        }
+        .mes button{
+            border:none;
+            background:linear-gradient(135deg,#77c39f 0%,#4b9d79 100%);
+            color:white;
+            padding:10px 16px;
+            border-radius:11px;
+            cursor:pointer;
+            transition:transform .18s ease, box-shadow .18s ease;
+            box-shadow:0 8px 18px rgba(63,143,111,0.24);
+        }
+        .mes button:hover{ transform:translateY(-1px); }
+        .mes button:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+        .semana{
+            display:grid;
+            grid-template-columns:repeat(7,1fr);
+            margin-bottom:10px;
+            font-weight:700;
+            color:#6b7872;
+            font-size:11px;
+            text-transform:uppercase;
+            letter-spacing:.5px;
+            text-align:center;
+        }
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(7,1fr);
+            gap:8px;
+        }
+        .dia{
+            padding:12px 2px;
+            border-radius:12px;
+            background:#f3f7f5;
+            cursor:pointer;
+            transition:all .18s ease;
+            font-size:13px;
+            text-align:center;
+            border:1px solid #deebe5;
+            font-weight:500;
+            min-height:42px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,0.7);
+        }
+        .dia:hover{ transform:translateY(-1px); border-color:#9acfb8; background:#ecf6f1; }
+        .seleccionado{
+            border:2px solid var(--verde)!important;
+            background:linear-gradient(180deg,#f3fbf7 0%,#e6f5ee 100%)!important;
+            font-weight:700;
+            color:#244135;
+            box-shadow:0 8px 16px rgba(101,171,139,0.26);
+        }
+        .domingo,.pasado,.bloqueado{
+            background:#eff2f1;
+            color:#b1bab6;
+            cursor:not-allowed;
+            opacity:.72;
+            border-color:#e8ecea;
+            box-shadow:none;
+            transform:none!important;
+        }
+
+        /* ── Horarios ── */
+        .horarios{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+            gap:12px;
+            margin-top:20px;
+        }
+        .horarios:empty::before{
+            content:"Elegí un día del calendario para ver los horarios disponibles.";
+            grid-column:1 / -1;
+            padding:16px 18px;
+            border-radius:18px;
+            border:1px dashed #cfe0d7;
+            background:rgba(255,255,255,0.84);
+            color:#607267;
+            font-size:13px;
+            font-weight:600;
+        }
+        .hora{
+            background:rgba(255,255,255,0.88);
+            border-radius:14px;
+            padding:13px 10px;
+            cursor:pointer;
+            border:1px solid rgba(180,210,196,0.5);
+            text-align:center;
+            font-size:14px;
+            font-weight:600;
+            transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+            box-shadow:0 4px 12px rgba(41,66,56,0.06);
+            animation:fadeInSlot 0.42s ease both;
+        }
+        @keyframes fadeInSlot{
+            from{ opacity:0; transform:translateY(10px); }
+            to{ opacity:1; transform:translateY(0); }
+        }
+        .hora:hover{ transform:translateY(-2px); border-color:rgba(107,160,137,0.7); box-shadow:0 10px 22px rgba(70,130,104,0.14); }
+        .hora.selected{
+            background:linear-gradient(135deg,#7dbfa3 0%,#4d9b78 100%);
+            color:white;
+            border-color:#4d9b78;
+            box-shadow:0 12px 22px rgba(70,131,103,0.28);
+            transform:translateY(-2px) scale(1.02);
+        }
+        .hora.ocupado{
+            background:rgba(200,210,205,0.22)!important;
+            color:#adb9b4!important;
+            cursor:not-allowed!important;
+            text-decoration:line-through!important;
+            opacity:0.52;
+            pointer-events:none!important;
+        }
+
+        /* ── Summary ── */
+        .selection-summary{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:12px;
+            margin-top:18px;
+            margin-bottom:12px;
+        }
+        .summary-card{
+            padding:14px 16px;
+            border-radius:18px;
+            background:rgba(255,255,255,0.9);
+            border:1px solid rgba(90,144,119,0.16);
+            box-shadow:0 10px 22px rgba(41,66,56,0.06);
+            text-align:left;
+        }
+        .summary-label{ display:block; margin-bottom:6px; color:#718177; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+        .summary-value{ display:block; color:#2f4b3f; font-size:15px; font-weight:700; }
+
+        /* ── Botón confirmar ── */
+        .boton{
+            width:100%;
+            padding:18px;
+            background:linear-gradient(135deg,#77c39f 0%,#4e9f7b 100%);
+            border:none;
+            border-radius:16px;
+            color:white;
+            font-size:16px;
+            cursor:pointer;
+            font-weight:700;
+            margin-top:20px;
+            letter-spacing:.3px;
+            box-shadow:0 14px 28px rgba(63,143,111,0.32);
+            transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        }
+        .boton:hover{ transform:translateY(-2px); filter:brightness(1.05); box-shadow:0 18px 34px rgba(63,143,111,0.38); }
+        .boton:active{ transform:translateY(0); filter:brightness(0.97); }
+        .boton:disabled{ background:#c9d2cd; box-shadow:none; cursor:not-allowed; }
+
+        /* ── Modal ── */
+        .modal-mimar{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,22,19,0.56); display:none; justify-content:center; align-items:center; z-index:9999; backdrop-filter:blur(4px); padding:20px; }
+        .modal-box{ background:white; padding:25px; border-radius:20px; text-align:center; max-width:400px; width:100%; box-shadow:0 24px 50px rgba(15,22,19,0.24); }
+        .modal-box h3{ font-family:'Cormorant Garamond',serif; font-size:22px; color:#2a4338; margin-bottom:10px; }
+        .modal-box p{ font-size:14px; color:#607267; margin-bottom:16px; line-height:1.55; }
+        .modal-box button{ padding:13px 28px; background:linear-gradient(135deg,#77c39f 0%,#4e9f7b 100%); border:none; border-radius:12px; color:white; font-size:14px; font-weight:700; cursor:pointer; margin:4px; box-shadow:0 8px 18px rgba(63,143,111,0.26); }
+
+        /* ── Responsive ── */
+        @media(max-width:600px){
+            .grid{ gap:5px; }
+            .dia{ font-size:12px; min-height:36px; padding:8px 2px; }
+            .selection-summary{ grid-template-columns:1fr; }
+            .upsell-banner{ flex-direction:column; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <img src="img/3P.jpg" alt="" class="hero-img-bg" id="heroBgImg" aria-hidden="true">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="logo-shell">
+            <img src="img/logo.png" class="logo" alt="Espacio Mimar T">
+        </div>
+        <p class="hero-title">Reservar turno</p>
+        <p class="hero-sub">Espacio Mimar T · Turno ocasional</p>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- Banner membresía -->
+    <div class="upsell-banner" id="upsellBanner">
+        <div class="upsell-icon">✦</div>
+        <div class="upsell-copy">
+            <strong>Accedé a más beneficios con membresía</strong>
+            <p>Con membresía activa podés reservar sesiones recurrentes, acceder a horarios preferenciales y gestionar tu tratamiento completo.</p>
+            <a href="https://wa.me/5493764291807?text=Hola%20Gime%21%20Me%20gustar%C3%ADa%20consultar%20sobre%20la%20members%C3%ADa%20de%20Espacio%20Mimar%20T." target="_blank" rel="noopener noreferrer" class="upsell-cta">Consultar por WhatsApp</a>
+        </div>
+    </div>
+
+    <div id="saldoStatus" style="display:none;"></div>
+    <div class="step-pill">
+        <span>Paso 1</span> — Elegí fecha y horario
+    </div>
+    <h2 class="selection-title">¿Cuándo querés venir?</h2>
+
+    <div class="calendario">
+        <div class="mes">
+            <button id="anteriorMes" aria-label="Mes anterior">‹</button>
+            <strong id="mes">Cargando...</strong>
+            <button id="siguienteMes" aria-label="Mes siguiente">›</button>
+        </div>
+        <div class="semana" id="semana"></div>
+        <div class="grid" id="calendario"></div>
+    </div>
+
+    <div class="horarios" id="horarios"></div>
+
+    <div class="selection-summary" id="selectionSummary" style="display:none;">
+        <div class="summary-card">
+            <span class="summary-label">Fecha elegida</span>
+            <span class="summary-value" id="fechaElegida">—</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-label">Horario elegido</span>
+            <span class="summary-value" id="horaElegida">—</span>
+        </div>
+    </div>
+
+    <button class="boton" id="btnConfirmar" disabled>Confirmar turno</button>
+
+    <div class="modal-mimar" id="modalMimar" role="dialog" aria-modal="true">
+        <div class="modal-box">
+            <h3 id="modalTitulo">¿Confirmás?</h3>
+            <p id="modalTexto">Vas a reservar este turno.</p>
+            <button onclick="confirmarTurno()">Confirmar</button>
+            <button onclick="cerrarModal()" style="background:#b0bdb6; box-shadow:none;">Volver</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp }       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp }
+        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBc5435tsDnJ_yJqO1ppwSjxSpCIhpjgew",
+        authDomain: "estetica-8d067.firebaseapp.com",
+        projectId: "estetica-8d067"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    const dni    = localStorage.getItem("clienteDNI");
+    const nombre = localStorage.getItem("clienteNombre") || "Paciente";
+
+    if (!dni) { window.location.href = "/"; }
+
+    /* ── Ken-Burns bg ── */
+    const bg = document.getElementById('heroBgImg');
+    if (bg) { bg.addEventListener('load', () => bg.classList.add('loaded')); if (bg.complete) bg.classList.add('loaded'); }
+
+    /* ── Estado ── */
+    let fechaSeleccionada = "";
+    let horaSeleccionada  = "";
+    let reservasOcupadas  = [];
+    let bloqueos          = {};
+    let currentDate       = new Date();
+    let renderizando      = false;
+
+    const DIAS_SEMANA = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+    const HORAS_DISPONIBLES = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00"];
+
+    function formatearFechaISO(y, m, d) {
+        return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    }
+
+    function setDiasSemana() {
+        const sem = document.getElementById('semana');
+        sem.innerHTML = DIAS_SEMANA.map(d => `<span>${d}</span>`).join('');
+    }
+
+    async function cargarReservas(anio, mes) {
+        const desde = `${anio}-${String(mes+1).padStart(2,'0')}-01`;
+        const hasta = `${anio}-${String(mes+1).padStart(2,'0')}-31`;
+        const snap = await getDocs(query(collection(db,'reservas'),
+            where('fecha','>=',desde), where('fecha','<=',hasta)));
+        reservasOcupadas = snap.docs.map(d => d.data()).filter(r => (r.estado||'')!=='cancelado');
+    }
+
+    async function cargarBloqueos(anio, mes) {
+        const clave = `${anio}-${String(mes+1).padStart(2,'0')}`;
+        try {
+            const snap = await getDocs(collection(db,'horariosBloqueados'));
+            bloqueos = {};
+            snap.docs.forEach(d => {
+                const data = d.data();
+                if (d.id.startsWith(clave)) bloqueos[d.id] = data;
+            });
+        } catch(e) { bloqueos = {}; }
+    }
+
+    async function renderCalendario() {
+        if (renderizando) return;
+        renderizando = true;
+        const anio = currentDate.getFullYear();
+        const mes  = currentDate.getMonth();
+        document.getElementById('mes').textContent =
+            new Date(anio, mes, 1).toLocaleDateString('es-AR',{month:'long',year:'numeric'});
+
+        await Promise.all([cargarReservas(anio, mes), cargarBloqueos(anio, mes)]);
+
+        const grid = document.getElementById('calendario');
+        grid.innerHTML = '';
+        const hoy    = new Date(); hoy.setHours(0,0,0,0);
+        const primerDia = new Date(anio, mes, 1).getDay();
+        const diasMes   = new Date(anio, mes+1, 0).getDate();
+
+        for (let i = 0; i < primerDia; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'dia pasado';
+            grid.appendChild(cell);
+        }
+        for (let d = 1; d <= diasMes; d++) {
+            const fecha = formatearFechaISO(anio, mes, d);
+            const fDate = new Date(anio, mes, d);
+            const esDom = fDate.getDay() === 0;
+            const esPas = fDate < hoy;
+            const cell  = document.createElement('div');
+            cell.className = 'dia' + (esDom ? ' domingo' : '') + (esPas ? ' pasado' : '');
+            cell.textContent = d;
+            if (!esDom && !esPas) {
+                cell.addEventListener('click', () => seleccionarDia(fecha, cell));
+            }
+            grid.appendChild(cell);
+        }
+        renderizando = false;
+    }
+
+    function seleccionarDia(fecha, el) {
+        document.querySelectorAll('.dia.seleccionado').forEach(d => d.classList.remove('seleccionado'));
+        el.classList.add('seleccionado');
+        fechaSeleccionada = fecha;
+        horaSeleccionada  = '';
+        renderHorarios(fecha);
+    }
+
+    function renderHorarios(fecha) {
+        const cont = document.getElementById('horarios');
+        cont.innerHTML = '';
+        const reservasDia = reservasOcupadas.filter(r => r.fecha === fecha);
+        HORAS_DISPONIBLES.forEach((hora, idx) => {
+            const ocupado = reservasDia.some(r => r.hora === hora);
+            const btn = document.createElement('button');
+            btn.className = 'hora' + (ocupado ? ' ocupado' : '');
+            btn.textContent = hora;
+            btn.style.animationDelay = `${idx * 0.04}s`;
+            if (!ocupado) btn.addEventListener('click', () => seleccionarHora(hora, btn));
+            cont.appendChild(btn);
+        });
+    }
+
+    function seleccionarHora(hora, el) {
+        document.querySelectorAll('.hora.selected').forEach(h => h.classList.remove('selected'));
+        el.classList.add('selected');
+        horaSeleccionada = hora;
+        actualizarSummary();
+    }
+
+    function actualizarSummary() {
+        const sum = document.getElementById('selectionSummary');
+        if (fechaSeleccionada && horaSeleccionada) {
+            const [y,m,d] = fechaSeleccionada.split('-');
+            document.getElementById('fechaElegida').textContent =
+                new Date(+y,+m-1,+d).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+            document.getElementById('horaElegida').textContent = horaSeleccionada + ' hs';
+            sum.style.display = 'grid';
+            document.getElementById('btnConfirmar').disabled = false;
+        } else {
+            sum.style.display = 'none';
+            document.getElementById('btnConfirmar').disabled = true;
+        }
+    }
+
+    window.confirmarTurno = async function() {
+        if (!fechaSeleccionada || !horaSeleccionada) return;
+        const modal = document.getElementById('modalMimar');
+        const btn   = document.getElementById('btnConfirmar');
+        modal.style.display = 'none';
+        btn.disabled = true;
+        btn.textContent = 'Procesando...';
+        try {
+            await setDoc(doc(collection(db,'reservas')), {
+                cliente: nombre, nombre, fullName: nombre,
+                dni, fecha: fechaSeleccionada, hora: horaSeleccionada,
+                servicio: localStorage.getItem('servicioSeleccionado') || 'Turno ocasional',
+                estado: 'pendiente', origen: 'ocasional',
+                createdAt: serverTimestamp()
+            });
+            localStorage.setItem('fechaSeleccionada',  fechaSeleccionada);
+            localStorage.setItem('horaSeleccionada',   horaSeleccionada);
+            window.location.href = 'confirmar.html';
+        } catch(e) {
+            alert('Error al guardar el turno. Intentá de nuevo.');
+            btn.disabled = false;
+            btn.textContent = 'Confirmar turno';
+        }
+    };
+
+    window.cerrarModal = function() {
+        document.getElementById('modalMimar').style.display = 'none';
+    };
+
+    document.getElementById('btnConfirmar').addEventListener('click', () => {
+        if (!fechaSeleccionada || !horaSeleccionada) return;
+        const [y,m,d] = fechaSeleccionada.split('-');
+        const fechaLeg = new Date(+y,+m-1,+d).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+        document.getElementById('modalTitulo').textContent = '¿Confirmás tu turno?';
+        document.getElementById('modalTexto').textContent  =
+            `${fechaLeg} a las ${horaSeleccionada} hs.\nEste turno quedará en estado pendiente hasta ser confirmado por Gimena.`;
+        document.getElementById('modalMimar').style.display = 'flex';
+    });
+
+    document.getElementById('anteriorMes').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendario();
+    });
+    document.getElementById('siguienteMes').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendario();
+    });
+
+    setDiasSemana();
+    renderCalendario();
+</script>
+</body>
+</html>

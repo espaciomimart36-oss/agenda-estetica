@@ -96,6 +96,135 @@
         .modal-card.delicado p { color: #456a5b; }
         .modal-card.delicado .modal-actions { margin-top: 14px; }
         @keyframes popInSoft { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        /* ── Modal de Registro Premium ── */
+        #modal-registrar-overlay {
+            position: fixed; inset: 0; z-index: 100001;
+            background: rgba(6, 22, 15, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center; padding: 16px;
+        }
+        #modal-registrar-overlay.open { display: flex; }
+        #modal-registrar-card {
+            width: 100%; max-width: 480px;
+            background: linear-gradient(165deg, #ffffff 0%, #f6fbf8 55%, #eef7f3 100%);
+            border-radius: 28px;
+            border: 1px solid rgba(178,222,200,0.6);
+            box-shadow: 0 28px 60px rgba(6,40,25,0.22), 0 8px 24px rgba(6,40,25,0.10), inset 0 1px 0 rgba(255,255,255,0.95);
+            padding: 28px 26px 24px;
+            animation: popInSoft 0.22s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        #modal-registrar-card::before {
+            content: "";
+            position: absolute; top: -60px; right: -60px;
+            width: 180px; height: 180px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(78,163,127,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .mreg-logo-wrap {
+            display: flex; justify-content: center; margin-bottom: 16px;
+        }
+        .mreg-logo {
+            width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+            border: 2px solid rgba(178,222,200,0.7);
+            box-shadow: 0 10px 24px rgba(6,64,43,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        .mreg-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px; color: var(--verde-oscuro);
+            text-align: center; margin: 0 0 4px;
+        }
+        .mreg-subtitle {
+            text-align: center; font-size: 12px; color: #6a8e7f;
+            font-weight: 700; letter-spacing: 0.04em; margin: 0 0 20px;
+        }
+        .mreg-field-label {
+            font-size: 11px; font-weight: 800; color: #4a7060;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 6px; display: block;
+        }
+        .mreg-input {
+            width: 100%; padding: 13px 14px;
+            border: 2px solid #d5eadf; border-radius: 12px;
+            font-family: inherit; font-size: 14px; font-weight: 600;
+            color: var(--verde-oscuro); background: #f8fefb;
+            outline: none; box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-bottom: 14px;
+        }
+        .mreg-input:focus { border-color: var(--accento); box-shadow: 0 0 0 3px rgba(78,163,127,0.15); }
+        .mreg-select {
+            width: 100%; padding: 13px 14px;
+            border: 2px solid #d5eadf; border-radius: 12px;
+            font-family: inherit; font-size: 14px; font-weight: 600;
+            color: var(--verde-oscuro); background: #f8fefb;
+            outline: none; box-sizing: border-box; cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-bottom: 14px; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234a7060' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 14px center;
+        }
+        .mreg-select:focus { border-color: var(--accento); box-shadow: 0 0 0 3px rgba(78,163,127,0.15); }
+        .mreg-resultados {
+            min-height: 0; margin-bottom: 14px;
+        }
+        .mreg-paciente-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 14px; border-radius: 12px;
+            border: 1.5px solid #d5eadf; background: #fff;
+            cursor: pointer; transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+            margin-bottom: 8px;
+        }
+        .mreg-paciente-item:hover { border-color: var(--accento); background: #f0faf5; box-shadow: 0 4px 14px rgba(78,163,127,0.12); }
+        .mreg-paciente-item.seleccionado { border-color: var(--accento); background: linear-gradient(135deg, #e8f8f0 0%, #d8f0e8 100%); }
+        .mreg-paciente-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accento) 0%, var(--verde-oscuro) 100%);
+            color: #fff; font-weight: 800; font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .mreg-paciente-nombre { font-size: 14px; font-weight: 700; color: var(--verde-oscuro); }
+        .mreg-paciente-tel { font-size: 12px; color: #6a8e7f; margin-top: 1px; }
+        .mreg-actions { display: flex; gap: 10px; margin-top: 4px; }
+        .mreg-btn-cancel {
+            flex: 1; padding: 13px; border: 1.5px solid #c8ddd6; background: #fff;
+            border-radius: 12px; color: #4a7060; font-weight: 700; font-size: 14px;
+            cursor: pointer; transition: background 0.18s;
+        }
+        .mreg-btn-cancel:hover { background: #f0f6f3; }
+        .mreg-btn-confirm {
+            flex: 2; padding: 13px;
+            background: linear-gradient(135deg, #5ab88c 0%, #3d9068 100%);
+            border: none; border-radius: 12px; color: #fff;
+            font-weight: 700; font-size: 14px; cursor: pointer;
+            box-shadow: 0 6px 18px rgba(78,163,127,0.30);
+            transition: filter 0.18s, box-shadow 0.18s, transform 0.12s;
+        }
+        .mreg-btn-confirm:hover { filter: brightness(1.06); box-shadow: 0 10px 24px rgba(78,163,127,0.38); }
+        .mreg-btn-confirm:disabled { background: #b8cfc7; box-shadow: none; cursor: not-allowed; filter: none; }
+
+        /* ── Modal cambio de servicio ── */
+        #modal-cambio-servicio-overlay {
+            position: fixed; inset: 0; z-index: 100001;
+            background: rgba(6, 22, 15, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center; padding: 16px;
+        }
+        #modal-cambio-servicio-overlay.open { display: flex; }
+        #modal-cambio-servicio-card {
+            width: 100%; max-width: 440px;
+            background: linear-gradient(165deg, #ffffff 0%, #f6fbf8 55%, #eef7f3 100%);
+            border-radius: 24px;
+            border: 1px solid rgba(178,222,200,0.6);
+            box-shadow: 0 24px 52px rgba(6,40,25,0.20);
+            padding: 24px 22px 20px;
+            animation: popInSoft 0.22s ease-out;
+        }
         .filtros-advanced { display: grid; grid-template-columns: minmax(190px, 1.2fr) repeat(3, minmax(110px, 1fr)) auto; gap: 8px; margin-bottom: 10px; align-items: center; }
         .select-input { width: 100%; min-height: 40px; padding: 10px 12px; border-radius: 12px; border: 1px solid #d1e7dc; box-sizing: border-box; outline: none; background: #fff; color: var(--texto); transition: border-color 0.2s, box-shadow 0.2s; }
         .select-input:focus { border-color: var(--accento); box-shadow: 0 0 0 3px rgba(78,163,127,0.12); }
@@ -1466,6 +1595,7 @@
                         <button class="btn-ws btn-recordar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','recordar')">Recordar</button>
                         <button class="btn-ws btn-cancelar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','cancelar')">Cancelar</button>
                     </div>
+                    <button class="btn-mini" style="width:100%;margin-top:8px;border-color:#b5cce8;color:#2e61b1;background:#f3f8ff" onclick="cambiarServicioReserva('${r.id}')">Cambiar servicio</button>
                     <button class="btn-delete-reserva" onclick="borrarReserva('${r.id}')">Borrar reserva</button>
                     ${btnEnviar1}${btnEnviar2}
                 </div>`;
@@ -2060,47 +2190,110 @@
             }
         };
         
-        window.registrarReservaManual = async (fecha, hora) => {
+        /* ── Estado del modal de registro ── */
+        let _mreg_fecha = null, _mreg_hora = null, _mreg_clienteSeleccionado = null, _mreg_debounce = null;
+
+        window.registrarReservaManual = (fecha, hora) => {
             const horaNormalizada = normalizarHora(hora);
-            if (!horaNormalizada) {
-                mostrarAviso("Hora inválida");
-                return;
-            }
+            if (!horaNormalizada) { mostrarAviso("Hora inválida"); return; }
             const yaExiste = todasLasReservas.some(r => esReservaActiva(r) && r.fecha === fecha && normalizarHora(r.hora) === horaNormalizada);
-            if (yaExiste) {
-                mostrarAviso("Ese horario ya está reservado");
+            if (yaExiste) { mostrarAviso("Ese horario ya está reservado"); return; }
+
+            _mreg_fecha = fecha;
+            _mreg_hora = horaNormalizada;
+            _mreg_clienteSeleccionado = null;
+
+            document.getElementById('mreg-fecha-label').textContent = `${formatoFechaISO(fecha)} · ${horaNormalizada} hs`;
+            document.getElementById('mreg-nombre-input').value = '';
+            document.getElementById('mreg-resultados').innerHTML = '';
+            document.getElementById('mreg-btn-confirmar').disabled = true;
+
+            const servicios = [...new Set(
+                todasLasReservas.map(r => (r.servicio || '').toString().trim()).filter(Boolean)
+            )].sort((a, b) => a.localeCompare(b, 'es'));
+            const sel = document.getElementById('mreg-servicio-select');
+            sel.innerHTML = '<option value="">Seleccioná un servicio…</option>' +
+                servicios.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+
+            document.getElementById('modal-registrar-overlay').classList.add('open');
+            setTimeout(() => document.getElementById('mreg-nombre-input').focus(), 80);
+        };
+
+        window.cerrarModalRegistrar = () => {
+            document.getElementById('modal-registrar-overlay').classList.remove('open');
+            _mreg_clienteSeleccionado = null;
+        };
+
+        document.getElementById('mreg-nombre-input').addEventListener('input', (e) => {
+            clearTimeout(_mreg_debounce);
+            const q = e.target.value.trim();
+            if (q.length < 2) {
+                document.getElementById('mreg-resultados').innerHTML = '';
                 return;
             }
-            const dniIngresado = normalizarDNI(window.prompt(`Ingresá el DNI para registrar en ${formatoFechaISO(fecha)} ${horaNormalizada}`) || "");
-            if (!dniIngresado) return;
-            const servicioIngresado = (window.prompt("Servicio a registrar", "Reservar turno sin tratamiento específico") || "").trim();
-            if (!servicioIngresado) {
-                mostrarAviso("Ingresá un servicio");
-                return;
-            }
+            document.getElementById('mreg-resultados').innerHTML = '<div style="font-size:12px;color:#6a8e7f;padding:6px 0">Buscando…</div>';
+            _mreg_debounce = setTimeout(() => buscarPacientesPorNombre(q), 350);
+        });
+
+        const buscarPacientesPorNombre = async (q) => {
+            const resultadosEl = document.getElementById('mreg-resultados');
             try {
-                mostrarLoader(true);
-                const refCliente = doc(db, "clients", dniIngresado);
-                const snapCliente = await getDoc(refCliente);
-                if (!snapCliente.exists()) {
-                    mostrarAviso("No existe un paciente con ese DNI");
+                const snap = await getDocs(collection(db, "clients"));
+                const matches = [];
+                snap.forEach(docSnap => {
+                    const d = docSnap.data();
+                    const nombre = (d.fullName || d.fullLname || d.nombre || d.name || '').toString().trim();
+                    if (nombre.toLowerCase().includes(q.toLowerCase())) {
+                        matches.push({ id: docSnap.id, nombre, phone: normalizarTelefono(d.phone || '') });
+                    }
+                });
+                if (matches.length === 0) {
+                    resultadosEl.innerHTML = '<div style="font-size:12px;color:#6a8e7f;padding:6px 0">Sin resultados</div>';
                     return;
                 }
-                const c = snapCliente.data() || {};
-                const nombreCliente = (c.fullName || c.fullLname || c.nombre || c.name || "Paciente").toString().trim();
-                const phoneCliente = normalizarTelefono(c.phone || "");
+                resultadosEl.innerHTML = matches.slice(0, 5).map(p => `
+                    <div class="mreg-paciente-item" data-dni="${escapeHtml(p.id)}" data-nombre="${escapeHtml(p.nombre)}" data-phone="${escapeHtml(p.phone)}"
+                         onclick="seleccionarPacienteRegistro(this)">
+                        <div class="mreg-paciente-avatar">${escapeHtml(p.nombre.charAt(0).toUpperCase())}</div>
+                        <div>
+                            <div class="mreg-paciente-nombre">${escapeHtml(p.nombre)}</div>
+                            <div class="mreg-paciente-tel">${escapeHtml(p.phone || 'Sin teléfono')}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(err) {
+                console.error(err);
+                resultadosEl.innerHTML = '<div style="font-size:12px;color:#c94040;padding:6px 0">Error al buscar</div>';
+            }
+        };
+
+        window.seleccionarPacienteRegistro = (el) => {
+            _mreg_clienteSeleccionado = { dni: el.dataset.dni, nombre: el.dataset.nombre, phone: el.dataset.phone };
+            document.querySelectorAll('.mreg-paciente-item').forEach(i => i.classList.remove('seleccionado'));
+            el.classList.add('seleccionado');
+            document.getElementById('mreg-nombre-input').value = el.dataset.nombre;
+            document.getElementById('mreg-btn-confirmar').disabled = false;
+        };
+
+        window.confirmarRegistroManual = async () => {
+            if (!_mreg_clienteSeleccionado) { mostrarAviso("Seleccioná un paciente"); return; }
+            const servicioIngresado = document.getElementById('mreg-servicio-select').value.trim();
+            if (!servicioIngresado) { mostrarAviso("Seleccioná un servicio"); return; }
+            try {
+                mostrarLoader(true);
+                cerrarModalRegistrar();
                 const reservaNueva = {
-                    cliente: nombreCliente,
-                    clienteNombre: nombreCliente,
-                    nombre: nombreCliente,
-                    title: nombreCliente,
-                    displayName: nombreCliente,
-                    phone: phoneCliente,
-                    telefono: phoneCliente,
-                    dni: dniIngresado,
+                    cliente: _mreg_clienteSeleccionado.nombre,
+                    clienteNombre: _mreg_clienteSeleccionado.nombre,
+                    nombre: _mreg_clienteSeleccionado.nombre,
+                    title: _mreg_clienteSeleccionado.nombre,
+                    displayName: _mreg_clienteSeleccionado.nombre,
+                    phone: _mreg_clienteSeleccionado.phone,
+                    telefono: _mreg_clienteSeleccionado.phone,
+                    dni: _mreg_clienteSeleccionado.dni,
                     servicio: servicioIngresado,
-                    fecha,
-                    hora: horaNormalizada,
+                    fecha: _mreg_fecha,
+                    hora: _mreg_hora,
                     origen: document.getElementById("btnFlowModeHeader")?.classList.contains("is-jornada") ? "jornada" : "normal",
                     status: "confirmado",
                     estado: "confirmado",
@@ -2109,14 +2302,62 @@
                     creadoPor: "admin_manual"
                 };
                 const ref = await addDoc(collection(db, "reservas"), reservaNueva);
-                todasLasReservas.push({ id: ref.id, ...reservaNueva, nombreLimpio: nombreCliente });
+                todasLasReservas.push({ id: ref.id, ...reservaNueva, nombreLimpio: _mreg_clienteSeleccionado.nombre });
                 actualizarKPIs();
                 poblarServiciosFiltro();
-                verTurnos(fecha, document.querySelector('.day.selected'));
-                mostrarAviso("Reserva creada y guardada en Firestore");
-            } catch (error) {
+                verTurnos(_mreg_fecha, document.querySelector('.day.selected'));
+                mostrarAviso("Reserva creada");
+            } catch(error) {
                 console.error(error);
                 mostrarAviso("No se pudo registrar la reserva");
+            } finally {
+                mostrarLoader(false);
+                _mreg_clienteSeleccionado = null;
+            }
+        };
+
+        /* ── Estado del modal cambio de servicio ── */
+        let _mcs_reservaId = null;
+
+        window.cambiarServicioReserva = (reservaId) => {
+            const reserva = todasLasReservas.find(r => r.id === reservaId);
+            if (!reserva) { mostrarAviso("Reserva no encontrada"); return; }
+            _mcs_reservaId = reservaId;
+
+            document.getElementById('mcs-paciente-label').textContent =
+                `${reserva.nombreLimpio || reserva.nombre || 'Paciente'} · ${formatoFechaISO(reserva.fecha)} ${reserva.hora} hs`;
+
+            const servicios = [...new Set(
+                todasLasReservas.map(r => (r.servicio || '').toString().trim()).filter(Boolean)
+            )].sort((a, b) => a.localeCompare(b, 'es'));
+            const sel = document.getElementById('mcs-servicio-select');
+            sel.innerHTML = '<option value="">Seleccioná un servicio…</option>' +
+                servicios.map(s => `<option value="${escapeHtml(s)}"${s === reserva.servicio ? ' selected' : ''}>${escapeHtml(s)}</option>`).join('');
+
+            document.getElementById('modal-cambio-servicio-overlay').classList.add('open');
+        };
+
+        window.cerrarModalCambioServicio = () => {
+            document.getElementById('modal-cambio-servicio-overlay').classList.remove('open');
+            _mcs_reservaId = null;
+        };
+
+        window.confirmarCambioServicio = async () => {
+            const nuevoServicio = document.getElementById('mcs-servicio-select').value.trim();
+            if (!nuevoServicio) { mostrarAviso("Seleccioná un servicio"); return; }
+            try {
+                mostrarLoader(true);
+                cerrarModalCambioServicio();
+                await updateDoc(doc(db, "reservas", _mcs_reservaId), { servicio: nuevoServicio });
+                const idx = todasLasReservas.findIndex(r => r.id === _mcs_reservaId);
+                if (idx !== -1) todasLasReservas[idx].servicio = nuevoServicio;
+                actualizarKPIs();
+                poblarServiciosFiltro();
+                if (fechaSeleccionada) verTurnos(fechaSeleccionada, document.querySelector('.day.selected'));
+                mostrarAviso("Servicio actualizado");
+            } catch(error) {
+                console.error(error);
+                mostrarAviso("No se pudo actualizar el servicio");
             } finally {
                 mostrarLoader(false);
             }
@@ -2899,6 +3140,47 @@
         }
         window.descargarWidget = descargarWidget;
     </script>
+    <!-- Modal: Registrar turno manualmente -->
+    <div id="modal-registrar-overlay" role="dialog" aria-modal="true" aria-labelledby="mreg-title">
+        <div id="modal-registrar-card">
+            <div class="mreg-logo-wrap">
+                <img src="img/logo.png" class="mreg-logo" alt="Mimar T" onerror="this.style.display='none'">
+            </div>
+            <p class="mreg-title" id="mreg-title">Registrar turno</p>
+            <p class="mreg-subtitle" id="mreg-fecha-label">—</p>
+            <label class="mreg-field-label" for="mreg-nombre-input">Buscar paciente por nombre</label>
+            <input type="text" class="mreg-input" id="mreg-nombre-input" placeholder="Empezá a escribir el nombre…" autocomplete="off">
+            <div class="mreg-resultados" id="mreg-resultados"></div>
+            <label class="mreg-field-label" for="mreg-servicio-select">Servicio</label>
+            <select class="mreg-select" id="mreg-servicio-select">
+                <option value="">Seleccioná un servicio…</option>
+            </select>
+            <div class="mreg-actions">
+                <button class="mreg-btn-cancel" onclick="cerrarModalRegistrar()">Cancelar</button>
+                <button class="mreg-btn-confirm" id="mreg-btn-confirmar" disabled onclick="confirmarRegistroManual()">Registrar turno</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Cambiar servicio de una reserva -->
+    <div id="modal-cambio-servicio-overlay" role="dialog" aria-modal="true" aria-labelledby="mcs-title">
+        <div id="modal-cambio-servicio-card">
+            <div class="mreg-logo-wrap">
+                <img src="img/logo.png" class="mreg-logo" alt="Mimar T" onerror="this.style.display='none'">
+            </div>
+            <p class="mreg-title" id="mcs-title">Cambiar servicio</p>
+            <p class="mreg-subtitle" id="mcs-paciente-label">—</p>
+            <label class="mreg-field-label" for="mcs-servicio-select">Nuevo servicio</label>
+            <select class="mreg-select" id="mcs-servicio-select">
+                <option value="">Seleccioná un servicio…</option>
+            </select>
+            <div class="mreg-actions">
+                <button class="mreg-btn-cancel" onclick="cerrarModalCambioServicio()">Cancelar</button>
+                <button class="mreg-btn-confirm" onclick="confirmarCambioServicio()">Guardar cambio</button>
+            </div>
+        </div>
+    </div>
+
     <script src="/js/shared-footer.js"></script>
     <script src="/js/mimi-bot.js?v=20260405-4"></script>
 </body>

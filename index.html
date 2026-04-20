@@ -189,15 +189,56 @@
             opacity: 0.85;
             animation: rotateHalo 16s linear infinite;
         }
-        .hero-bg {
+        /* Hero slideshow */
+        .hero-bg { display: none; }
+        .hero-slideshow {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .hero-slide {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center 34%;
-            transform: scale(1.06);
-            filter: saturate(1.08) contrast(1.02);
+            object-position: center 42%;
+            opacity: 0;
+            transform: scale(1.08);
+            transition: opacity 1.6s cubic-bezier(.4,0,.2,1), transform 8s ease-out;
+            filter: saturate(1.12) contrast(1.04);
+        }
+        .hero-slide.active {
+            opacity: 1;
+            transform: scale(1.0);
+        }
+        .hero-slide:nth-child(1) { object-position: center 50%; }
+        .hero-slide:nth-child(2) { object-position: center 35%; }
+        .hero-slide:nth-child(3) { object-position: center 40%; }
+        /* Dots indicadores */
+        .hero-dots {
+            position: absolute;
+            bottom: 168px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 7px;
+            z-index: 4;
+        }
+        .hero-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.6);
+            transition: background 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+        .hero-dot.active {
+            background: rgba(255,255,255,0.92);
+            transform: scale(1.4);
         }
         .hero-overlay {
             position: absolute;
@@ -1450,6 +1491,170 @@
                 font-size: 11px;
                 letter-spacing: 0.12em;
             }
+            .hero-dots { bottom: 116px; }
+        }
+        /* ── Scroll reveal ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.55s ease, transform 0.55s ease;
+        }
+        .reveal.revealed {
+            opacity: 1;
+            transform: none;
+        }
+        .service-card:nth-child(2).reveal { transition-delay: 0.08s; }
+        .service-card:nth-child(3).reveal { transition-delay: 0.16s; }
+        .service-card:nth-child(4).reveal { transition-delay: 0.24s; }
+        .service-card:nth-child(5).reveal { transition-delay: 0.32s; }
+        .service-card:nth-child(6).reveal { transition-delay: 0.40s; }
+        /* ── Servicios mejorados ── */
+        .service-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(212,165,90,0.18) 0%, rgba(134,164,134,0.22) 100%);
+            border: 1px solid rgba(197,165,104,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        .service-sessions {
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: #6a7d6e;
+            border-top: 1px solid rgba(196,209,198,0.5);
+            padding-top: 8px;
+            margin-top: 2px;
+        }
+        .service-card a {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: gap 0.18s, color 0.18s;
+        }
+        .service-card a::after {
+            content: "→";
+            transition: transform 0.18s;
+        }
+        .service-card:hover a { color: var(--rojo-acento); gap: 8px; }
+        .service-card:hover a::after { transform: translateX(3px); }
+        /* ── Nav top bar ── */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(197,209,198,0.5);
+            box-shadow: 0 2px 14px rgba(29,51,42,0.07);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            height: 58px;
+            transition: transform 0.28s ease;
+        }
+        .top-nav.hidden { transform: translateY(-100%); }
+        .top-nav-logo {
+            height: 36px;
+            width: auto;
+            display: block;
+        }
+        .top-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .top-nav-link {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #3a5040;
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 999px;
+            transition: background 0.18s, color 0.18s;
+        }
+        .top-nav-link:hover { background: rgba(134,164,134,0.12); }
+        .top-nav-cta {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: #fff;
+            background: linear-gradient(135deg, #7ba891 0%, #4a6e5c 100%);
+            text-decoration: none;
+            padding: 9px 18px;
+            border-radius: 999px;
+            box-shadow: 0 6px 18px rgba(74,110,92,0.28);
+            transition: transform 0.18s, box-shadow 0.18s;
+        }
+        .top-nav-cta:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(74,110,92,0.36); }
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            flex-direction: column;
+            gap: 5px;
+            align-items: flex-start;
+            width: 38px;
+        }
+        .hamburger-btn span {
+            display: block;
+            height: 2px;
+            background: #3a5040;
+            border-radius: 2px;
+            transition: transform 0.26s ease, opacity 0.2s ease, width 0.22s ease;
+        }
+        .hamburger-btn span:nth-child(1) { width: 22px; }
+        .hamburger-btn span:nth-child(2) { width: 16px; }
+        .hamburger-btn span:nth-child(3) { width: 20px; }
+        .hamburger-btn.open span:nth-child(1) { width: 22px; transform: translateY(7px) rotate(45deg); }
+        .hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .hamburger-btn.open span:nth-child(3) { width: 22px; transform: translateY(-7px) rotate(-45deg); }
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 199;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.28s ease;
+        }
+        .mobile-menu.open { opacity: 1; pointer-events: auto; }
+        .mobile-menu-link {
+            font-family: var(--font-display);
+            font-size: clamp(26px, 7vw, 36px);
+            font-style: italic;
+            color: #24362c;
+            text-decoration: none;
+            text-align: center;
+            padding: 10px 20px;
+            transition: color 0.18s;
+        }
+        .mobile-menu-link:hover { color: var(--rojo-acento); }
+        @media (max-width: 720px) {
+            .hamburger-btn { display: flex; }
+            .top-nav-links { display: none; }
+            .mobile-menu { display: flex; }
         }
     </style>
     <link rel="stylesheet" href="/pro-theme.css">
@@ -1458,72 +1663,48 @@
     <!-- HEADER -->
     <div id="headerContainer"></div>
     
+    <!-- Top navigation -->
+    <nav class="top-nav" id="topNav" aria-label="Navegación principal">
+        <button class="hamburger-btn" id="btnHamburger" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <a href="/" aria-label="Inicio Espacio Mimar T">
+            <img src="img/logo.webp" alt="Espacio Mimar T" class="top-nav-logo">
+        </a>
+        <nav class="top-nav-links">
+            <a href="#loginAccess" class="top-nav-link">Ingresar</a>
+            <a href="/servicios-pro.html" class="top-nav-link">Servicios</a>
+            <a href="https://wa.me/5493764291807?text=Hola%20Gime%21%20Vi%20la%20web%20y%20quiero%20consultar." class="top-nav-cta" target="_blank" rel="noopener noreferrer">Reservar</a>
+        </nav>
+    </nav>
+    <!-- Mobile fullscreen menu -->
+    <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Menú de navegación">
+        <a href="#loginAccess" class="mobile-menu-link" onclick="cerrarMenu()">Iniciar sesión</a>
+        <a href="/servicios-pro.html" class="mobile-menu-link">Servicios</a>
+        <a href="/kit-facial.html" class="mobile-menu-link">Kit Facial</a>
+        <a href="https://wa.me/5493764291807?text=Hola%20Gime%21%20Vi%20la%20web%20y%20quiero%20reservar." class="mobile-menu-link" target="_blank" rel="noopener noreferrer">Reservar por WhatsApp</a>
+    </div>
+
     <div class="login-page-container">
         <section class="hero-section" aria-label="Bienvenida">
-            <img src="img/recepcion.jpeg" alt="" class="hero-bg">
+            <!-- Slideshow de imágenes del espacio -->
+            <div class="hero-slideshow" id="heroSlideshow" aria-hidden="true">
+                <img src="img/1P.jpg" alt="" class="hero-slide active">
+                <img src="img/2P.jpg" alt="" class="hero-slide">
+                <img src="img/3P.jpg" alt="" class="hero-slide">
+            </div>
             <div class="hero-overlay"></div>
+            <!-- Dots de navegación del slideshow -->
+            <div class="hero-dots" id="heroDots" aria-hidden="true">
+                <button class="hero-dot active" data-idx="0" aria-label="Imagen 1"></button>
+                <button class="hero-dot" data-idx="1" aria-label="Imagen 2"></button>
+                <button class="hero-dot" data-idx="2" aria-label="Imagen 3"></button>
+            </div>
             <div class="hero-content">
-                <!-- Personaje 3D cartoon reemplazando a Mimi/logo -->
                 <div class="hero-brand-lockup" aria-label="Marca Espacio Mimar T">
                     <img src="img/logo.png" alt="Espacio Mimar T" class="hero-brand-mark">
                     <p class="hero-brand-caption">Espacio Mimar T</p>
                 </div>
-                <div id="mimi-3d-container" style="width:120px; height:120px; margin:0 auto 16px auto;"></div>
-                
-                <!-- Three.js CDN -->
-                <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-                <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js"></script>
-                <script>
-                // Renderizar personaje 3D cartoon en lugar de Mimi/logo
-                (function() {
-                    const container = document.getElementById('mimi-3d-container');
-                    if (!container) return;
-                    // Ajustar tamaño del canvas para que el personaje entre bien
-                    const width = 140;
-                    const height = 140;
-                    const scene = new THREE.Scene();
-                    const camera = new THREE.PerspectiveCamera(32, width/height, 0.1, 1000);
-                    camera.position.set(0, 1.1, 2.1);
-                    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                    renderer.setSize(width, height);
-                    renderer.setClearColor(0x000000, 0);
-                    container.innerHTML = '';
-                    container.appendChild(renderer.domElement);
-                    // Luz ambiente y direccional para mejor visibilidad
-                    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.25);
-                    scene.add(hemiLight);
-                    const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
-                    dirLight.position.set(2, 4, 2);
-                    scene.add(dirLight);
-                    // Modelo cartoon notorio (Fox de Google Poly, dominio público)
-                    const loader = new THREE.GLTFLoader();
-                    loader.load('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF/Fox.gltf', function(gltf) {
-                        const model = gltf.scene;
-                        model.scale.set(0.055, 0.055, 0.055); // Escala para que entre perfecto
-                        model.position.y = -0.7;
-                        model.position.x = 0;
-                        model.rotation.y = Math.PI/2;
-                        scene.add(model);
-                        animate();
-                    }, undefined, function(error) {
-                        // fallback: cubo simpático
-                        const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
-                        const material = new THREE.MeshStandardMaterial({ color: 0xffc97a });
-                        const cube = new THREE.Mesh(geometry, material);
-                        scene.add(cube);
-                        animate();
-                    });
-                    function animate() {
-                        requestAnimationFrame(animate);
-                        scene.traverse(obj => {
-                            if (obj.isMesh || obj.isGroup) {
-                                obj.rotation.y += 0.012;
-                            }
-                        });
-                        renderer.render(scene, camera);
-                    }
-                })();
-                </script>
                 <p class="hero-kicker">Gimena Knack · Farmacéutica · Dermatocosmiatra</p>
                 <h1 class="hero-title">Espacio Mimar T</h1>
                 <p class="hero-copy">Tratamientos faciales y corporales con criterio profesional y resultados reales.</p>
@@ -1596,30 +1777,35 @@
                 <p class="block-urgency">Trabajamos con agenda organizada y cupos limitados para garantizar una atención personalizada.</p>
                 <div class="services-grid">
                     <div class="service-card">
+                        <div class="service-card-icon">✦</div>
                         <strong>Facial LED Regenerativo</strong>
                         <span>Mejora la firmeza, la luminosidad y la textura de la piel. Ideal para pieles apagadas o con pérdida de tono.</span>
                         <div class="service-sessions">Resultados visibles desde la 1ª sesión · Protocolo recomendado: 4–6 sesiones</div>
                         <a href="/servicios.html">Ver más</a>
                     </div>
                     <div class="service-card">
+                        <div class="service-card-icon">◈</div>
                         <strong>Tratamiento de Manchas</strong>
                         <span>Despigmentación progresiva con activos específicos según el tipo de mancha y fototipo de piel.</span>
                         <div class="service-sessions">Mínimo 4 sesiones para resultados sostenidos</div>
                         <a href="/servicios.html">Ver más</a>
                     </div>
                     <div class="service-card">
-                        <strong>MioUp (Reafirmación Muscular)</strong>
+                        <div class="service-card-icon">⬡</div>
+                        <strong>MioUp — Reafirmación Muscular</strong>
                         <span>Tecnología de estimulación muscular para reafirmar glúteos, abdomen y piernas sin esfuerzo físico.</span>
                         <div class="service-sessions">Protocolo: 6–8 sesiones para resultados óptimos</div>
                         <a href="/servicios.html">Ver más</a>
                     </div>
                     <div class="service-card">
+                        <div class="service-card-icon">◉</div>
                         <strong>Sesión Corporal Combinada</strong>
                         <span>Abordaje integral por zona para flacidez, celulitis y estrías con tecnología combinada.</span>
                         <div class="service-sessions">Protocolo: 4–6 sesiones · Resultados progresivos</div>
                         <a href="/servicios.html">Ver más</a>
                     </div>
                     <div class="service-card">
+                        <div class="service-card-icon">◌</div>
                         <strong>Reafirmación de Brazos</strong>
                         <span>Protocolo enfocado en firmeza, textura y contorno del brazo. Resultados visibles en pocas sesiones.</span>
                         <div class="service-sessions">4–6 sesiones recomendadas según el caso</div>
@@ -1627,6 +1813,7 @@
                     </div>
                     <div class="service-card service-card-coming">
                         <div class="coming-badge">Próximamente</div>
+                        <div class="service-card-icon">✧</div>
                         <strong>Depilación Láser</strong>
                         <span>Próximamente en Espacio Mimar T. Cupos limitados para el lanzamiento. Anotate ahora para recibir información antes que nadie.</span>
                         <a href="https://wa.me/5493764291807?text=Hola%20Gime%21%20Me%20interesa%20informaci%C3%B3n%20sobre%20depilaci%C3%B3n%20l%C3%A1ser%20cuando%20est%C3%A9%20disponible." target="_blank" rel="noopener noreferrer" class="service-card-wa-link">Quiero información</a>
@@ -1885,7 +2072,8 @@
                         } else if (!cliente.historiaCompletada) {
                             window.location.href = "historia.html";
                         } else {
-                            window.location.href = "servicios-pro.html";
+                            const esMiembro = cliente.membershipActive === true || cliente.membresia === true;
+                            window.location.href = esMiembro ? "fecha.html" : "fechaocasional.html";
                         }
                     } else {
                         errorDiv.innerText = "El nombre no coincide con el DNI.";
@@ -2020,5 +2208,60 @@
         cargarComponentes();
     </script>
     <script src="/js/mimi-bot.js"></script>
+    <script>
+    /* Hamburger menu */
+    const btnHamburger = document.getElementById('btnHamburger');
+    const mobileMenu   = document.getElementById('mobileMenu');
+    function toggleMenu() {
+        const open = btnHamburger.classList.toggle('open');
+        mobileMenu.classList.toggle('open');
+        btnHamburger.setAttribute('aria-expanded', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+    }
+    function cerrarMenu() {
+        btnHamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+        btnHamburger.setAttribute('aria-expanded', false);
+        document.body.style.overflow = '';
+    }
+    window.cerrarMenu = cerrarMenu;
+    btnHamburger?.addEventListener('click', toggleMenu);
+    /* Hide nav on scroll down */
+    let lastY = 0;
+    window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        document.getElementById('topNav')?.classList.toggle('hidden', y > lastY && y > 80);
+        lastY = y;
+    }, { passive: true });
+
+    /* Hero slideshow */
+    (function() {
+        const slides = document.querySelectorAll('.hero-slide');
+        const dots   = document.querySelectorAll('.hero-dot');
+        let cur = 0, timer;
+        function goTo(n) {
+            slides[cur].classList.remove('active');
+            dots[cur].classList.remove('active');
+            cur = (n + slides.length) % slides.length;
+            slides[cur].classList.add('active');
+            dots[cur].classList.add('active');
+        }
+        function next() { goTo(cur + 1); }
+        timer = setInterval(next, 5200);
+        dots.forEach(d => d.addEventListener('click', () => {
+            clearInterval(timer);
+            goTo(+d.dataset.idx);
+            timer = setInterval(next, 5200);
+        }));
+        /* Scroll reveal: .reveal elements */
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.service-card, .metric-card, .faq-item, .trust-item, .patient-path-card').forEach(el => {
+            el.classList.add('reveal');
+            io.observe(el);
+        });
+    })();
+    </script>
 </body>
 </html>
