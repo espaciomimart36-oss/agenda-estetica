@@ -139,8 +139,8 @@
         document.head.appendChild(s);
     }
 
-    // ── POPUP (aparece en cada scroll) ─────────────────────────
-    let popupBuilt = false, popupVisible = false, autoHideTimer = null, scrollDebounce = null;
+    // ── POPUP (aparece cada 60 segundos) ──────────────────────
+    let popupBuilt = false, popupVisible = false, autoHideTimer = null;
 
     function buildPopup() {
         if (popupBuilt) return;
@@ -186,12 +186,6 @@
     function scheduleAutoHide(ms) {
         clearTimeout(autoHideTimer);
         autoHideTimer = setTimeout(hidePopup, ms);
-    }
-
-    function onScroll() {
-        if (window.scrollY < 80) return;
-        clearTimeout(scrollDebounce);
-        scrollDebounce = setTimeout(showPopup, 600);
     }
 
     // ── BARRA FIJA INFERIOR ────────────────────────────────────
@@ -248,9 +242,8 @@
         injectCSS();
         buildFooterCard();
         buildBar();
-        window.addEventListener('scroll', onScroll, { passive: true });
-        // Primera aparición al cargar (sin esperar scroll)
         setTimeout(showPopup, 5000);
+        setInterval(showPopup, 60000);
     }
 
     if (document.readyState === 'loading') {

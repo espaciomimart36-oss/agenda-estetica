@@ -301,7 +301,7 @@
 
   // ── Gemini ────────────────────────────────────────────────
   const GEMINI_KEY = (typeof window !== 'undefined' && window.MIMI_GEMINI_KEY) || 'AIzaSyALuNcwC2OY4ymdNPNsuNuktlbMVzk62yU';
-  const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+  const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent';
 
   const SYSTEM_PROMPT = `# PERFIL
 Sos Mimi, la asistente virtual de Espacio Mimar T. Atendés pacientes con voseo rioplatense, tono cálido, elegante y orientado a la acción. Sos amable, concisa y siempre buscás el siguiente paso concreto para ayudar.
@@ -432,13 +432,21 @@ Estado: ⏳ Sin recordatorio
   const chatHistory      = [];
   const chatHistoryAdmin = [];
 
-  async function askGemini(userText, systemPrompt = SYSTEM_PROMPT, history = chatHistory) {
+  const SAFETY_SETTINGS = [
+    { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+    { category: 'HARM_CATEGORY_HATE_SPEECH',       threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+    { category: 'HARM_CATEGORY_HARASSMENT',        threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+    { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' }
+  ];
+
+  async function askGemini(userText, systemPrompt = SYSTEM_PROMPT, history = chatHistory, temperature = 0.7) {
     if (!GEMINI_KEY) return null;
     history.push({ role: 'user', parts: [{ text: userText }] });
     const body = {
       system_instruction: { parts: [{ text: systemPrompt }] },
       contents: history,
-      generationConfig: { temperature: 0.4, maxOutputTokens: 300 }
+      safetySettings: SAFETY_SETTINGS,
+      generationConfig: { temperature, topP: 0.95, topK: 40, maxOutputTokens: 500 }
     };
     try {
       const res = await fetch(`${GEMINI_URL}?key=${GEMINI_KEY}`, {
@@ -461,13 +469,14 @@ Estado: ⏳ Sin recordatorio
   }
 
   const QUICK_REPLIES = [
-    { label: 'Quiero reservar', query: 'Quiero reservar un turno' },
-    { label: '¿Qué servicios tienen?', query: 'Qué servicios tienen' },
-    { label: '¿Cuáles son los horarios?', query: 'Cuáles son los horarios disponibles' },
-    { label: 'Kit facial — precios', query: 'Cuánto cuesta el kit facial' },
-    { label: 'Sesión Duo', query: 'Quiero reservar una sesión duo con una amiga' },
-    { label: 'Necesito cancelar', query: 'Necesito cancelar un turno' },
-    { label: 'Primera vez', query: 'Es mi primera vez, cómo me registro' },
+    { label: '📅 Agendar turno',     query: 'Quiero reservar un turno' },
+    { label: '💅 Ver servicios',     query: 'Qué servicios tienen' },
+    { label: '📋 Ver mis turnos',    query: 'Ver mis turnos' },
+    { label: '🕐 Horarios',          query: 'Cuáles son los horarios disponibles' },
+    { label: '🌿 Kit facial',        query: 'Cuánto cuesta el kit facial' },
+    { label: '🎁 Membresía',         query: 'Beneficios de membresía' },
+    { label: '❌ Cancelar turno',    query: 'Necesito cancelar un turno' },
+    { label: '✨ Primera vez',       query: 'Es mi primera vez, cómo me registro' },
   ];
 
   // ── Utilidades ────────────────────────────────────────────
@@ -1405,8 +1414,8 @@ PROHIBIDO: mencionar turnos, servicios, agenda o estado de sesión anterior en e
       // 3. Si no respondió nada operativo, intentar Gemini con el prompt y el historial correspondiente
       if (!answer && GEMINI_KEY) {
         answer = esAdmin
-          ? await askGemini(text, SYSTEM_PROMPT_ADMIN, chatHistoryAdmin)
-          : await askGemini(text, buildPatientSystemPrompt(), chatHistory);
+          ? await askGemini(text, SYSTEM_PROMPT_ADMIN, chatHistoryAdmin, 0.5)
+          : await askGemini(text, buildPatientSystemPrompt(), chatHistory, 0.7);
       }
 
       // 4. Fallback al KB local
@@ -1419,9 +1428,9 @@ PROHIBIDO: mencionar turnos, servicios, agenda o estado de sesión anterior en e
 
       if (!answer) {
         if (esAdmin) {
-          await addMsg('No encontré eso. Podés escribirme el nombre de una paciente, pedirme los turnos de hoy, recordatorios pendientes o los próximos 7 días. 📋', 'bot');
+          await addMsg('No encontré eso, Gime. Podés pedirme los <strong>turnos de hoy</strong>, <strong>recordatorios pendientes</strong>, <strong>próximos 7 días</strong>, o buscarme por nombre de paciente. 📋', 'bot');
         } else {
-          await addMsg('No encontré info exacta sobre eso, pero puedo ayudarte con cualquiera de estos temas: 👇', 'bot');
+          await addMsg('Aquí está la información que tengo disponible. ¿En cuál de estos temas puedo ayudarte? 👇', 'bot');
         }
         renderQuickReplies();
       } else {
