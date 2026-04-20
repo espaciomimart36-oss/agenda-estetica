@@ -729,9 +729,7 @@ PROHIBIDO: mencionar turnos, servicios, agenda o estado de sesión anterior en e
       pointer-events: none;
       display: block;
     }
-    #mimi-bubble-fallback.mimi-video-ok { display: none; }
-    #mimi-vid-bubble.mimi-video-ok { display: block; }
-    #mimi-vid-bubble:not(.mimi-video-ok) { display: none; }
+    #mimi-bubble-fallback { display: block; }
 
     #mimi-badge {
       position: absolute;
@@ -860,9 +858,7 @@ PROHIBIDO: mencionar turnos, servicios, agenda o estado de sesión anterior en e
       overflow: hidden;
       background: #c6dfc6;
     }
-    #mimi-avatar-fallback.mimi-video-ok { display: none; }
-    #mimi-avatar-vid.mimi-video-ok { display: block; }
-    #mimi-avatar-vid:not(.mimi-video-ok) { display: none; }
+    #mimi-avatar-fallback { display: block; }
 
     #mimi-header-info { flex: 1; min-width: 0; }
     #mimi-header-info strong {
@@ -1137,9 +1133,6 @@ PROHIBIDO: mencionar turnos, servicios, agenda o estado de sesión anterior en e
       <div id="mimi-bubble" role="button" aria-label="Abrir asistente Mimi" tabindex="0">
         <div id="mimi-bubble-inner">
           <div id="mimi-bubble-fallback"><img src="img/mimi-avatar.png" alt="Mimi"></div>
-          <video id="mimi-vid-bubble" autoplay loop muted playsinline>
-            <source src="img/Bot.mp4" type="video/mp4">
-          </video>
         </div>
         <div id="mimi-badge">1</div>
         <button id="mimi-bubble-dismiss" aria-label="Cerrar asistente" title="Cerrar">✕</button>
@@ -1152,9 +1145,6 @@ PROHIBIDO: mencionar turnos, servicios, agenda o estado de sesión anterior en e
         <div id="mimi-header">
           <div id="mimi-avatar-small">
             <div id="mimi-avatar-fallback"><img src="img/mimi-avatar.png" alt="Mimi"></div>
-            <video id="mimi-avatar-vid" autoplay loop muted playsinline>
-              <source src="img/Bot.mp4" type="video/mp4">
-            </video>
           </div>
           <div id="mimi-header-info">
             <strong>Mimi ✨</strong>
