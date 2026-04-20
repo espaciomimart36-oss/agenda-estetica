@@ -166,14 +166,15 @@
       keywords: ['cancelar', 'cancelacion', 'cancelación', 'reprogramar', 'cambiar turno',
                  'anular', 'no puedo ir', 'no voy a poder', 'cambiar fecha',
                  'cambiar horario', 'modificar turno'],
-      answer: '⚠️ Podés cancelar o reprogramar con <strong>al menos 48 horas de anticipación</strong>. Las cancelaciones fuera de ese plazo o la inasistencia se consideran como <strong>turno utilizado</strong>. Si necesitás cancelar, coordiná con Gimena a tiempo.'
+      answer: '⚠️ Podés cancelar un turno directamente desde la sección <strong>"Mis Próximos Turnos"</strong> en la web. Es necesario <strong>justificar el motivo</strong> — se notifica a Gimena automáticamente. Al cancelar, se te <strong>devuelve 1 hora de saldo</strong> a tu cuenta. Cancelá con anticipación para que otro paciente pueda tomar ese horario.'
     },
     {
       id: 'ver_turnos',
       keywords: ['ver mis turnos', 'mis turnos', 'proximos turnos', 'próximos turnos',
                  'tengo turno', 'cuando tengo turno', 'cuándo tengo turno',
-                 'consultar turno', 'ver reserva', 'mis reservas'],
-      answer: 'Podés ver tus próximos turnos en la sección <strong>"Ver mis próximos turnos"</strong> dentro de la página de servicios. Ingresás con tu DNI y te muestra todo ordenado cronológicamente. 📋'
+                 'consultar turno', 'ver reserva', 'mis reservas', 'historial turnos',
+                 'turnos pasados', 'turno cancelado'],
+      answer: 'Podés ver <strong>todos tus turnos</strong> (próximos, realizados y cancelados) en la sección <strong>"Ver mis próximos turnos"</strong> dentro de la página de servicios. Cada turno tiene su estado y, si es futuro, el botón para cancelarlo. 📋'
     },
 
     // ── PRECIOS ─────────────────────────────────────────────
@@ -343,14 +344,16 @@ El pago se coordina directamente con Gimena. Se solicita desde la sección de se
 - Sin contraseñas. El sistema reconoce por nombre + DNI.
 
 # FLUJO DE RESERVA
-Paso 1 → Identificación en index.html
-Paso 2 → Elección de fecha y hora en fecha.html
-Paso 3 → Confirmación en confirmar.html → WhatsApp automático con los detalles
+Paso 1 → Identificación en index.html (nombre + DNI)
+Paso 2 → Selección de servicio en servicios.html
+Paso 3 → Elección de fecha y hora en fecha.html (miembros) o fechaocasional.html (ocasionales)
+Paso 4 → Confirmación en confirmar.html → WhatsApp automático con los detalles
 
 # POLÍTICA DE CANCELACIÓN
-- Cancelar con mínimo 48 horas de anticipación
-- Cancelación fuera de plazo o inasistencia = turno utilizado
-- Se cancela o reprograma directamente desde servicios-pro.html con motivo
+- El paciente puede cancelar directamente desde servicios.html → "Mis Próximos Turnos"
+- Cancelar requiere justificar el motivo (obligatorio) — se notifica a Gimena automáticamente
+- Al cancelar se devuelve 1 hoursBalance (hora de saldo) al paciente
+- El horario cancelado vuelve a estar disponible para otros pacientes
 
 # SESIÓN DUO
 Dos pacientes pueden reservar el mismo horario juntas. Se configura en el flujo de fecha.
@@ -359,13 +362,14 @@ Dos pacientes pueden reservar el mismo horario juntas. Se configura en el flujo 
 Primera vez: Gimena pide completar la historia clínica antes de la sesión (historia.html). Incluye datos de salud, objetivos y consentimiento.
 
 # MEMBRESÍA
-Pacientes con membresía activa tienen acceso a condiciones preferenciales. Se gestiona desde el panel.
+Pacientes con membresía activa acceden a fecha.html directamente. Las no-miembros van a fechaocasional.html. Se gestiona desde el panel de admin.
 
 # MAPA DEL SITIO
-- index.html: ingreso de paciente
-- servicios-pro.html: mis turnos, cancelación, kit facial
-- fecha.html: selección de fecha y hora
-- confirmar.html: confirmación final
+- index.html: ingreso de paciente (nombre + DNI)
+- servicios.html: selección de servicio, mis turnos, cancelación, kit facial
+- fecha.html: selección de fecha y hora (solo miembros)
+- fechaocasional.html: selección de fecha y hora (pacientes ocasionales)
+- confirmar.html: confirmación final → WhatsApp automático
 - politica.html: política de cancelación completa
 - historia.html: historia clínica del paciente
 - servicioincluido.html: detalle de qué incluye cada sesión
@@ -508,7 +512,7 @@ Estado: ⏳ Sin recordatorio
     const servicio = (localStorage.getItem('servicioSeleccionado') || '').trim();
     const fecha = (localStorage.getItem('fechaSeleccionada') || '').trim();
     const hora = (localStorage.getItem('horaSeleccionada') || '').trim();
-    const paso = (!dni || !nombre) ? 'Paso 1' : (fecha && hora ? 'Paso 3' : 'Paso 2');
+    const paso = (!dni || !nombre) ? 'Paso 1' : (fecha && hora ? 'Paso 4' : (servicio ? 'Paso 3' : 'Paso 2'));
     const pagina = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
     return `${SYSTEM_PROMPT}
