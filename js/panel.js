@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-import { db } from "./firebase.js";
-import {
-  collection, getDocs, getDoc, doc, query, where, addDoc, setDoc, serverTimestamp, updateDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-=======
 import { db, collection, getDocs, getDoc, doc, query, where, addDoc, setDoc, serverTimestamp, updateDoc } from "./firebase-web.js";
->>>>>>> main
 
 /* ===============================
 ELEMENTOS DOM
@@ -300,21 +293,13 @@ async function reservarTurno(fecha,hora){
         const clienteRef=doc(db,"clients",clientId);
         const clienteSnap=await getDoc(clienteRef);
         const clienteData=clienteSnap.data();
-<<<<<<< HEAD
-=======
         const turnoAt = new Date(`${fecha}T${hora}:00-03:00`);
->>>>>>> main
 
         await addDoc(collection(db,"reservas"),{
 
             clientId,
             nombreCliente:clienteData.nombre,
             emailCliente:clienteData.email,
-<<<<<<< HEAD
-            servicio:servicioSeleccionado,
-            fecha,
-            hora,
-=======
             telefono: clienteData.telefono || clienteData.phone || "",
             servicio:servicioSeleccionado,
             fecha,
@@ -329,7 +314,6 @@ async function reservarTurno(fecha,hora){
                 h12: { enviado: false },
                 h6: { enviado: false }
             },
->>>>>>> main
             timestamp:serverTimestamp()
 
         });

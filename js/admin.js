@@ -1,18 +1,4 @@
-<<<<<<< HEAD
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyBc5435tsDnJ_yJqO1ppwSjxSpCIhpjgew",
-    projectId: "estetica-8d067",
-    appId: "1:774341571551:web:863e0e7a2b2923057e4e4a"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-=======
 import { db, collection, onSnapshot, doc, updateDoc, getDocs } from "./firebase-web.js";
->>>>>>> main
 
 let reservas = [];
 let diccionarioClientes = {};
@@ -125,7 +111,6 @@ function mostrarTurnosDia(fecha) {
         container.appendChild(card);
     });
 
-    // Botón enviar resumen del día por WhatsApp (solo si hay turnos)
     if (lista.length > 0) {
         const btnResumen = document.createElement("button");
         btnResumen.innerHTML = "📲 Enviar resumen del día por WhatsApp";
@@ -141,7 +126,6 @@ function mostrarTurnosDia(fecha) {
     container.appendChild(btnVolver);
 }
 
-// Activa edición inline de la nota
 window.activarEdicionNota = (id) => {
     document.getElementById(`nota-display-${id}`).style.display = "none";
     const editArea = document.getElementById(`nota-edit-${id}`);
@@ -154,7 +138,6 @@ window.cancelarEdicion = (id) => {
     document.getElementById(`nota-edit-${id}`).style.display = "none";
 };
 
-// 5. GUARDAR NOTA Y ENVIAR WHATSAPP
 window.guardarNota = async (id, fecha) => {
     const el = document.getElementById(`nota-${id}`);
     if (!el) return;
@@ -163,11 +146,9 @@ window.guardarNota = async (id, fecha) => {
     try {
         await updateDoc(doc(db, "reservas", id), { detalleSesion: nota });
 
-        // Actualizar el objeto en memoria para que el botón de resumen lo tome
         const idx = reservas.findIndex(r => r.id === id);
         if (idx !== -1) reservas[idx].detalleSesion = nota;
 
-        // Actualizar vista: mostrar bloque guardado con lápiz
         const displayEl = document.getElementById(`nota-display-${id}`);
         if (displayEl) {
             displayEl.innerHTML = `${escapeHtml(nota)}<button title="Editar nota" onclick="window.activarEdicionNota('${id}')" style="position:absolute; top:8px; right:8px; background:none; border:none; cursor:pointer; font-size:16px; line-height:1">✏️</button>`;
@@ -175,7 +156,6 @@ window.guardarNota = async (id, fecha) => {
             const editArea = document.getElementById(`nota-edit-${id}`);
             if (editArea) editArea.style.display = "none";
         } else {
-            // Primera vez que se guarda: reemplazar el textarea por el bloque display
             const card = el.closest(".card-turno");
             el.replaceWith((() => {
                 const d = document.createElement("div");
@@ -184,12 +164,10 @@ window.guardarNota = async (id, fecha) => {
                 d.innerHTML = `${escapeHtml(nota)}<button title="Editar nota" onclick="window.activarEdicionNota('${id}')" style="position:absolute; top:8px; right:8px; background:none; border:none; cursor:pointer; font-size:16px; line-height:1">✏️</button>`;
                 return d;
             })());
-            // Quitar el botón guardar originario (está en el sibling div)
             const botonesDiv = card.querySelector(`div[style*="gap:8px"]`);
             if (botonesDiv) botonesDiv.remove();
         }
 
-        // Envío automático por WhatsApp al guardar
         const reserva = reservas.find(r => r.id === id);
         if (reserva && reserva.telFinal && nota) {
             await enviarNota1a1(reserva, nota);
@@ -202,7 +180,6 @@ window.guardarNota = async (id, fecha) => {
     }
 };
 
-// Envío inmediato de una nota individual vía Cloud Function
 async function enviarNota1a1(reserva, nota) {
     if (!reserva.telFinal) return;
     try {
@@ -220,9 +197,7 @@ async function enviarNota1a1(reserva, nota) {
     } catch (e) { console.error("WA enviarNota1a1:", e); }
 }
 
-// Envío del resumen completo del día (botón manual)
 async function enviarResumenDia(fecha, lista) {
-    // Si hay pacientes con distintos teléfonos, enviar uno a uno
     const porCliente = {};
     lista.forEach(t => {
         if (!t.telFinal) return;
@@ -258,7 +233,6 @@ function escapeHtml(str) {
         .replace(/'/g, "&#039;");
 }
 
-// 5b. AVISAR TURNO PRÓXIMO (botón individual - ya existía)
 window.enviarWS = (tel, nombre, fecha, hora, servicio) => {
     if (!tel) return mostrarToast("Sin teléfono registrado");
     const dias = ["Dom.", "Lun.", "Mar.", "Mié.", "Jue.", "Vie.", "Sáb."];
@@ -271,17 +245,13 @@ window.enviarWS = (tel, nombre, fecha, hora, servicio) => {
     window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
 };
 
-window.cambiarMes = (n) => { 
-    mesActual += n; 
-    if(mesActual < 0){ mesActual = 11; yearActual--; } 
-    if(mesActual > 11){ mesActual = 0; yearActual++; } 
-    renderCalendario(); 
+window.cambiarMes = (n) => {
+    mesActual += n;
+    if(mesActual < 0){ mesActual = 11; yearActual--; }
+    if(mesActual > 11){ mesActual = 0; yearActual++; }
+    renderCalendario();
 };
 
-<<<<<<< HEAD
-=======
-
-// --- BUSCADOR DE SESIONES POR PACIENTE ---
 window.buscarSesionesPorNombreInput = function() {
     const input = document.getElementById('inpBuscadorSesiones');
     const cont = document.getElementById('contenedorSesionesBuscadas');
@@ -300,28 +270,22 @@ window.buscarSesionesPorNombreInput = function() {
         return;
     }
     cont.innerHTML = lista.map(r => {
-        const fechaObj = parsearFecha(r.fecha);
         const tieneNota = !!(r.detalleSesion && r.detalleSesion.trim());
         const esPendiente = !tieneNota;
-        const tagEstado = esPendiente ? 
-            '<span class="tag-fecha" style="background:#fff3cd; color:#856404;">⏳ PENDIENTE</span>' : 
+        const tagEstado = esPendiente ?
+            '<span class="tag-fecha" style="background:#fff3cd; color:#856404;">⏳ PENDIENTE</span>' :
             '<span class="tag-fecha" style="background:#d4edda; color:#155724;">✅ COMPLETADA</span>';
-            
         return `
         <div class="detalle-dia-card" style="margin-bottom:10px; ${esPendiente ? 'border-left:4px solid #ffc107;' : 'border-left:4px solid #28a745;'}">
-            <b>${escapeHtml(r.nombreFinal)}</b> 
+            <b>${escapeHtml(r.nombreFinal)}</b>
             <span class="tag-fecha">${escapeHtml(r.fecha)} ${escapeHtml(r.hora || '')}</span>
             ${tagEstado}<br>
             <span style="color:#4a7c6a; font-weight:600">${escapeHtml(r.servicio || 'Tratamiento')}</span>
-            <div style="margin-top:7px;">
-                <b>Nota:</b> <span>${escapeHtml(r.detalleSesion || '(sin nota)')}</span>
-            </div>
-        </div>
-    `}).join('');
+            <div style="margin-top:7px;"><b>Nota:</b> <span>${escapeHtml(r.detalleSesion || '(sin nota)')}</span></div>
+        </div>`;
+    }).join('');
 };
-// --- FIN BUSCADOR DE SESIONES ---
 
-// --- BUSCADOR DE SERVICIOS REALIZADOS (solo fechas pasadas) ---
 window.buscarServiciosRealizadosInput = function() {
     const input = document.getElementById('inpBuscadorRealizados');
     const cont = document.getElementById('contenedorServiciosRealizados');
@@ -330,7 +294,6 @@ window.buscarServiciosRealizadosInput = function() {
         cont.innerHTML = '<div class="empty-state">Escribe el nombre o parte del nombre de la paciente...</div>';
         return;
     }
-    // TODAS las sesiones: pasadas Y futuras
     const hoy = new Date();
     hoy.setHours(0,0,0,0);
     const lista = reservas.filter(r => {
@@ -340,19 +303,18 @@ window.buscarServiciosRealizadosInput = function() {
     }).sort((a,b) => parsearFecha(b.fecha) - parsearFecha(a.fecha));
 
     if (!lista.length) {
-        cont.innerHTML = '<div class="empty-state">No se encontraron sesiones pasadas para ese nombre.</div>';
+        cont.innerHTML = '<div class="empty-state">No se encontraron sesiones para ese nombre.</div>';
         return;
     }
     cont.innerHTML = lista.map(r => {
         const fechaObj = parsearFecha(r.fecha);
         const esPendiente = fechaObj > hoy;
-        const tagEstado = esPendiente ? 
-            '<span class="tag-fecha" style="background:#fff3cd; color:#856404;">⏳ PENDIENTE</span>' : 
+        const tagEstado = esPendiente ?
+            '<span class="tag-fecha" style="background:#fff3cd; color:#856404;">⏳ PENDIENTE</span>' :
             '<span class="tag-fecha" style="background:#d4edda; color:#155724;">✅ REALIZADA</span>';
-            
         return `
         <div class="detalle-dia-card" style="margin-bottom:10px; ${esPendiente ? 'border-left:4px solid #ffc107;' : 'border-left:4px solid #28a745;'}">
-            <b>${escapeHtml(r.nombreFinal)}</b> 
+            <b>${escapeHtml(r.nombreFinal)}</b>
             <span class="tag-fecha">${escapeHtml(r.fecha)} ${escapeHtml(r.hora || '')}</span>
             ${tagEstado}<br>
             <span style="color:#4a7c6a; font-weight:600">${escapeHtml(r.servicio || 'Tratamiento')}</span>
@@ -360,18 +322,14 @@ window.buscarServiciosRealizadosInput = function() {
                 <b>Nota:</b> <span>${escapeHtml(r.detalleSesion || '(sin nota)')}</span>
                 <button class="btn-mini" style="margin-left:10px;" onclick="window.activarEdicionNota('${r.id}')">Editar</button>
             </div>
-        </div>
-    `}).join('');
+        </div>`;
+    }).join('');
 };
-// --- FIN BUSCADOR DE SERVICIOS REALIZADOS ---
 
->>>>>>> main
-function obtenerNombreMes(m) { 
-    return ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"][m]; 
+function obtenerNombreMes(m) {
+    return ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"][m];
 }
 
-<<<<<<< HEAD
-=======
 function parsearFecha(fechaStr) {
     if (!fechaStr) return null;
     const [y, m, d] = fechaStr.split('-');
@@ -381,8 +339,7 @@ function parsearFecha(fechaStr) {
 }
 
 function mostrarToast(mensaje) {
-    mostrarAviso(mensaje);
+    if (typeof mostrarAviso === 'function') mostrarAviso(mensaje);
 }
 
->>>>>>> main
 iniciar();
