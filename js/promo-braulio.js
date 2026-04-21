@@ -11,7 +11,7 @@
         #pb-chip {
             position: fixed;
             bottom: 22px;
-            right: 16px;
+            left: 16px;
             z-index: 999999;
             display: flex;
             align-items: center;
@@ -101,7 +101,7 @@
         @media (max-width: 560px) {
             .pb-footer-inner { flex-direction: column; text-align: center; }
             .pb-footer-pills { justify-content: center; }
-            #pb-chip { bottom: 14px; right: 10px; }
+            #pb-chip { bottom: 14px; left: 10px; }
         }
     `;
 
@@ -120,7 +120,7 @@
         chip.innerHTML = `
             <a id="pb-chip-link" href="${WA_URL}" target="_blank" rel="noopener" aria-label="Contactar al desarrollador">
                 <span id="pb-chip-icon">💻</span>
-                <span id="pb-chip-text">¿Tu negocio también?</span>
+                <span id="pb-chip-text">¿Querés algo así? Escribime</span>
                 <span id="pb-chip-wa">${WA_SVG}</span>
             </a>
             <button id="pb-chip-dismiss" aria-label="No mostrar más">✕</button>
