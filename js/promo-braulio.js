@@ -1,5 +1,6 @@
 (() => {
-    const DISMISS_KEY = 'pb_v3_gone';
+    const DISMISS_KEY = 'pb_v4_gone';
+    const DISMISS_DAYS = 30;
     const WA_NUM = "5493757671229";
     const WA_MSG = encodeURIComponent("Hola! 👋 Vi el trabajo en Espacio Mimar T y me encantó. Me gustaría tener algo así para mi negocio. ¿Podés contarme más?");
     const WA_URL = `https://wa.me/${WA_NUM}?text=${WA_MSG}`;
@@ -10,7 +11,7 @@
         /* ── Chip fijo ── */
         #pb-chip {
             position: fixed;
-            bottom: 22px;
+            bottom: 108px;
             left: 16px;
             z-index: 999999;
             display: flex;
@@ -101,7 +102,7 @@
         @media (max-width: 560px) {
             .pb-footer-inner { flex-direction: column; text-align: center; }
             .pb-footer-pills { justify-content: center; }
-            #pb-chip { bottom: 14px; left: 10px; }
+            #pb-chip { bottom: 80px; left: 10px; }
         }
     `;
 
@@ -111,9 +112,17 @@
         document.head.appendChild(s);
     }
 
-    // ── CHIP FIJO (dismiss permanente) ─────────────────────────
+    function isDismissed() {
+        const ts = localStorage.getItem(DISMISS_KEY);
+        if (!ts) return false;
+        if (Date.now() - Number(ts) < DISMISS_DAYS * 864e5) return true;
+        localStorage.removeItem(DISMISS_KEY);
+        return false;
+    }
+
+    // ── CHIP FIJO ─────────────────────────────────────────────
     function buildChip() {
-        if (localStorage.getItem(DISMISS_KEY)) return;
+        if (isDismissed()) return;
 
         const chip = document.createElement('div');
         chip.id = 'pb-chip';
@@ -130,7 +139,7 @@
         document.getElementById('pb-chip-dismiss').onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            localStorage.setItem(DISMISS_KEY, '1');
+            localStorage.setItem(DISMISS_KEY, String(Date.now()));
             chip.classList.add('pb-chip-out');
             setTimeout(() => chip.remove(), 320);
         };
@@ -139,7 +148,7 @@
     // ── FOOTER CARD ────────────────────────────────────────────
     function buildFooterCard() {
         if (document.querySelector('.pb-footer-card')) return;
-        if (localStorage.getItem(DISMISS_KEY)) return;
+        if (isDismissed()) return;
         const footer = document.querySelector('.footer, footer, #footer');
         if (!footer) return;
         const div = document.createElement('div');
