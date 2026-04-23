@@ -56,10 +56,23 @@ function renderCalendario() {
     for (let d = 1; d <= totalDias; d++) {
         const fecha = `${yearActual}-${String(mesActual + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
         const tieneTurno = reservas.some(r => r.fecha === fecha);
+        const blockedDates = ["2026-05-01", "2026-05-04"];
+        const isBlocked = blockedDates.includes(fecha);
+
         const el = document.createElement("div");
-        el.className = `day ${tieneTurno ? 'ocupado' : ''}`;
+        el.className = `day ${tieneTurno ? 'ocupado' : ''} ${isBlocked ? 'bloqueado-admin' : ''}`;
         el.innerText = d;
-        el.onclick = () => mostrarTurnosDia(fecha);
+        if (isBlocked) {
+            el.style.backgroundColor = "#e74c3c"; // Rojo intenso como Viernes Santo
+            el.style.color = "white";
+            el.style.fontWeight = "bold";
+        }
+        if (isBlocked) {
+            el.title = "Bloqueado por Admin";
+            el.onclick = () => mostrarToast("Este día está bloqueado por administración.");
+        } else {
+            el.onclick = () => mostrarTurnosDia(fecha);
+        }
         grid.appendChild(el);
     }
 }

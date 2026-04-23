@@ -23,7 +23,7 @@ const btnAceptarNutricion = document.getElementById("aceptarNutricion");
 const btnRechazarNutricion = document.getElementById("rechazarNutricion");
 
 let servicioSeleccionado = null;
-let clientId = localStorage.getItem("usuario");
+let clientId = localStorage.getItem("clienteDNI") || localStorage.getItem("usuario");
 
 /* ===============================
 GESTIÓN DE VISTAS
@@ -148,7 +148,8 @@ if (btnIngresar) {
 
             }
 
-            localStorage.setItem("usuario", keyword);
+            localStorage.setItem("clienteDNI", keyword);
+            localStorage.setItem("usuario", keyword); // Mantener por compatibilidad legacy
 
             location.reload();
 
@@ -213,6 +214,12 @@ async function generarHorarios(fechaSeleccionada){
 
     horariosContainer.innerHTML="<p>Buscando horarios...</p>";
 
+    const blockedDates = ["2026-05-01", "2026-05-04"];
+    if (blockedDates.includes(fechaSeleccionada)) {
+        horariosContainer.innerHTML = "<p style='color:#e74c3c; font-weight:bold; margin-top:10px; padding:10px; border:1px solid #e74c3c; border-radius:10px; background:#fdf2f2; text-align:center;'>Bloqueado por Admin</p>";
+        return;
+    }
+
     const dias=["domingo","lunes","martes","miercoles","jueves","viernes","sabado"];
 
     const fechaObj=new Date(fechaSeleccionada.replace(/-/g,"/"));
@@ -232,7 +239,13 @@ async function generarHorarios(fechaSeleccionada){
     const qReservas=query(collection(db,"reservas"),where("fecha","==",fechaSeleccionada));
     const snapRes=await getDocs(qReservas);
 
-    const ocupados=snapRes.docs.map(d=>d.data().hora);
+    const ocupados=snapRes.docs
+        .filter(d => {
+            const r = d.data();
+            const estado = (r.estado || r.status || "").toLowerCase();
+            return estado !== "cancelado";
+        })
+        .map(d=>d.data().hora);
 
     horariosContainer.innerHTML="";
 

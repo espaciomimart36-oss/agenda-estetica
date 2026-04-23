@@ -22,6 +22,8 @@ const CONFIG_DIAS = {
 const EXCEPCIONES_HORARIOS = {
   "2026-04-22": { normal: ["21:00"], fraccionado: [] },
   "2026-04-25": { normal: ["17:00"], fraccionado: [] },
+  "2026-05-01": { normal: [], fraccionado: [], replaceBase: true, reason: "Bloqueado por Admin" },
+  "2026-05-04": { normal: [], fraccionado: [], replaceBase: true, reason: "Bloqueado por Admin" },
 };
 
 const PROHIBITED_TERMS = [
@@ -681,6 +683,18 @@ async function getAvailability(dateISO, serviceName) {
   const mergedConfig = getMergedConfigForDate(dateISO);
   if (!mergedConfig) {
     return { ok: true, dateISO, availableHours: [], closedReason: "Ese día no tiene agenda habilitada." };
+  }
+
+  // Verificación de bloqueos manuales (hardcoded)
+  const ex = EXCEPCIONES_HORARIOS[dateISO];
+  if (ex && ex.replaceBase && (ex.normal || []).length === 0 && (ex.fraccionado || []).length === 0) {
+    return { ok: true, dateISO, availableHours: [], closedReason: ex.reason || "Bloqueado por Admin" };
+  }
+
+  // Verificación de bloqueos manuales (hardcoded)
+  const ex = EXCEPCIONES_HORARIOS[dateISO];
+  if (ex && ex.replaceBase && (ex.normal || []).length === 0 && (ex.fraccionado || []).length === 0) {
+    return { ok: true, dateISO, availableHours: [], closedReason: ex.reason || "Bloqueado por Admin" };
   }
 
   const calendarMeta = await getCalendarExceptionsMeta();

@@ -1527,15 +1527,24 @@
         async function cargarTodo() {
             mostrarLoader(true);
             try {
-                const [snapR, snapH, snapC] = await Promise.all([
+                // Usamos Promise.allSettled para que si falla una colección (por permisos), el panel no se rompa por completo
+                const resultados = await Promise.allSettled([
                     getDocs(collection(db, "reservas")),
                     getDocs(collection(db, "historias")),
-                    getDocs(collection(db, "clients")).catch(() => ({ docs: [] }))
+                    getDocs(collection(db, "clients")),
+                    getDocs(collection(db, "horarios")),
+                    getDocs(collection(db, "calendarExceptions"))
                 ]);
-                const [snapHorarios, snapBloqueos] = await Promise.all([
-                    getDocs(collection(db, "horarios")).catch(() => ({ docs: [] })),
-                    getDocs(collection(db, "calendarExceptions")).catch(() => ({ docs: [] }))
-                ]);
+
+                const snapR = resultados[0].status === 'fulfilled' ? resultados[0].value : { docs: [] };
+                const snapH = resultados[1].status === 'fulfilled' ? resultados[1].value : { docs: [] };
+                const snapC = resultados[2].status === 'fulfilled' ? resultados[2].value : { docs: [] };
+                const snapHorarios = resultados[3].status === 'fulfilled' ? resultados[3].value : { docs: [] };
+                const snapBloqueos = resultados[4].status === 'fulfilled' ? resultados[4].value : { docs: [] };
+
+                if (resultados[0].status === 'rejected') console.warn("Error permisos Reservas:", resultados[0].reason);
+                if (resultados[1].status === 'rejected') console.warn("Error permisos Historias:", resultados[1].reason);
+
                 horariosDisponibles = extraerHorariosDesdeFirebase(snapHorarios);
                 bloqueosHorarios = extraerBloqueosDesdeFirebase(snapBloqueos);
                 cierresPorFecha = extraerCierresDiaDesdeFirebase(snapBloqueos);
@@ -1749,7 +1758,7 @@
                     <div class="grid-acciones">
                         <button class="btn-ws btn-confirmar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','confirmar')">Confirmar</button>
                         <button class="btn-ws btn-recordar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','recordar')">Recordar</button>
-                        <button class="btn-ws btn-cancelar" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','cancelar')">Cancelar</button>
+                        <button class="btn-ws btn-cancelar" title="Solo envía mensaje de aviso" onclick="enviarW('${r.phone || ''}','${r.nombreLimpio}','${r.fecha}','${r.hora}','${r.servicio}','cancelar')">Avisar Canc.</button>
                     </div>
                     <button class="btn-mini" style="width:100%;margin-top:8px;border-color:#b5cce8;color:#2e61b1;background:#f3f8ff" onclick="cambiarServicioReserva('${r.id}')">Cambiar servicio</button>
                     <button class="btn-mini" style="width:100%;margin-top:6px;border-color:#e0b0b0;color:#a02828;background:#fff5f5" onclick="cancelarTurnoYNotificar('${r.id}')">Cancelar turno y notificar</button>
@@ -2377,8 +2386,9 @@
                     await cargarTodo();
                     if (fechaSeleccionada) verTurnos(fechaSeleccionada, document.querySelector('.day.selected'));
                 } catch (error) {
-                    console.error(error);
-                    mostrarAviso("No se pudo cancelar el turno");
+                    console.error("Error Firestore cancelarTurno:", error);
+                    const msg = error.code === 'permission-denied' ? "Error: Permisos insuficientes en Firebase" : "No se pudo cancelar el turno";
+                    mostrarAviso(msg);
                 } finally {
                     mostrarLoader(false);
                 }
@@ -2582,8 +2592,9 @@
                 }
                 mostrarAviso("Reserva borrada de Firestore");
             } catch (error) {
-                console.error(error);
-                mostrarAviso("No se pudo borrar la reserva");
+                console.error("Error Firestore borrarReserva:", error);
+                const msg = error.code === 'permission-denied' ? "Error: No tienes permiso para borrar" : "No se pudo borrar la reserva";
+                mostrarAviso(msg);
             } finally {
                 mostrarLoader(false);
             }
@@ -3009,6 +3020,7 @@
             var horaActual = new Date().toTimeString().slice(0, 5);
             var sesiones = todasLasReservas
                 .filter(function(r) { return (r.nombreLimpio || "").toLowerCase().indexOf(txt) >= 0 && esReservaActiva(r); })
+                .filter(function(r) { return (r.nombreLimpio || "").toLowerCase().indexOf(txt) >= 0; })
                 .sort(function(a, b) {
                     var fa = a.fecha || "", fb = b.fecha || "";
                     if (fa !== fb) return fa < fb ? -1 : 1;
@@ -3021,11 +3033,16 @@
             var primerNombre = escapeHtml(sesiones[0].nombreLimpio || txt);
             var html = "<p style='font-size:13px;color:#4a90e2;font-weight:700;margin-bottom:10px;'>" + sesiones.length + " sesión(es) encontrada(s) &middot; <strong>" + primerNombre + "</strong></p>";
             sesiones.forEach(function(r) {
+                var isCancelado = (r.estado || r.status || "").toLowerCase() === "cancelado";
                 var esPasada = r.fecha < hoyStr || (r.fecha === hoyStr && (r.hora || "00:00") <= horaActual);
                 var estado = esPasada ? "Realizada" : "Pendiente";
                 var color = esPasada ? "#3f8f6f" : "#c07a10";
                 var bg = esPasada ? "#e8f5ee" : "#fff8e7";
                 var border = esPasada ? "#7dc9a0" : "#f0c060";
+                var estado = isCancelado ? "CANCELADO" : (esPasada ? "Realizada" : "Pendiente");
+                var color = isCancelado ? "#e11d2e" : (esPasada ? "#3f8f6f" : "#c07a10");
+                var bg = isCancelado ? "#fff1f2" : (esPasada ? "#e8f5ee" : "#fff8e7");
+                var border = isCancelado ? "#fecdd3" : (esPasada ? "#7dc9a0" : "#f0c060");
                 var detalle = r.detalleSesion || r.notas || r.nota || "";
                 html += "<div style='background:#fff;border:1px solid " + border + ";border-left:4px solid " + color + ";border-radius:12px;padding:14px 16px;margin-bottom:10px;'>" +
                     "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;'>" +
