@@ -3614,7 +3614,8 @@
                 }
             } catch(e) {}
 
-            await renderListaBloqueos();
+            await leerBloqueos();
+            renderListaBloqueos();
 
             try {
                 const snap = await getDoc(doc(db, "configuracion", "negocio"));
@@ -3690,14 +3691,44 @@
             }
         };
 
+        // Estado local de bloqueos (espejo del doc configuracion/bloqueos)
+        let _bloqueosMeses = [];
+        let _bloqueosDias  = [];
+
+        async function leerBloqueos() {
+            try {
+                const snap = await getDoc(doc(db, "configuracion", "bloqueos"));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    _bloqueosMeses = Array.isArray(d.meses)  ? [...d.meses]  : [];
+                    _bloqueosDias  = Array.isArray(d.rangos) ? [...d.rangos] : [];
+                } else {
+                    _bloqueosMeses = [];
+                    _bloqueosDias  = [];
+                }
+            } catch(e) {
+                console.error("leerBloqueos:", e);
+            }
+        }
+
+        async function guardarBloqueos() {
+            await setDoc(doc(db, "configuracion", "bloqueos"), {
+                meses:  _bloqueosMeses,
+                rangos: _bloqueosDias,
+                updatedAt: serverTimestamp()
+            }, { merge: false });
+        }
+
         window.bloquearMes = async () => {
             const val = document.getElementById("bloqueoMesInput")?.value;
             if (!val) { mostrarAviso("Elegí un mes para bloquear"); return; }
             try {
                 mostrarLoader(true);
-                await setDoc(doc(db, "bloqueosMeses", val), { mes: val, activo: true, creadoAt: serverTimestamp(), bloqueadoPor: "admin" });
+                await leerBloqueos();
+                if (!_bloqueosMeses.includes(val)) _bloqueosMeses.push(val);
+                await guardarBloqueos();
                 document.getElementById("bloqueoMesInput").value = "";
-                await renderListaBloqueos();
+                renderListaBloqueos();
                 mostrarAviso(`Mes ${val} bloqueado ✓`);
             } catch(e) {
                 console.error(e);
@@ -3708,8 +3739,10 @@
         window.desbloquearMes = async (mes) => {
             try {
                 mostrarLoader(true);
-                await deleteDoc(doc(db, "bloqueosMeses", mes));
-                await renderListaBloqueos();
+                await leerBloqueos();
+                _bloqueosMeses = _bloqueosMeses.filter(m => m !== mes);
+                await guardarBloqueos();
+                renderListaBloqueos();
                 mostrarAviso(`Mes ${mes} desbloqueado ✓`);
             } catch(e) {
                 mostrarAviso("No se pudo desbloquear el mes");
@@ -3717,20 +3750,23 @@
         };
 
         window.bloquearRangoDias = async () => {
-            const desde = document.getElementById("bloqueoDesdeDia")?.value;
-            const hasta = document.getElementById("bloqueoHastaDia")?.value;
+            const desde  = document.getElementById("bloqueoDesdeDia")?.value;
+            const hasta  = document.getElementById("bloqueoHastaDia")?.value;
             const motivo = (document.getElementById("bloqueoRazonDia")?.value || "").trim();
             if (!desde || !hasta) { mostrarAviso("Ingresá fecha desde y hasta"); return; }
-            if (!motivo) { mostrarAviso("Ingresá un motivo para el bloqueo"); return; }
-            if (desde > hasta) { mostrarAviso("La fecha 'Desde' debe ser anterior a 'Hasta'"); return; }
+            if (!motivo)           { mostrarAviso("Ingresá un motivo para el bloqueo"); return; }
+            if (desde > hasta)     { mostrarAviso("La fecha 'Desde' debe ser anterior a 'Hasta'"); return; }
             const rangeId = `${desde}_${hasta}`;
             try {
                 mostrarLoader(true);
-                await setDoc(doc(db, "bloqueosDias", rangeId), { desde, hasta, motivo, activo: true, creadoAt: serverTimestamp(), bloqueadoPor: "admin" });
+                await leerBloqueos();
+                _bloqueosDias = _bloqueosDias.filter(r => r.id !== rangeId);
+                _bloqueosDias.push({ id: rangeId, desde, hasta, motivo });
+                await guardarBloqueos();
                 document.getElementById("bloqueoDesdeDia").value = "";
                 document.getElementById("bloqueoHastaDia").value = "";
                 document.getElementById("bloqueoRazonDia").value = "";
-                await renderListaBloqueos();
+                renderListaBloqueos();
                 mostrarAviso(`Días bloqueados del ${desde} al ${hasta} ✓`);
             } catch(e) {
                 console.error(e);
@@ -3741,50 +3777,40 @@
         window.desbloquearRangoDias = async (id) => {
             try {
                 mostrarLoader(true);
-                await deleteDoc(doc(db, "bloqueosDias", id));
-                await renderListaBloqueos();
+                await leerBloqueos();
+                _bloqueosDias = _bloqueosDias.filter(r => r.id !== id);
+                await guardarBloqueos();
+                renderListaBloqueos();
                 mostrarAviso("Bloqueo eliminado ✓");
             } catch(e) {
                 mostrarAviso("No se pudo eliminar el bloqueo");
             } finally { mostrarLoader(false); }
         };
 
-        async function renderListaBloqueos() {
+        function renderListaBloqueos() {
             const el = document.getElementById("listaBloqueos");
             if (!el) return;
-            try {
-                const [mesesSnap, diasSnap] = await Promise.all([
-                    getDocs(collection(db, "bloqueosMeses")),
-                    getDocs(collection(db, "bloqueosDias"))
-                ]);
-                if (mesesSnap.empty && diasSnap.empty) {
-                    el.innerHTML = '<span style="color:#8a9e94;font-size:12px;">No hay bloqueos activos.</span>';
-                    return;
-                }
-                let html = "";
-                mesesSnap.forEach(d => {
-                    const mes = d.id;
-                    html += `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:#fff;border:1px solid #d5eadf;border-radius:10px;margin-bottom:6px;">
-                        <span style="font-weight:700;color:#2f5a47;">📅 ${mes} — mes completo</span>
-                        <button onclick="desbloquearMes('${mes}')" style="flex-shrink:0;font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid #e8a0a0;background:#fff8f8;color:#c05050;font-weight:700;cursor:pointer;">Desbloquear</button>
-                    </div>`;
-                });
-                diasSnap.forEach(d => {
-                    const { desde, hasta, motivo } = d.data();
-                    const id = d.id;
-                    html += `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:#fff;border:1px solid #d5eadf;border-radius:10px;margin-bottom:6px;">
-                        <div>
-                            <span style="font-weight:700;color:#2f5a47;">📆 ${desde} → ${hasta}</span>
-                            <span style="font-size:12px;color:#6a8e7f;margin-left:6px;">${escapeHtml(motivo || "")}</span>
-                        </div>
-                        <button onclick="desbloquearRangoDias('${escapeHtml(id)}')" style="flex-shrink:0;font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid #e8a0a0;background:#fff8f8;color:#c05050;font-weight:700;cursor:pointer;">Desbloquear</button>
-                    </div>`;
-                });
-                el.innerHTML = html;
-            } catch(e) {
-                console.error(e);
-                el.innerHTML = '<span style="color:#c05050;font-size:12px;">Error al cargar bloqueos.</span>';
+            if (!_bloqueosMeses.length && !_bloqueosDias.length) {
+                el.innerHTML = '<span style="color:#8a9e94;font-size:12px;">No hay bloqueos activos.</span>';
+                return;
             }
+            let html = "";
+            _bloqueosMeses.forEach(mes => {
+                html += `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:#fff;border:1px solid #d5eadf;border-radius:10px;margin-bottom:6px;">
+                    <span style="font-weight:700;color:#2f5a47;">📅 ${mes} — mes completo</span>
+                    <button onclick="desbloquearMes('${mes}')" style="flex-shrink:0;font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid #e8a0a0;background:#fff8f8;color:#c05050;font-weight:700;cursor:pointer;">Desbloquear</button>
+                </div>`;
+            });
+            _bloqueosDias.forEach(r => {
+                html += `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:#fff;border:1px solid #d5eadf;border-radius:10px;margin-bottom:6px;">
+                    <div>
+                        <span style="font-weight:700;color:#2f5a47;">📆 ${r.desde} → ${r.hasta}</span>
+                        <span style="font-size:12px;color:#6a8e7f;margin-left:6px;">${escapeHtml(r.motivo || "")}</span>
+                    </div>
+                    <button onclick="desbloquearRangoDias('${escapeHtml(r.id)}')" style="flex-shrink:0;font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid #e8a0a0;background:#fff8f8;color:#c05050;font-weight:700;cursor:pointer;">Desbloquear</button>
+                </div>`;
+            });
+            el.innerHTML = html;
         }
 
         window.guardarConfigNegocio = async () => {

@@ -1101,12 +1101,12 @@ async function cargarDatos(){
     });
 
     try {
-        const [mesesSnap, diasSnap] = await Promise.all([
-            getDocs(collection(db, "bloqueosMeses")),
-            getDocs(collection(db, "bloqueosDias"))
-        ]);
-        mesesBloqueados = new Set(mesesSnap.docs.map(d => d.id));
-        rangosDiasBloqueados = diasSnap.docs.map(d => d.data()).filter(d => d.desde && d.hasta);
+        const bloqueosSnap = await getDoc(doc(db, "configuracion", "bloqueos"));
+        if (bloqueosSnap.exists()) {
+            const bd = bloqueosSnap.data();
+            mesesBloqueados      = new Set(Array.isArray(bd.meses)  ? bd.meses  : []);
+            rangosDiasBloqueados = Array.isArray(bd.rangos) ? bd.rangos.filter(r => r.desde && r.hasta) : [];
+        }
     } catch(e) {}
 
     if (jornadaModo) fijarMesJornada();

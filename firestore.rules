@@ -61,15 +61,5 @@ service cloud.firestore {
       allow write:  if esAdmin();
     }
 
-    match /bloqueosMeses/{mesId} {
-      allow read:  if true;
-      allow write: if esAdmin();
-    }
-
-    match /bloqueosDias/{rangoId} {
-      allow read:  if true;
-      allow write: if esAdmin();
-    }
-
   }
 }
