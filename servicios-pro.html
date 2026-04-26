@@ -1003,7 +1003,7 @@
     </div>
 
     <script type="module">
-        import { db, collection, getDocs, addDoc, query, where, doc, getDoc } from "/js/firebase-web.js";
+        import { db, collection, getDocs, addDoc, query, where, doc, getDoc, updateDoc, serverTimestamp, increment } from "/js/firebase-web.js";
         const CF_CANCELACION_URL = "https://us-central1-estetica-8d067.cloudfunctions.net/cancelarReservaPaciente";
         const WHATSAPP_GIMENA_NUMERO = "5493764291807";
 
@@ -1100,7 +1100,7 @@
                 .replace(/\*/g, "")
                 .replace(/\s+/g, " ")
                 .trim();
-            const mensaje = `Hola Gime, soy ${nombrePaciente || "paciente"}. Tuve que cancelar mi turno por *${motivoTexto}*. Era para el ${fechaTexto} a las ${horaTexto}.`;
+            const mensaje = `Hola Gime, me llamo ${nombrePaciente || "paciente"}. Tuve que cancelar mi reserva porque *${motivoTexto}*. Era para el ${fechaTexto} a las ${horaTexto}.`;
             return `https://wa.me/${WHATSAPP_GIMENA_NUMERO}?text=${encodeURIComponent(mensaje)}`;
         };
 
@@ -1311,40 +1311,36 @@
             renderTurnosConsultados();
 
             try {
-                const response = await fetch(CF_CANCELACION_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        reservaId: turnoId,
-                        dni: dniConsultaActual,
-                        nombre: nombreSesion,
-                        motivo
-                    })
+                await updateDoc(doc(db, "reservas", turnoId), {
+                    status: "cancelado",
+                    estado: "cancelado",
+                    canceladoPor: "paciente",
+                    motivoCancelacion: motivo,
+                    canceladoAt: serverTimestamp()
                 });
 
-                const result = await response.json().catch(() => ({}));
-                if (!response.ok) {
-                    throw new Error(result.error || "No se pudo cancelar el turno.");
+                if (dniSesion && dniSesion !== "null") {
+                    await updateDoc(doc(db, "clients", dniSesion), { hoursBalance: increment(1) });
                 }
 
                 turnosConsultados = turnosConsultados.map((item) => item.id === turnoId ? {
                     ...item,
                     status: "cancelado",
                     estado: "cancelado",
-                    canceladoPor: result.reserva?.canceladoPor || "paciente",
-                    motivoCancelacion: result.reserva?.motivoCancelacion || motivo
+                    canceladoPor: "paciente",
+                    motivoCancelacion: motivo
                 } : item);
 
                 cancelacionTurnoActivaId = "";
                 cancelandoReservaId = "";
                 renderTurnosConsultados();
-                setTurnosFeedback(`Tu turno del ${formatearFechaTexto(turno.fecha)} a las ${turno.hora} quedó cancelado. El horario ya se liberó y abrimos WhatsApp para avisarle a Espacio Mimar T.`, "success");
-                abrirWhatsAppCancelacion(turno, result.reserva?.motivoCancelacion || motivo);
+                setTurnosFeedback(`Tu turno del ${formatearFechaTexto(turno.fecha)} a las ${turno.hora} quedó cancelado. Se abrirá WhatsApp para avisarle a Gimena.`, "success");
+                abrirWhatsAppCancelacion(turno, motivo);
             } catch (error) {
                 console.error(error);
                 cancelandoReservaId = "";
                 renderTurnosConsultados();
-                setTurnosFeedback(error.message || "No se pudo cancelar el turno en este momento.", "error");
+                setTurnosFeedback("No se pudo cancelar el turno. Intentá de nuevo.", "error");
             }
         };
 

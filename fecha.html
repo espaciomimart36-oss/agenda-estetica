@@ -1129,7 +1129,7 @@ function renderCalendario(){
     document.getElementById("mes").innerText=`${["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][m]} ${y}`;
 
     const btnSig = document.getElementById("btnMesSiguiente");
-    const MES_LIMITE_Y = 2026, MES_LIMITE_M = 4;
+    const MES_LIMITE_Y = 2026, MES_LIMITE_M = 5;
     const esBloqueado = y > MES_LIMITE_Y || (y === MES_LIMITE_Y && m > MES_LIMITE_M);
     btnSig.disabled = esBloqueado || (y === MES_LIMITE_Y && m === MES_LIMITE_M);
     btnSig.style.opacity = btnSig.disabled ? "0.45" : "";
@@ -1300,7 +1300,7 @@ document.getElementById("reservarBtn").onclick=()=>{
 
 document.getElementById("btnMesSiguiente").onclick=()=>{
     const y=fechaActual.getFullYear(), m=fechaActual.getMonth();
-    if(y > 2026 || (y === 2026 && m >= 4)) return;
+    if(y > 2026 || (y === 2026 && m >= 5)) return;
     fechaActual.setMonth(m+1); renderCalendario();
 };
 document.getElementById("btnMesAnterior").onclick=()=>{ fechaActual.setMonth(fechaActual.getMonth()-1); renderCalendario(); };

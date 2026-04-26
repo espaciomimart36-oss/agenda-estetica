@@ -16,6 +16,7 @@ import {
   limit,
   writeBatch,
   runTransaction,
+  increment,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   getAuth,
@@ -61,6 +62,7 @@ export {
   getDownloadURL,
   getFirestore,
   getStorage,
+  increment,
   initializeApp,
   limit,
   onAuthStateChanged,

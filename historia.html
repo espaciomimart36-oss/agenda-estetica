@@ -94,6 +94,12 @@
             animation: fadeUp 0.5s ease both;
         }
 
+        .form-section:nth-child(1) { animation-delay: 0.06s; }
+        .form-section:nth-child(2) { animation-delay: 0.12s; }
+        .form-section:nth-child(3) { animation-delay: 0.18s; }
+        .form-section:nth-child(4) { animation-delay: 0.24s; }
+        .form-section:nth-child(5) { animation-delay: 0.30s; }
+
         .section-eyebrow {
             font-size: 10px;
             letter-spacing: 0.22em;
@@ -159,12 +165,20 @@
         .extra-info {
             display: none;
             margin-top: 12px;
-            animation: slideDown 0.28s ease;
+            animation: fadeUp 0.28s ease;
         }
 
         .extra-info input {
             border-left: 2px solid var(--sage);
             background: rgba(107, 144, 128, 0.04);
+        }
+
+        .objetivo-intro {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.72;
+            margin: -8px 0 20px;
+            font-weight: 400;
         }
 
         .consent-row {
@@ -181,8 +195,20 @@
             width: 20px;
             height: 20px;
             min-width: 20px;
+            margin: 2px 0 0;
+            border-radius: 6px;
             accent-color: var(--sage);
             cursor: pointer;
+            padding: 0;
+        }
+
+        .consent-row label {
+            font-size: 13px;
+            letter-spacing: 0;
+            text-transform: none;
+            font-weight: 400;
+            color: var(--muted);
+            line-height: 1.7;
         }
 
         .btn-continuar {
@@ -200,7 +226,7 @@
             text-transform: uppercase;
             cursor: pointer;
             box-shadow: 0 12px 30px rgba(74, 110, 92, 0.28);
-            transition: all 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -214,6 +240,25 @@
             box-shadow: none;
         }
 
+        .btn-continuar:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 34px rgba(74, 110, 92, 0.34);
+        }
+
+        .btn-continuar .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.38);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+
+        .btn-continuar.loading .spinner { display: block; }
+        .btn-continuar.loading .btn-text { opacity: 0.72; }
+
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(14px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -226,18 +271,11 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .spinner {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.38);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
+        @media (max-width: 600px) {
+            body { padding: 28px 14px 56px; }
+            .form-section { padding: 24px 18px; }
+            .form-grid { grid-template-columns: 1fr; }
         }
-
-        .loading .spinner { display: block; }
-        .loading .btn-text { opacity: 0.7; }
     </style>
 </head>
 <body>
@@ -274,6 +312,7 @@
         <div class="form-section">
             <p class="section-eyebrow">Objetivo del tratamiento</p>
             <h2 class="section-title">¿Qué queres mejorar?</h2>
+            <p class="objetivo-intro">Indicanos la zona principal y el resultado que buscás. Esta información orienta la selección del protocolo más adecuado para tu caso.</p>
             <div class="form-grid">
                 <div class="form-group">
                     <label>Zona principal <span class="req">*</span></label>
@@ -287,7 +326,7 @@
                 </div>
                 <div class="form-group full">
                     <label>Objetivo principal <span class="req">*</span></label>
-                    <textarea id="objetivo" class="req" maxlength="200" placeholder="Ej: mejorar la textura de la piel..."></textarea>
+                    <textarea id="objetivo" class="req" maxlength="200" placeholder="Ej: mejorar la textura de la piel, reducir la flacidez..."></textarea>
                 </div>
             </div>
         </div>
@@ -303,7 +342,7 @@
                         <option>Sí</option>
                     </select>
                     <div id="extra-enfermedad" class="extra-info">
-                        <input id="det-enfermedad" placeholder="¿Cuál enfermedad?">
+                        <input id="det-enfermedad" placeholder="¿Cuál enfermedad?" class="req-si">
                     </div>
                 </div>
                 <div class="form-group full">
@@ -313,7 +352,7 @@
                         <option>Sí</option>
                     </select>
                     <div id="extra-medicacion" class="extra-info">
-                        <input id="det-medicacion" placeholder="Nombre de la medicación">
+                        <input id="det-medicacion" placeholder="Nombre de la medicación" class="req-si">
                     </div>
                 </div>
                 <div class="form-group full">
@@ -323,7 +362,7 @@
                         <option>Sí</option>
                     </select>
                     <div id="extra-alergias" class="extra-info">
-                        <input id="det-alergias" placeholder="¿A qué es alérgica?">
+                        <input id="det-alergias" placeholder="¿A qué es alérgica?" class="req-si">
                     </div>
                 </div>
             </div>
@@ -340,7 +379,7 @@
                         <option>Sí</option>
                     </select>
                     <div id="extra-hijos" class="extra-info">
-                        <input id="det-hijos" type="number" placeholder="¿Cuántos?">
+                        <input id="det-hijos" type="number" placeholder="¿Cuántos?" class="req-si">
                     </div>
                 </div>
                 <div class="form-group full">
@@ -356,7 +395,7 @@
         <div class="form-section">
             <div class="consent-row">
                 <input type="checkbox" id="consent">
-                <label for="consent">Declaro que la información brindada es verdadera y completa. Entiendo que será utilizada exclusivamente para mi tratamiento.</label>
+                <label for="consent">Declaro que la información brindada es verdadera y completa. Entiendo que será utilizada exclusivamente para orientar mi tratamiento estético personalizado.</label>
             </div>
             <button id="btnContinuar" class="btn-continuar" disabled>
                 <span class="btn-text">Continuar</span>
@@ -368,83 +407,65 @@
 
     <script type="module">
         import { db, doc, setDoc, updateDoc } from "/js/firebase-web.js";
-        
         const dni = localStorage.getItem("clienteDNI");
-        const checkConsent = document.getElementById("consent");
-        const boton = document.getElementById("btnContinuar");
+        if (!dni || dni === "null" || dni === "") {
+            window.location.href = "/index.html";
+        }
 
         window.toggleExtra = (id, val) => {
             const div = document.getElementById(`extra-${id}`);
-            if(div) div.style.display = (val === "Sí") ? "block" : "none";
+            div.style.display = val === "Sí" ? "block" : "none";
             validarFormulario();
         };
 
+        const inputsObligatorios =   document.querySelectorAll('input.req, textarea.req, select.req');
+        const checkConsent = document.getElementById("consent");
+        const boton = document.getElementById("btnContinuar");
+
         function validarFormulario() {
             let ok = true;
-
-            // 1. Validar inputs con clase .req (Obligatorios base)
-            document.querySelectorAll('.req').forEach(inp => {
-                const val = inp.value ? inp.value.trim() : "";
-                if (val === "") ok = false;
+            inputsObligatorios.forEach(inp => { if (inp.value.trim() === "") ok = false; });
+            document.querySelectorAll('.extra-info[style*="display: block"] input').forEach(inp => {
+                if (inp.value.trim() === "") ok = false;
             });
-
-            // 2. Validar campos "Sí" que están visibles
-            const extrasVisibles = document.querySelectorAll('.extra-info[style*="display: block"] input');
-            extrasVisibles.forEach(inp => {
-                const val = inp.value ? inp.value.trim() : "";
-                if (val === "") ok = false;
-            });
-
-            // 3. Checkbox de consentimiento
             if (!checkConsent.checked) ok = false;
-
             boton.disabled = !ok;
         }
 
-        // Listeners para validación en tiempo real
         document.querySelectorAll('input, textarea, select').forEach(el => {
             el.addEventListener('input', validarFormulario);
             el.addEventListener('change', validarFormulario);
         });
 
         boton.addEventListener("click", async () => {
-            if (!dni) {
-                alert("Error: No se encontró el DNI del cliente.");
-                return;
-            }
-
+            if (boton.disabled) return;
             boton.disabled = true;
             boton.classList.add('loading');
-
-            const getVal = (id) => document.getElementById(id) ? document.getElementById(id).value : "";
-            const getExtraVal = (selId, inpId) => getVal(selId) === "Sí" ? getVal(inpId) : "No";
-
             const datos = {
-                nombre: getVal("nombre"),
-                edad: getVal("edad"),
-                telefono: getVal("telefono"),
-                zona: getVal("zona"),
-                objetivo: getVal("objetivo"),
-                enfermedad: getExtraVal("enfermedad", "det-enfermedad"),
-                medicacion: getExtraVal("medicacion", "det-medicacion"),
-                alergias: getExtraVal("alergias", "det-alergias"),
-                hijos: getExtraVal("hijos", "det-hijos"),
-                embarazo: getVal("embarazo"),
+                nombre:    document.getElementById("nombre").value,
+                edad:      document.getElementById("edad").value,
+                telefono:  document.getElementById("telefono").value,
+                zona:      document.getElementById("zona").value,
+                objetivo:  document.getElementById("objetivo").value,
+                enfermedad: document.getElementById("enfermedad").value === "Sí" ? document.getElementById("det-enfermedad").value : "No",
+                medicacion: document.getElementById("medicacion").value === "Sí" ? document.getElementById("det-medicacion").value : "No",
+                alergias:   document.getElementById("alergias").value === "Sí"   ? document.getElementById("det-alergias").value   : "No",
+                hijos:      document.getElementById("hijos").value === "Sí"      ? document.getElementById("det-hijos").value      : "No",
+                embarazo:   document.getElementById("embarazo").value,
                 fechaRegistro: new Date()
             };
-
             try {
-                // Guardar en historias
                 await setDoc(doc(db, "historias", dni), datos);
-                // Actualizar flag en el cliente
-                await updateDoc(doc(db, "clients", dni), { historiaCompletada: true });
-                
+                await updateDoc(doc(db, "clients", dni), { historiaCompleta: true });
                 window.location.href = "servicios-pro.html";
             } catch (e) {
-                console.error("Error Firebase:", e);
-                alert("Error al guardar. Verifica tu conexión e intenta de nuevo.");
+                console.error(e);
                 boton.disabled = false;
                 boton.classList.remove('loading');
+                const msg = e?.code === "permission-denied"
+                    ? "Error de permisos. Contactá a Gimena."
+                    : "Error al guardar la información. Por favor, intentá de nuevo.";
+                alert(msg);
             }
         });
     </script>

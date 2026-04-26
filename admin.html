@@ -182,16 +182,19 @@
         .cliente-checks { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
         .cliente-checks label { font-size: 13px; font-weight: 600; color: #396a56; display: flex; align-items: center; gap: 6px; }
         .cliente-help { margin-top: 8px; font-size: 12px; color: #557b6b; }
-        .horarios-admin-card { margin-top: 12px; border: 1px solid #cfe6da; border-radius: 14px; background: #f8fdfb; padding: 12px; }
-        .horarios-admin-card h4 { margin: 0 0 8px 0; font-size: 14px; color: #2f7c5d; }
+        .horarios-admin-card { margin-top: 12px; border: 1px solid #cfe6da; border-radius: 16px; background: linear-gradient(180deg, #f8fdfb 0%, #f2fbf6 100%); padding: 14px; box-shadow: 0 2px 8px rgba(47,90,71,0.06); }
+        .horarios-admin-card h4 { margin: 0 0 10px 0; font-size: 14px; color: #2f7c5d; font-weight: 800; letter-spacing: 0.02em; }
         .horarios-admin-list { display: grid; gap: 7px; }
-        .hora-row { display: grid; grid-template-columns: 72px 1fr auto; gap: 8px; align-items: center; background: #fff; border: 1px solid #d7ebe2; border-radius: 10px; padding: 8px 10px; }
+        .hora-row { display: grid; grid-template-columns: 72px 1fr auto; gap: 8px; align-items: center; background: #fff; border: 1px solid #d7ebe2; border-radius: 10px; padding: 8px 10px; transition: box-shadow 0.15s ease; }
+        .hora-row:hover { box-shadow: 0 2px 10px rgba(47,90,71,0.10); }
         .hora-row .hora-label { font-weight: 700; color: #2f7c5d; }
         .hora-row .hora-status { font-size: 12px; color: #4f6f61; }
+        .hora-row.admin-bloqueado { background: rgba(253,248,232,0.55); border-color: #e8d9a0; }
+        .hora-row.admin-bloqueado .hora-label { text-decoration: line-through; text-decoration-thickness: 1px; color: #8a6c00; opacity: 0.82; }
         .hora-row .hora-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-        .pill { border-radius: 999px; padding: 4px 8px; font-size: 11px; font-weight: 700; }
-        .pill.disponible { background: #e8f8ef; color: #1f7c55; }
-        .pill.reservado { background: #eef5ff; color: #2e61b1; }
+        .pill { border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.02em; display: inline-block; }
+        .pill.disponible { background: #e6f7ef; color: #1a7550; border: 1px solid #b8e8ce; }
+        .pill.reservado { background: #eef5ff; color: #2e61b1; border: 1px solid #c4d8f8; }
         .pill.bloqueado { background: #fdf8e8; color: #8a6c00; border: 1px solid #e8d9a0; }
         .btn-mini.alerta { border-color: #D4AF37; color: #7a5e00; background: #fdf8e8; }
         .btn-mini.alerta:hover { background: #faf0cc; }
@@ -206,6 +209,15 @@
         .modal-card.delicado p { color: #456a5b; }
         .modal-card.delicado .modal-actions { margin-top: 14px; }
         @keyframes popInSoft { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .detalle-dia-card { animation: fadeInUp 0.22s ease both; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(178,222,200,0.15); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(63,143,111,0.38); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(63,143,111,0.58); }
+        .busc-input { font-family: inherit; font-size: 14px; color: var(--texto); }
+        .select-input { font-family: inherit; font-size: 14px; color: var(--texto); }
+        .tag-fecha { font-family: inherit; }
 
         /* ── Modal de Registro Premium ── */
         #modal-registrar-overlay {
@@ -390,9 +402,9 @@
             border-radius: 20px; padding: 16px; margin-top: 14px;
             box-shadow: 0 8px 28px rgba(94,153,124,0.12), inset 0 1px 0 rgba(255,255,255,0.9);
             border: 1px solid rgba(178,222,200,0.38);
-            transition: box-shadow 0.2s;
+            transition: box-shadow 0.22s ease, transform 0.18s ease;
         }
-        .detalle-dia-card:hover { box-shadow: 0 12px 36px rgba(94,153,124,0.18), inset 0 1px 0 rgba(255,255,255,0.9); }
+        .detalle-dia-card:hover { box-shadow: 0 14px 40px rgba(94,153,124,0.20), inset 0 1px 0 rgba(255,255,255,0.9); transform: translateY(-2px); }
         .detalle-dia-card b { color: #2f7c5d; }
         textarea { width: 100%; height: 80px; border: 1px solid #cbe7da; border-radius: 12px; padding: 10px; font-family: inherit; resize: none; box-sizing: border-box; margin-top: 10px; background: #f5fcf8; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
         textarea:focus { border-color: var(--accento); box-shadow: 0 0 0 3px rgba(78,163,127,0.12); }
@@ -577,11 +589,11 @@
         </div>
         <div class="container">
             <div id="sec-buscador-sesiones" class="section">
-                <div class="detalle-dia-card buscador-sesiones-card" style="margin-bottom:18px; box-shadow:0 6px 24px rgba(76,144,226,0.10); border-radius:22px; border-top:6px solid var(--azul);">
-                    <h3 style="margin-top:0; color:var(--azul); font-family:'Playfair Display',serif; font-size:1.35em; letter-spacing:0.01em;">Buscador de sesiones</h3>
-                    <input type="text" class="busc-input buscador-sesiones-input" id="inpBuscadorSesiones" placeholder="Nombre del paciente..." oninput="buscarSesionesPorNombreInput()" style="font-size:1.1em; border:2px solid #b7d6f7; margin-bottom:14px; border-radius:14px;">
+                <div class="detalle-dia-card buscador-sesiones-card" style="margin-bottom:18px; box-shadow:0 6px 24px rgba(63,143,111,0.13); border-radius:22px; border-top:6px solid var(--accento);">
+                    <h3 style="margin-top:0; color:var(--accento-oscuro); font-family:'Playfair Display',serif; font-size:1.35em; letter-spacing:0.01em;">Buscador de sesiones</h3>
+                    <input type="text" class="busc-input buscador-sesiones-input" id="inpBuscadorSesiones" placeholder="Nombre del paciente..." oninput="buscarSesionesPorNombreInput()" style="font-size:1.1em; border:2px solid #b2ddc8; margin-bottom:14px; border-radius:14px;">
                     <div id="contenedorSesionesBuscadas" style="margin-top:10px;"></div>
-                    <div class="cliente-help" style="margin-top:14px; color:#4a90e2; font-size:13px; background:#f5faff; border-radius:10px; padding:8px 12px;">Busca todas las sesiones con nota asociada para un paciente. Escribí al menos 2 letras del nombre.</div>
+                    <div class="cliente-help" style="margin-top:14px; color:#3f8f6f; font-size:13px; background:#f0faf5; border-radius:10px; padding:8px 12px;">Busca todas las sesiones con nota asociada para un paciente. Escribí al menos 2 letras del nombre.</div>
                 </div>
             </div>
             <div id="sec-agenda" class="section active">
@@ -1196,8 +1208,8 @@
         
         const esReservaPacienteExportable = (r = {}) => esReservaActiva(r) && !esReservaBloqueoAdmin(r);
         const ANIO_RESERVAS_PDF = Number.parseInt((fechaHoyISO() || '').slice(0, 4), 10) || new Date().getFullYear();
-        const PERIODOS_RESERVAS_PDF = new Set([`${ANIO_RESERVAS_PDF}-04`, `${ANIO_RESERVAS_PDF}-05`]);
-        const ETIQUETA_PERIODO_RESERVAS_PDF = `abril y mayo ${ANIO_RESERVAS_PDF}`;
+        const PERIODOS_RESERVAS_PDF = new Set([`${ANIO_RESERVAS_PDF}-04`, `${ANIO_RESERVAS_PDF}-05`, `${ANIO_RESERVAS_PDF}-06`]);
+        const ETIQUETA_PERIODO_RESERVAS_PDF = `abril, mayo y junio ${ANIO_RESERVAS_PDF}`;
         
         const esReservaDeBraulioV = (r = {}) => {
             const candidatos = [
@@ -1596,6 +1608,14 @@
                         hoursBalance: c.hoursBalance ?? 0,
                         membershipActive: resolverMembresiaActiva(c)
                     };
+                }).filter(p => {
+                    const d = (p.dni || "").toString();
+                    return d.length >= 3
+                        && d !== "undefined"
+                        && d !== "null"
+                        && !d.includes("__PLACEHOLDER__")
+                        && !d.includes("<__")
+                        && !d.startsWith("549");
                 }).sort((a, b) => (a.fullName || "").localeCompare((b.fullName || ""), 'es'));
                 
                 todasLasReservas = snapR.docs.map(d => {
@@ -1793,7 +1813,7 @@
                     ? `<button class="btn-mini alerta" onclick="cancelarTurnoYNotificar('${reserva.id}')">Cancelar y notificar</button>`
                     : '';
                 return `
-                    <div class="hora-row">
+                    <div class="hora-row${bloqueo ? ' admin-bloqueado' : ''}">
                         <div class="hora-label">${hora}</div>
                         <div class="hora-status">${estado} · ${label}</div>
                         <div class="hora-actions">${accionBloqueo}${accionDuo}${botonRegistrar}${botonCancelar}</div>
@@ -1949,7 +1969,10 @@
         
         const filasReservasPdf = (reservasOrdenadas) => reservasOrdenadas.map((reserva) => [
             formatoFechaReservaPdf(reserva.fecha),
-            limpiarTextoPdf(reserva.servicio || 'Servicio a tratar') || 'Servicio a tratar'
+            limpiarTextoPdf(reserva.hora || '—'),
+            limpiarTextoPdf(reserva.nombreLimpio || reserva.clienteNombre || reserva.nombre || reserva.cliente || 'Sin nombre'),
+            limpiarTextoPdf(reserva.servicio || 'Sin especificar'),
+            reserva.duo === true ? 'Dúo' : ''
         ]);
         
         window.exportarReservasPDF = () => {
@@ -1975,22 +1998,22 @@
             docPdf.text(`Total de reservas: ${reservasOrdenadas.length}`, 14, 32);
             if (!reservasOrdenadas.length) {
                 docPdf.text(`No hay reservas de ${ETIQUETA_PERIODO_RESERVAS_PDF} para exportar.`, 14, 41);
-                docPdf.save(`reservas_abril_mayo_${ANIO_RESERVAS_PDF}_${fechaHoyISO()}.pdf`);
+                docPdf.save(`reservas_abr_jun_${ANIO_RESERVAS_PDF}_${fechaHoyISO()}.pdf`);
                 return;
             }
             const pudoRenderizar = runAutoTable(docPdf, {
                 startY: 37,
                 theme: 'grid',
-                head: [['Fecha', 'Servicio a tratar']],
+                head: [['Fecha', 'Hora', 'Paciente', 'Servicio', 'Dúo']],
                 body: filasReservasPdf(reservasOrdenadas),
-                margin: { top: 37, right: 14, bottom: 12, left: 14 },
+                margin: { top: 37, right: 10, bottom: 12, left: 10 },
                 styles: {
                     font: 'helvetica',
-                    fontSize: 10,
+                    fontSize: 9,
                     textColor: [47, 90, 71],
                     lineColor: [207, 233, 221],
                     lineWidth: 0.15,
-                    cellPadding: 3.5,
+                    cellPadding: 3,
                     overflow: 'linebreak',
                     valign: 'top'
                 },
@@ -1999,18 +2022,22 @@
                     textColor: [255, 255, 255],
                     font: 'helvetica',
                     fontStyle: 'bold',
-                    halign: 'left'
+                    halign: 'left',
+                    fontSize: 9
                 },
                 alternateRowStyles: {
                     fillColor: [248, 253, 251]
                 },
                 columnStyles: {
-                    0: { cellWidth: 78 },
-                    1: { cellWidth: 104 }
+                    0: { cellWidth: 44 },
+                    1: { cellWidth: 16, halign: 'center' },
+                    2: { cellWidth: 54 },
+                    3: { cellWidth: 60 },
+                    4: { cellWidth: 16, halign: 'center' }
                 }
             });
             if (!pudoRenderizar) return;
-            docPdf.save(`reservas_abril_mayo_${ANIO_RESERVAS_PDF}_${fechaHoyISO()}.pdf`);
+            docPdf.save(`reservas_abr_jun_${ANIO_RESERVAS_PDF}_${fechaHoyISO()}.pdf`);
         };
         
         window.exportarPacientesPDF = () => {
@@ -2370,19 +2397,34 @@
                         canceladoAt: serverTimestamp()
                     });
 
-                    // Notificar a la paciente por WA
-                    enviarW(reserva.phone || '', reserva.nombreLimpio || 'Paciente', reserva.fecha, reserva.hora, reserva.servicio || 'Servicio', 'cancelar');
+                    // Buscar teléfono registrado del cliente (no el número de la reserva)
+                    const pacienteNombre = reserva.nombreLimpio || reserva.cliente || reserva.clienteNombre || 'Paciente';
+                    let telefonoRegistrado = "";
+                    if (reserva.dni) {
+                        try {
+                            const clienteSnap = await getDoc(doc(db, "clients", reserva.dni));
+                            if (clienteSnap.exists()) {
+                                const cd = clienteSnap.data();
+                                telefonoRegistrado = cd.phone || cd.telefono || cd.whatsapp || "";
+                            }
+                        } catch (_) {}
+                    }
+                    telefonoRegistrado = telefonoRegistrado || reserva.phone || "";
 
-                    // Notificar a Gimena con el motivo
-                    const fechaFmt = escapeHtml(reserva.fecha);
-                    const horaFmt = escapeHtml(reserva.hora);
-                    const paciente = encodeURIComponent(reserva.nombreLimpio || 'Paciente');
-                    const servicio = encodeURIComponent(reserva.servicio || 'Servicio');
-                    const motivoEnc = encodeURIComponent(motivo);
-                    const msgGimena = `🔔 *Turno cancelado*%0A%0A👤 Paciente: *${paciente}*%0A📅 Fecha: *${fechaFmt}*%0A🕒 Hora: *${horaFmt} hs*%0A✨ Servicio: *${servicio}*%0A%0A📝 Motivo:%0A${motivoEnc}`;
-                    window.open(`https://wa.me/5493764291807?text=${msgGimena}`, '_blank');
+                    // Abrir WhatsApp para que Gimena envíe manualmente desde su celular
+                    if (telefonoRegistrado) {
+                        let num = telefonoRegistrado.replace(/\D/g, "");
+                        if (!num.startsWith("54")) num = "549" + num;
+                        const fechaFmt = reserva.fecha || "";
+                        const horaFmt = reserva.hora || "";
+                        const servicio = reserva.servicio || "Tratamiento";
+                        const msgPaciente = encodeURIComponent(`Hola ${pacienteNombre}, te escribo de Espacio Mimar T. Lamentablemente tuvimos que cancelar tu turno del *${fechaFmt}* a las *${horaFmt}* (${servicio}). ${motivo} ¡Pedimos disculpas y te contactamos pronto para reprogramar!`);
+                        window.open(`https://wa.me/${num}?text=${msgPaciente}`, '_blank');
+                        mostrarAviso("Turno cancelado · Abrió WhatsApp para notificar al paciente");
+                    } else {
+                        mostrarAviso("Turno cancelado · Sin teléfono registrado para notificar");
+                    }
 
-                    mostrarAviso("Turno cancelado · Gimena notificada por WhatsApp");
                     await cargarTodo();
                     if (fechaSeleccionada) verTurnos(fechaSeleccionada, document.querySelector('.day.selected'));
                 } catch (error) {
@@ -2817,11 +2859,41 @@
                         <span class="pill ${p.membershipActive ? 'disponible' : 'bloqueado'}">${p.membershipActive ? 'Membresía activa' : 'Ocasional'}</span>
                         <span class="pill reservado">Horas: ${escapeHtml((p.hoursBalance ?? 0).toString())}</span>
                     </div>
+                    <div style="margin-top:8px;">
+                        <button onclick="toggleMembresiaCliente('${escapeHtml(p.dni || '')}', ${!p.membershipActive})"
+                            style="font-size:11px;padding:5px 12px;border-radius:8px;border:1.5px solid ${p.membershipActive ? '#c8ddd6' : '#3f8f6f'};background:${p.membershipActive ? '#fff' : '#edf7f2'};cursor:pointer;color:#2f5a47;font-weight:700;">
+                            ${p.membershipActive ? 'Cambiar a Ocasional' : 'Cambiar a Membresía'}
+                        </button>
+                    </div>
                 </div>
             `).join('');
         };
         
         window.filtrarListadoClientesInput = debounce(() => window.filtrarListadoClientes(), 180);
+
+        window.toggleMembresiaCliente = async (dni, nuevoEstado) => {
+            if (!dni) return;
+            try {
+                mostrarLoader(true);
+                await updateDoc(doc(db, "clients", dni), {
+                    membershipActive: nuevoEstado,
+                    membresia: nuevoEstado,
+                    updatedAt: serverTimestamp()
+                });
+                const idx = todasLosPacientes.findIndex(p => p.dni === dni);
+                if (idx !== -1) {
+                    todasLosPacientes[idx].membershipActive = nuevoEstado;
+                    todasLosPacientes[idx].membresia = nuevoEstado;
+                }
+                filtrarListadoClientes();
+                mostrarAviso(`Membresía ${nuevoEstado ? 'activada' : 'desactivada'} · DNI ${dni}`);
+            } catch (error) {
+                console.error(error);
+                mostrarAviso("No se pudo cambiar la membresía");
+            } finally {
+                mostrarLoader(false);
+            }
+        };
         
         window.limpiarFiltrosClientes = () => {
             document.getElementById("inpBusPaciente").value = "";
@@ -3118,7 +3190,9 @@
                     const totalPedido = calcularTotalKit(productosArr);
                     const fechaStr = p.createdAt || p.fecha || '';
                     if (fechaStr.slice(0, 7) === mesActual) totalMes += totalPedido;
-                    const estadoBadge = p.estado === 'listo'
+                    const estadoBadge = p.estado === 'entregado'
+                        ? '<span style="background:#d4f0e3;color:#1a6644;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">✓ Entregado</span>'
+                        : p.estado === 'listo'
                         ? '<span style="background:#e8f5ee;color:#3a7a5a;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Listo</span>'
                         : '<span style="background:#fff8e1;color:#8a6c00;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Pendiente</span>';
                     const productosList = productosArr.length
@@ -3146,8 +3220,16 @@
                             (totalPedido > 0 ? '<div style="display:flex;justify-content:space-between;padding:6px 0 0;font-weight:800;color:#2f5a47;font-size:13px;"><span>Total</span><span>' + formatPesos(totalPedido) + '</span></div>' : '') +
                         '</div>' +
                         (p.descripcionPiel ? '<div style="font-size:12px;background:#f2f7f4;padding:8px 10px;border-radius:8px;margin-bottom:8px;"><strong>Descripción piel:</strong> ' + escapeHtml(p.descripcionPiel) + '</div>' : '') +
-                        '<button onclick="enviarWaKit(\'' + escapeHtml(p.id || '') + '\',\'' + escapeHtml(p.dni || '') + '\',\'' + (p.nombrePaciente || '').replace(/'/g, "\\'") + '\')" ' +
-                            'style="background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;border:none;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;width:100%;">📲 Avisar por WhatsApp</button>' +
+                        '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+                            '<button onclick="enviarWaKit(\'' + escapeHtml(p.id || '') + '\',\'' + escapeHtml(p.dni || '') + '\',\'' + (p.nombrePaciente || '').replace(/'/g, "\\'") + '\')" ' +
+                                'style="background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;border:none;padding:9px 14px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;flex:1;">📲 WhatsApp</button>' +
+                            (p.estado !== 'entregado'
+                                ? '<button onclick="marcarEntregadoKit(\'' + escapeHtml(p.id || '') + '\')" ' +
+                                  'style="background:linear-gradient(135deg,#3f8f6f,#2a6e52);color:#fff;border:none;padding:9px 14px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;flex:1;">✓ Entregado</button>'
+                                : '') +
+                            '<button onclick="borrarPedidoKit(\'' + escapeHtml(p.id || '') + '\')" ' +
+                                'style="background:#fff;color:#c94040;border:1.5px solid #f5c5c5;padding:9px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">Borrar</button>' +
+                        '</div>' +
                     '</div>';
                 });
                 cont.innerHTML =
@@ -3180,6 +3262,38 @@
             window.open(url, '_blank');
         };
         
+        window.marcarEntregadoKit = async function(pedidoId) {
+            if (!pedidoId) return;
+            if (!confirm('¿Marcar este pedido como entregado?')) return;
+            try {
+                mostrarLoader(true);
+                await updateDoc(doc(db, 'pedidosKit', pedidoId), { estado: 'entregado', entregadoAt: serverTimestamp() });
+                mostrarAviso('Pedido marcado como entregado');
+                await cargarPedidosKit();
+            } catch(e) {
+                console.error(e);
+                mostrarAviso('No se pudo actualizar el pedido');
+            } finally {
+                mostrarLoader(false);
+            }
+        };
+
+        window.borrarPedidoKit = async function(pedidoId) {
+            if (!pedidoId) return;
+            if (!confirm('¿Borrar este pedido? Esta acción no se puede deshacer.')) return;
+            try {
+                mostrarLoader(true);
+                await deleteDoc(doc(db, 'pedidosKit', pedidoId));
+                mostrarAviso('Pedido eliminado');
+                await cargarPedidosKit();
+            } catch(e) {
+                console.error(e);
+                mostrarAviso('No se pudo borrar el pedido');
+            } finally {
+                mostrarLoader(false);
+            }
+        };
+
         window.toggleMenuNav = () => {
             const nav = document.getElementById('menuNav');
             if (nav) nav.classList.toggle('open');
