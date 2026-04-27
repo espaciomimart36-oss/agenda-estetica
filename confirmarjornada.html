@@ -193,7 +193,7 @@
     </div>
 
     <script type="module">
-        import { db, collection, addDoc, doc, getDoc } from "/js/firebase-web.js";
+        import { db, collection, addDoc, doc, getDoc, getDocs, query, where } from "/js/firebase-web.js";
 
         const CF_CONFIRM_URL = "https://us-central1-estetica-8d067.cloudfunctions.net/enviarConfirmacionTurno";
 
@@ -318,6 +318,23 @@
                 const telefonos = parseTelefonos(telefonosEl.value);
                 const telefonoPrincipal = telefonos[0] || "";
                 const turnoAt = new Date(`${fechaLs}T${horaLs}:00-03:00`);
+
+                // Verificar que el horario no esté bloqueado por admin
+                const blkSnap = await getDocs(query(
+                    collection(db, "calendarExceptions"),
+                    where("fecha", "==", fechaLs),
+                    where("hora",  "==", horaLs)
+                ));
+                const esBloqueado = blkSnap.docs.some(d => {
+                    const bd = d.data();
+                    return bd.active !== false && (bd.type === "blocked" || bd.blocked === true);
+                });
+                if (esBloqueado) {
+                    setStatus("Este horario no está disponible. Por favor, volvé y elegí otro.");
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.textContent = "Confirmar turno";
+                    return;
+                }
 
                 await addDoc(collection(db, "reservas"), {
                     cliente: nombreLs,

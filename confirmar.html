@@ -446,6 +446,16 @@ btn.addEventListener("click", async () => {
 
         // Transaccion atomica: verifica y reserva en un solo paso
         await runTransaction(db, async (tx) => {
+            // Verificar bloqueo admin — el ID canónico del documento es block_YYYY-MM-DD_HH-MM
+            const blkRef  = doc(db, "calendarExceptions", `block_${fecha}_${hora.replace(":", "-")}`);
+            const blkSnap = await tx.get(blkRef);
+            if (blkSnap.exists()) {
+                const bd = blkSnap.data();
+                if (bd.active !== false && (bd.type === "blocked" || bd.blocked === true)) {
+                    throw new Error("HORA_BLOQUEADA");
+                }
+            }
+
             const slotSnap = await tx.get(slotRef);
             const ocupantes = slotSnap.exists() ? (slotSnap.data().ocupantes || 0) : 0;
             const capacidad = esDuo ? 2 : 1;
@@ -484,7 +494,10 @@ btn.addEventListener("click", async () => {
         document.getElementById("modalOk").style.display = "flex";
 
     } catch (e) {
-        if (e.message === "SLOT_OCUPADO") {
+        if (e.message === "HORA_BLOQUEADA") {
+            status.className   = "error";
+            status.textContent = "Este horario no está disponible. Por favor, volvé y elegí otro.";
+        } else if (e.message === "SLOT_OCUPADO") {
             status.className  = "error";
             status.textContent = "Este horario fue reservado en este momento por otro paciente. Por favor, selecciona otro.";
         } else {

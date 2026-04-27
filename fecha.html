@@ -1444,7 +1444,7 @@ async function iniciarFlujoFecha() {
     actualizarCabeceraFecha();
     actualizarResumenSeleccion();
     aplicarModoVisualJornada();
-    cargarDatos();
+    await cargarDatos();
 }
 
 iniciarFlujoFecha();
@@ -1464,6 +1464,8 @@ function renderHorariosPorConfig(config, container, fStr) {
                 div.className = "hora";
                 div.innerText = item.h;
 
+                const esAdminBloqueo = bloqueosHorarios.has(keyBloqueo(fStr, item.h));
+
                 let estaOcupado = ocupados.includes(item.h);
                 if (!estaOcupado) {
                     if (item.h === "12:00" && ocupados.includes("12:30")) estaOcupado = true;
@@ -1472,7 +1474,9 @@ function renderHorariosPorConfig(config, container, fStr) {
                     if (item.h === "20:30" && ocupados.includes("20:00")) estaOcupado = true;
                 }
 
-                if (estaOcupado) {
+                if (esAdminBloqueo) {
+                    div.classList.add("admin-bloqueado");
+                } else if (estaOcupado) {
                     div.classList.add("ocupado");
                 } else {
                     div.onclick = () => {
