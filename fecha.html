@@ -351,11 +351,11 @@
             box-shadow:0 8px 16px rgba(89,146,119,0.14);
         }
 
-        .dia:not(.domingo):not(.pasado):not(.bloqueado):not(.seleccionado):not(.lleno){
+        .dia:not(.domingo):not(.pasado):not(.bloqueado):not(.seleccionado){
             animation:fechaGlow 3.8s ease-in-out infinite;
         }
 
-        .dia:not(.domingo):not(.pasado):not(.bloqueado):not(.seleccionado):not(.lleno)::after{
+        .dia:not(.domingo):not(.pasado):not(.bloqueado):not(.seleccionado)::after{
             content:"";
             position:absolute;
             top:-35%;
@@ -403,11 +403,11 @@
             color:#fff;
             border-color:#e53935;
             box-shadow:0 4px 14px rgba(229,57,53,0.32);
-            cursor:not-allowed;
+            cursor:pointer;
             font-weight:700;
         }
         .dia.lleno:hover{
-            transform:none;
+            transform:translateY(-2px) scale(1.04);
             box-shadow:0 6px 18px rgba(229,57,53,0.42);
         }
 
@@ -533,7 +533,6 @@
             background:rgba(200,210,205,0.22)!important;
             color:#adb9b4!important;
             cursor:not-allowed!important;
-            text-decoration:line-through!important;
             border:1px solid rgba(190,205,200,0.32)!important;
             pointer-events:none!important;
             box-shadow:none!important;
@@ -1256,7 +1255,14 @@ function renderCalendario(){
             div.onclick=()=>mostrarAviso("Cerrado", `Motivo: ${excepciones[fStr]}`);
         } else if(esDiaLleno(fStr)){
             div.classList.add("lleno");
-            div.onclick=()=>mostrarAviso("Sin turnos disponibles", "Este día ya no tiene horarios libres. Elegí otro día o escribile a Gimena. 🌿");
+            div.onclick=()=>{
+                document.querySelectorAll(".dia").forEach(e=>e.classList.remove("seleccionado"));
+                div.classList.add("seleccionado");
+                fechaSeleccionada=f;
+                horaSeleccionada=null;
+                actualizarResumenSeleccion();
+                cargarHorarios(f, fStr);
+            };
         } else {
             div.onclick=()=>{
                 document.querySelectorAll(".dia").forEach(e=>e.classList.remove("seleccionado"));
