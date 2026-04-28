@@ -1037,7 +1037,7 @@
         // -------------------------
 
         const haySesionCliente = !!(dniSesion && dniSesion !== "null" && dniSesion !== "" && nombreSesion);
-        const fechaTurnoFormatter = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric" });
+        const fechaTurnoFormatter = new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
         let turnosConsultados = [];
         let dniConsultaActual = "";
         let cancelacionTurnoActivaId = "";
@@ -1089,7 +1089,8 @@
             const [year, month, day] = fechaStr.split("-").map(Number);
             const fecha = new Date(year, month - 1, day);
             if (Number.isNaN(fecha.getTime())) return fechaStr;
-            return fechaTurnoFormatter.format(fecha);
+            const s = fechaTurnoFormatter.format(fecha).replace(/,\s*/, " ");
+            return s.charAt(0).toUpperCase() + s.slice(1);
         };
 
         const construirWhatsAppCancelacionUrl = (turno = {}, motivo = "") => {

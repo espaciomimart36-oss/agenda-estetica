@@ -327,6 +327,16 @@
                     return new Date(y, m - 1, d);
                 };
 
+                const fmtFechaLarga = new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+                const formatFecha = (fechaStr) => {
+                    if (!fechaStr) return "—";
+                    const [y, m, d] = fechaStr.split("-").map(Number);
+                    const dt = new Date(y, m - 1, d);
+                    if (isNaN(dt.getTime())) return fechaStr;
+                    const s = fmtFechaLarga.format(dt).replace(/,\s*/, " ");
+                    return s.charAt(0).toUpperCase() + s.slice(1);
+                };
+
                 const esCancelado = r => (r.status || r.estado || "").toLowerCase() === "cancelado";
 
                 // Grupos separados con su propio orden
@@ -357,7 +367,7 @@
                     const cancelado = esCancelado(r);
                     const fechaR = parseDate(r);
                     const esFuturo = fechaR >= hoy;
-                    const fechaFmt = r.fecha ? r.fecha.split("-").reverse().join("/") : "—";
+                    const fechaFmt = formatFecha(r.fecha);
 
                     let badge = "";
                     if (tipo === "cancelada") {
@@ -406,7 +416,7 @@
 
         function abrirModalCancelacion(data) {
             _cancelData = data;
-            const fechaFmt = data.fecha ? data.fecha.split("-").reverse().join("/") : "—";
+            const fechaFmt = formatFecha(data.fecha);
             document.getElementById("cancelacion-info").textContent =
                 `${data.servicio || "Tratamiento"} · ${fechaFmt} · ${data.hora || "—"} hs`;
             document.getElementById("cancelacion-motivo").value = "";
@@ -448,7 +458,7 @@
                 });
 
                 // 3. Notificar a Gimena por WhatsApp
-                const fechaFmt = fecha ? fecha.split("-").reverse().join("/") : "—";
+                const fechaFmt = formatFecha(fecha);
                 const pacNombre = encodeURIComponent(nombreSesion || dni);
                 const servEnc = encodeURIComponent(servicio || "Tratamiento");
                 const motivoEnc = encodeURIComponent(motivo);
