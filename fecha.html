@@ -1359,9 +1359,7 @@ async function cargarHorarios(fecha, fStr){
         const esAdminBloqueo = bloqueosHorarios.has(keyBloqueo(fStr, item.h));
         const estaOcupado = ocupados.includes(item.h);
 
-        if(esAdminBloqueo) {
-            div.classList.add("admin-bloqueado");
-        } else if(estaOcupado) {
+        if(esAdminBloqueo || estaOcupado) {
             div.classList.add("ocupado");
         } else {
             div.onclick=()=>{
@@ -1474,9 +1472,7 @@ function renderHorariosPorConfig(config, container, fStr) {
                     if (item.h === "20:30" && ocupados.includes("20:00")) estaOcupado = true;
                 }
 
-                if (esAdminBloqueo) {
-                    div.classList.add("admin-bloqueado");
-                } else if (estaOcupado) {
+                if (esAdminBloqueo || estaOcupado) {
                     div.classList.add("ocupado");
                 } else {
                     div.onclick = () => {
